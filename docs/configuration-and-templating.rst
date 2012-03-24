@@ -1,69 +1,54 @@
-[Part 1] - Symfony2 Configuration and Templating
+[Part 1] - Symfony2 設定與樣板
 ================================================
 
-Overview
+概要
 --------
 
-This chapter will cover the first steps when creating a Symfony2 website.
-We will download and configure the Symfony2
-`Standard Distribution <http://symfony.com/doc/current/glossary.html#term-distribution>`_,
-create the Blog bundle and put together the main HTML templates. At the end
-of this chapter you will have configured a Symfony2 website that
-will be available via a local domain, eg ``http://symblog.dev/``. The website will
-contain the main HTML structure of the blog along with some dummy content.
+這一節會介紹建立 Symfony2 網站的幾個開始步驟，我們會下載與使用 Symfony2
+`標準版 <http://symfony.com/doc/current/glossary.html#term-distribution>`_,
+來建立部落格軟體包以及放入主要網頁樣板。在這一節結束後你會製作出一個設定好的 Symfony2 網站，
+能夠透過本地網址存取，像是 ``http://symblog.dev/`` 。這個網站會包含部落格主要的網頁結構以
+及一些測試內容。
 
-The following areas will be demonstrated in this chapter:
+在這個章節會展示下面這些主題：
 
-    1. Setting up a Symfony2 application
-    2. Configuring a development domain
-    3. Symfony2 Bundles
-    4. Routing
-    5. Controllers
-    6. Templating with Twig
+    1. 設定一個 Symfony2 應用
+    2. 設定一個開發網址
+    3. Symfony2 軟體包
+    4. 網址路徑
+    5. Controller
+    6. 使用 Twig 製作樣板
 
-Download and Setup
+下載與安裝
 ------------------
 
-As stated above we will be using the Symfony2 Standard Distribution. This
-distribution comes complete with the Symfony2 core libraries and the most common
-bundles required to create websites. You can
-`Download <http://symfony.com/download>`_ the Symfony2 package from the Symfony2 website.
-As I don't want to repeat the excellent documentation provided by the Symfony2 book,
-please refer to the
-`Installing and Configuring Symfony2 <http://symfony.com/doc/current/book/installation.html>`_
-chapter for detailed requirements. This will guide you through the process of
-which package to download, how to install the required vendors, and how to
-correctly permission folders.
+如同上面提到，我們會使用 Symfony2 標準版，這個版本包含了完整的核心函式庫與建立網站大多會需要的
+軟體包，你可以從官方網站 `下載 <http://symfony.com/download>`_ 。這個教學不希望重複官方網站的
+線上手冊說明，所以請先參考 `安裝與設定 Symfony2 <http://symfony.com/doc/current/book/installation.html>`_
+這個章節來了解環境需求。線上手冊會引導你進行下載軟體包的選擇、安裝必要外部軟體包與資料夾的權限
+設定等。
 
 .. warning::
 
-    It is important to pay special attention to the
-    `Setting up Permissions <http://symfony.com/doc/current/book/installation.html#configuration-and-setup>`_
-    section in the Installation chapter. This explains the various ways you
-    should permission the ``app/cache`` and ``app/logs`` folders so the web
-    server user and command line user have write access to them.
+    需要特別注意安裝說明的 `設定權限 <http://symfony.com/doc/current/book/installation.html#configuration-and-setup>`_
+    部份，這會說明一些設定 ``app/cache`` 與 ``app/logs`` 權限的方法，讓網頁伺服器使用者與指令
+    模式使用者都可以有寫入的權限。
 
-Creating a Development Domain
+建立一個開發網址
 -----------------------------
 
-For the purpose of this tutorial we will be using the local domain
-``http://symblog.dev/``, however you can choose any domain you want. These
-instructions are specific to `Apache <http://httpd.apache.org/>`_ and assume you
-already have Apache setup and running on your machine. If you are comfortable
-with setting up local domains, or use a different web server such as
-`nginx <http://nginx.net/>`_ you can skip this section.
+為了進行這個教學，我們會使用本地網址 ``http://symblog.dev/`` ，不過你可以選擇自己希望使用的網址。
+這些步驟主要針對 `Apache <http://httpd.apache.org/>`_ 說明，也假設你已經在自己主機安裝並且執行了
+Apache。如果你已經知道如何設定本地網址，或是使用像是 `nginx <http://nginx.net/>`_ 的網頁伺服器，
+你可以跳過這個部份。
 
 .. note::
 
-    These steps were performed on the Linux distribution Fedora so
-    path names, etc, may differ depending on your Operating System.
+    這些步驟是在特定 Linux 套件 Fedora 完成，因此路徑名稱等資訊可能會跟你操作中的作業系統不一樣。
 
-Lets begin by creating a virtual host with Apache. Locate the Apache configuration
-file and append the following settings, making sure to change the ``DocumentRoot``
-and ``Directory`` paths accordingly. The location and name of
-the Apache configuration can vary a lot depending on your OS. In Fedora
-its located at ``/etc/httpd/conf/httpd.conf``. You will need to edit this file with
-``sudo`` privileges.
+先開始建立一個 Apache 的虛擬主機。找到 Apache 設定檔案，然後附加下面這些設定。請依據自己的環境調整
+``DocumentRoot`` 與 ``Directory`` 路徑，Apache 設定檔案的位置與名稱會依據使用的作業系統產生差異，
+在 Fedora 是放在 ``/etc/httpd/conf/httpd.conf`` ，你會需要透過 ``sudo`` 權限來編輯這個檔案。
 
 .. code-block:: text
 
@@ -82,16 +67,14 @@ its located at ``/etc/httpd/conf/httpd.conf``. You will need to edit this file w
     </VirtualHost>
 
 
-Next add a new domain to the bottom of the host file located at ``/etc/hosts``.
-Again, you will need to edit this file with ``sudo`` privileges.
+接著新增一個網址到 ``/etc/hosts`` 主機檔案最下面，同樣的，你會需要透過 ``sudo`` 權限來編輯這個檔案。
 
 .. code-block:: text
 
     # /etc/hosts
     127.0.0.1     symblog.dev
 
-Lastly don't forget to restart the Apache service. This will reload the
-updated configuration settings we have made.
+最後不要忘記重新啟動 Apache 服務，這會套用剛剛異動的設定。
 
 .. code-block:: bash
 
@@ -99,105 +82,79 @@ updated configuration settings we have made.
 
 .. tip::
 
-    If you find yourself creating virtual domains all the time, you can simplify
-    this process by using
-    `Dynamic virtual hosts <http://blog.dsyph3r.com/2010/11/apache-dynamic-virtual-hosts.html>`_.
+    如果你發現自己經常在建立虛擬網址，你可以透過 `Dynamic virtual hosts <http://blog.dsyph3r.com/2010/11/apache-dynamic-virtual-hosts.html>`_
+    簡化這個步驟。
 
-You should now be able to visit ``http://symblog.dev/app_dev.php/``.
+你現在應該可以訪問 ``http://symblog.dev/app_dev.php/`` 。
 
 .. image:: /_static/images/part_1/welcome.jpg
     :align: center
     :alt: Symfony2 welcome page
 
-If this is your first visit to the Symfony2 welcome page, take some time to view
-the demo pages. Each demo page provides code snippets that demonstrate how each
-page works behind the scenes.
+如果這是你第一次看到 Symfony2 歡迎頁，可以花些時間看看它的展示頁，每個展示頁會提供相關程式碼來示範畫面
+背後如何運作。
 
 .. note::
 
-    You will also notice a toolbar at the bottom of the welcome screen. This
-    is the developer toolbar and provides you will invaluable information
-    about the state of the application. Information including the page execution time,
-    memory usage, database queries, authentication state and much more
-    can be viewed from this toolbar. By default the toolbar is only visible when
-    running in the ``dev`` environment, as providing the toolbar in production
-    would be a big security risk as it exposes a lot of the internals of your
-    application. References to the toolbar will be made through this tutorial
-    as we introduce new features.
+    你也會發現在歡迎頁下方的一個工具列，這是開發者工具，可以提供你許多關於應用程式狀態的寶貴資訊。可以
+    透過這個工具列看到的這些資訊包含頁面執行時間、記憶體用量、資料庫查詢、認證狀態等等。預設這個工具列
+    只會在執行於 ``dev`` 環境時顯示，在正式環境提供這個工具列會造成很大的安全風險，因為它揭露了應用程
+    式的許多細節。這個工具列的參考資訊會在介紹新功能時提到。
 
-Configuring Symfony: Web Interface
+設定 Symfony：網頁介面
 ----------------------------------
 
-Symfony2 introduces a web interface to configure various aspects regarding the
-website such as database settings. We require a database for this project so
-lets begin using the configurator.
+Symfony2 加入了一個網頁介面來進行網站的多個設定，像是資料庫。我們在這個專案會需要一個資料庫，所以現在就
+開始使用這個設定工具。
 
-Visit ``http://symblog.dev/app_dev.php/`` and click the Configure button. Enter
-the details to setup the database (this tutorial assumes the use of MySQL, but
-you can choose any other database you have access to), followed by generating a
-CSRF token on the next page. You will be presented with the parameter settings
-that Symfony2 has generated. Pay attention to the notice on the page, it is
-likely that your ``app/config/parameters.ini`` file is not writable so you will need to
-copy and paste the settings to the file located at ``app/config/parameters.ini`` (These
-settings can replace the existing settings in this file).
+瀏覽 ``http://symblog.dev/app_dev.php/`` 並且點選設定按鈕，進入設定資料庫的細節（這個教學假設使用 MySQL
+資料庫，不過你可以選擇任何可以使用的資料庫），接著在下一頁會產生一個 CSRF 權杖，你會看到 Symfony2 產生的
+各種參數。注意這個頁面的說明，有時你的 ``app/config/parameters.ini`` 檔案無法直接寫入，所以你會需要複製
+這些設定到位於 ``app/config/parameters.ini`` 的檔案（這些設定可以直接取代檔案中既有設定）。
 
 
-Bundles: Symfony2 Building Blocks
+軟體包：組成 Symfony2 的積木
 ----------------------------------
 
-Bundles are the basic building block of any Symfony2 application, in fact the
-Symfony2 framework is itself a bundle. Bundles allow us to separate
-functionality to provide reusable units of code. They encapsulate the entire
-needs to support the bundles purpose including the controllers, the model,
-the templates, and the various resources such as images and CSS. We will create
-a bundle for our website in the namespace Blogger. If you are not familiar with
-namespaces in PHP you should spend some time reading up on them as they are
-heavily used in Symfony2, everything is namespaced. See the
+軟體包是任何 Symfony2 應用的基礎組成積木，事實上 Symfony2 框架本身也是個軟體包。軟體包讓我們可以分離功能來
+提供可以重複運用的單位程式碼。它們封裝了整個為了軟體包目的所需要的東西，包含 controllers 、 model 與樣板，
+以及許多資源,以及許多像是圖片與 CSS 之類的資源。我們會建立一個使用 Blogger 命名空間的軟體包來製作網站。如果
+你不熟悉 PHP 的命名空間，你應該要花些時間去閱讀相關文件，因為在 Symfony2 中大量使用，每個元件都使用了命名空
+間。可以參考
 `Symfony2 autoloader <http://symfony.com/doc/current/cookbook/tools/autoloader.html>`_
-for specific details on how Symfony2 achieves autoloading.
+了解 Symfony2 如何作到自動載入功能。
 
 .. tip::
 
-    A good understanding of namespaces can help eliminate common problems you may face
-    when folder structures do not correctly map to namespace structures.
+    確實了解命名空間可以協助排除一些常見問題，像是資料夾結構與命名空間結構不一致你就會遇到。
 
-Creating the bundle
+建立軟體包
 ~~~~~~~~~~~~~~~~~~~
 
-To encapsulate the functionality for the blog we will create a Blog bundle.
-This will house all the required files and so could easily be dropped into another
-Symfony2 application. Symfony2 provides a number of tasks to assist us when performing common
-operations. One such task is the bundle generator.
+為了要封裝部落格的功能，我們要建立一個 Blog 軟體包。它將會包含所有需要的檔案，這樣一來可以輕易的移植到另一個
+Symfony2 應用程式。 Symfony2 提供了許多工具來協助我們執行一般操作，其中一個就是軟體包產生器。
 
-To start the bundle generator run the following command. You will be presented
-with a number of prompts that allow you to configure the way the bundle is setup.
-The default for each prompt should be used.
+要執行軟體包產生器請執行下面指令，畫面會顯示一些提示讓你設定軟體包應該如何配置。在這裡應該要使用每個提示的預
+設值。
 
 .. code-block:: bash
 
     $ php app/console generate:bundle --namespace=Blogger/BlogBundle --format=yml
 
-Upon completion of the generator Symfony2 will have constructed the basic bundle
-layout. A few important changes need to be noted here.
+產生器執行後，Symfony2 會建立基本的軟體包結構，在這裡需要注意一些重要的變動。
 
 .. tip::
 
-    You don't have to use the generator tasks that Symfony2 provides, they are simply
-    there to assist you. You could have manually created the Bundle folder structure
-    and files. While it is not mandatory to use the generators, they do provide some benefits
-    such as they are quick to use and perform all tasks required to get the bundle
-    up and running. One such example is registering the bundle.
+    其實你並不需要使用 Symfony2 提供的產生器工具，它們只是放在那裡來幫你，你當然可以手動建立軟體包的資料夾結構
+    與檔案。雖然使用產生器並非必要的，它們的確提供了一些好處，像是它們可以快速的執行所有必要工作來讓軟體包產生
+    與執行，其中一個例子就是註冊軟體包。
 
-Registering the bundle
+註冊軟體包
 ......................
 
-Our new bundle ``BloggerBlogBundle`` has been registered in the Kernel located at
-``app/AppKernel.php``. Symfony2 requires us to register all bundles that the application
-needs to use. You will also notice that some bundles are only registered when in
-the ``dev`` or ``test`` environments. Loading these bundles in the ``prod``
-(production) environment would introduce additional overhead for functionality
-that wouldn't be used. The snippet below shows how the ``BloggerBlogBundle`` has
-been registered.
+我們的新軟體包 ``BloggerBlogBundle`` 已經註冊在核心檔案 ``app/AppKernel.php`` ，Symfony2 要求我們註冊所有應用
+程式使用到的軟體包，你也會注意到一些軟體包只有在 ``dev`` 或 ``test`` 環境下註冊，在正式環境 ``prod`` 載入這些軟
+體包會因為一些用不到的功能而徒增系統負擔。下面這段程式碼顯示如何註冊 ``BloggerBlogBundle`` 。
 
 .. code-block:: php
 
@@ -218,11 +175,10 @@ been registered.
         // ..
     }
 
-Routing
+網址路徑
 .......
 
-The bundle routing has been imported into the applications main
-routing file located at ``app/config/routing.yml``.
+軟體包的路徑已經匯入到應用程式的主要網址路徑檔案 ``app/config/routing.yml`` 。
 
 .. code-block:: yaml
 
@@ -231,12 +187,10 @@ routing file located at ``app/config/routing.yml``.
         resource: "@BloggerBlogBundle/Resources/config/routing.yml"
         prefix:   /
 
-The prefix option allows us to mount the entire ``BloggerBlogBundle`` routing
-with a prefix. In our case we have opted to mount at the default which is ``/``.
-If for example you would like all routes to be prefixed with ``/blogger`` change
-the prefix to ``prefix: /blogger``.
+prefix 選項讓我們可以掛載整個 ``BloggerBlogBundle`` 的網址路徑，在我們的例子中已經選擇掛載在預設的 ``/`` 。
+如果你想要所有的網址路徑開始是 ``/blogger`` ，可以將 prefix 改為 ``prefix: /blogger`` 。
 
-Default structure
+預設結構
 .................
 
 Under the ``src`` directory the default bundle layout has been created. This
