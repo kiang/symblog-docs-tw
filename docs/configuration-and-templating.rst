@@ -193,28 +193,22 @@ prefix 選項讓我們可以掛載整個 ``BloggerBlogBundle`` 的網址路徑�
 預設結構
 .................
 
-Under the ``src`` directory the default bundle layout has been created. This
-starts at the top level with the ``Blogger`` folder which maps directly to
-the ``Blogger`` namespace we have created our bundle in. Under this we have the
-``BlogBundle`` folder which contains the actual bundle. The contents of this folder
-will be examined as we work through the tutorial. If your familiar with MVC
-frameworks, some of the folders will be self explanatory.
+在 ``src`` 資料夾已經建立了預設的軟體包結構，開始的是最上層 ``Blogger`` 資料夾，它直接對應到我們為軟體包設定的
+ ``Blogger`` 命名空間，在這之下可以看到包含實際軟體包的 ``BlogBundle`` 資料夾，裡面的內容結構有一部份名稱就解
+釋了它的用途。
 
-The Default Controller
+預設 Controller
 ~~~~~~~~~~~~~~~~~~~~~~
 
-As part of the bundle generator, Symfony2 has created a default controller. We
-can run this controller by going to
-``http://symblog.dev/app_dev.php/hello/symblog``. You should see a simple
-greeting page. Try changing the ``symblog`` part of the URL to your name.
-We can examine at a high level how this page was generated.
+在軟體包產生器製作的檔案中 Symfony2 建立了一個預設 controller ，我們可以透過瀏覽
+ ``http://symblog.dev/app_dev.php/hello/symblog`` 來執行它，你可以看到一個簡單的歡迎頁。試著修改網址的 ``symblog``
+為你所製作的名稱，我們可以藉此在比較高的層級檢驗頁面的產生。
 
-Routed
+網址路徑
 ......
 
-The ``BloggerBlogBundle`` routing file located at
-``src/Blogger/BlogBundle/Resources/config/routing.yml`` contains the following
-routing rule.
+ ``BloggerBlogBundle`` 的路徑檔案放在 ``src/Blogger/BlogBundle/Resources/config/routing.yml`` ，包含了下面的
+預設網址路徑規則。
 
 .. code-block:: yaml
 
@@ -223,40 +217,26 @@ routing rule.
         pattern:  /hello/{name}
         defaults: { _controller: BloggerBlogBundle:Default:index }
 
-The routing is composed of a pattern and a some default options. The pattern is
-checked against the URL, and the default options specify the controller to
-execute if the route matches. In the pattern ``/hello/{name}``, the ``{name}``
-placeholder will match any value as no specific requirements have been set. The
-route also doesn't specify any culture, format or HTTP methods. As no HTTP
-methods have been set, requests from GET, POST, PUT, etc will all be eligible
-for pattern matching.
+網址路徑是由一個樣式與一些預設選項組成，樣式會用來檢查網址，預設選項則是指定在網址符合時應該要執行的 controller 。在樣式
+ ``/hello/{name}`` 中， ``{name}`` 替位符號會對應到任意數值，因為沒有設定特別條件。網址路徑也沒有指定任何內涵、格式或
+HTTP 方法，沒有指定 HTTP 方法表示來自 GET 、 POST 、 PUT 等方式的請求都會視為符合樣式。
 
-If the route meets all the specified criteria it will be executed by the
-_controller option in defaults. The _controller option specifies the
-Logical Name of the controller which allows Symfony2 to map this to a specific file.
-The above example will cause the ``index`` action in the ``Default`` controller
-located at ``src/Blogger/BlogBundle/Controller/DefaultController.php`` to be executed.
+如果網址符合所有指定的條件，就會執行預設選項中設定的 _controller ， _controller 選項指定了 controller 的邏輯名稱，讓
+Symfony2 可以對應到一個指定的檔案。上面的例子會執行 ``Default`` controller 中的 ``index`` ，檔案位置在
+ ``src/Blogger/BlogBundle/Controller/DefaultController.php`` 。
 
-The Controller
+關於 Controller
 ..............
 
-The controller in this example is very simple. The ``DefaultController`` class
-extends the ``Controller`` class which provides some helpful methods such as the ``render``
-method used below. As our route defines a placeholder it is passed into the
-action as the argument ``$name``. The action does nothing more than
-call the ``render`` method specifying the ``index.html.twig`` template
-in the ``BloggerBlogBundle`` Default view folder to be rendered. The
-format of the template name is ``bundle:controller:template``. In
-our example this is ``BloggerBlogBundle:Default:index.html.twig``
-which maps to the ``index.html.twig`` template, in the ``Default``
-views folder of the ``BloggerBlogBundle``, or physically to the file
-``src/Blogger/BlogBundle/Resources/views/Default/index.html.twig``. Different
-variations of the template format can be used to render templates
-at different locations within the application and its bundles. We will see
-this later in the chapter.
+在這個例子中的 controller 非常簡單， ``DefaultController`` 繼承了 ``Controller`` ，它提供了一些有用的方法，像是下面用到的
+``render`` 。由於我們的網址路徑定義了一個替位符號 ``$name`` ，它會被送到方法中作為參數。 ``index`` 方法只有呼叫 ``render``
+方法來指定位於 ``BloggerBlogBundle`` 預設樣板資料夾中的 ``index.html.twig`` 樣板來顯示。樣板名稱的格式是
+``bundle:controller:template`` ，在我們的例子中是 ``BloggerBlogBundle:Default:index.html.twig`` ，會對應到 ``BloggerBlogBundle``
+ ``Default`` 樣板資料夾的 ``index.html.twig`` 樣板，實際上的路徑為
+``src/Blogger/BlogBundle/Resources/views/Default/index.html.twig`` 。在應用與所對應的軟體包中可以在樣板顯示時指定許多不同
+的樣板格式，在這個章節的後面會做介紹。
 
-We also pass over the ``$name`` variable to the template via the ``array``
-options.
+我們也透過 ``array`` 選項傳遞了變數 ``$name`` 到樣板。
 
 .. code-block:: php
 
@@ -275,52 +255,39 @@ options.
         }
     }
 
-The Template (The View)
+關於樣板 (也就是 View)
 .......................
 
-As you can see the template is very simple. It prints out Hello followed
-by the name argument passed over from the controller.
+如你所見，這個樣板非常簡單，只有印出 Hello 以及接著 controller 傳送過來的參數 name 。
 
 .. code-block:: html
 
     {# src/Blogger/BlogBundle/Resources/views/Default/index.html.twig #}
     Hello {{ name }}!
 
-Cleaning up
+整理
 ~~~~~~~~~~~
 
-As we don't need some of the default files created by the generator we can clean
-these up.
+由於我們不需要一些產生器製作出來的檔案，可以做些整理。
 
-The controller file ``src/Blogger/BlogBundle/Controller/DefaultController.php``
-can be deleted, along with the view folder and its content at
-``src/Blogger/BlogBundle/Resources/views/Default/``. Finally remove the route
-defined at ``src/Blogger/BlogBundle/Resources/config/routing.yml``
+controller 檔案 ``src/Blogger/BlogBundle/Controller/DefaultController.php`` 可以刪除，包含樣板資料夾
+``src/Blogger/BlogBundle/Resources/views/Default/`` 與其中的內容。最後移除定義在
+``src/Blogger/BlogBundle/Resources/config/routing.yml`` 的網址路徑。
 
-Templating
+樣板
 ----------
 
-We have 2 options by default when using Symfony2 for templating;
-`Twig <http://www.twig-project.org/>`_ and PHP. You could of course use neither of
-these and opt for a different library. This is possible thanks to Symfony2
-`Dependency Injection Container <http://symfony.com/doc/current/book/service_container.html>`_.
-We will be using Twig as our templating engine for a number of reasons.
+在 Symfony2 中使用樣板預設有 `Twig <http://www.twig-project.org/>`_ 與 PHP 兩個選擇，在不同的函式庫當然
+可以做不同的選擇，這要感謝 Symfony2 實做了 `Dependency Injection Container <http://symfony.com/doc/current/book/service_container.html>`_
+我們會基於下面理由選擇使用 Twig 。
 
-1. Twig is fast - Twig templates compile down to PHP classes so there is very little
-   overhead to use Twig templates.
-2. Twig is concise - Twig allows us to perform templating functionality in very little
-   code. Compare this to PHP where some statements become very verbose.
-3. Twig supports template inheritance - This is one of my personal favorites.
-   Templates have the ability to extend and override other templates allowing children
-   templates to change the defaults provided by their parents.
-4. Twig is secure - Twig has output escaping enabled by default and even provides a sand
-   boxed environment for imported templates.
-5. Twig is extensible - Twig comes will a lot of common core functionality that
-   you'd expected from a templating engine, but for those occasions where you need
-   some extra bespoke functionality, Twig can be easily extended.
+1. Twig 非常快，Twig 樣板會編譯成 PHP 物件，所以使用 Twig 樣板不會造成太大的負擔。
+2. Twig 非常簡潔， Twig 讓我們可以透過少量程式碼執行樣板功能， PHP 在部份情況下則是會相對冗長。
+3. Twig 支援樣板繼承，這是筆者個人喜愛的特色之一。樣板能夠繼承與覆寫其他樣板，讓子樣板可以修改來自父樣板的預設值。
+4. Twig 非常安全， Twig 預設啟用了輸出的檢查，甚至還為匯入的樣板提供一個沙箱環境。
+5. Twig 容易擴充，Twig 帶來了許多你對樣板期待的常見核心功能，而一些你預期需要的其他功能， Twig 可以輕易的延伸。
 
-These are just some of the benefits of Twig. For more reasons why you should use
-Twig see the official `Twig <http://www.twig-project.org/>`_ site.
+這只是 Twig 的一些好處，更多關於為什麼該用 Twig 的理由可以參考 `Twig <http://www.twig-project.org/>`_ 官方網站。
 
 Layout Structure
 ~~~~~~~~~~~~~~~~
