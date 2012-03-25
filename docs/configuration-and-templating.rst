@@ -289,20 +289,17 @@ controller 檔案 ``src/Blogger/BlogBundle/Controller/DefaultController.php`` �
 
 這只是 Twig 的一些好處，更多關於為什麼該用 Twig 的理由可以參考 `Twig <http://www.twig-project.org/>`_ 官方網站。
 
-Layout Structure
+布局結構
 ~~~~~~~~~~~~~~~~
 
-As Twig supports template inheritance, we are going to use the
-`Three level inheritance <http://symfony.com/doc/current/book/templating.html#three-level-inheritance>`_
-approach. This approach allows us to modify the view at 3 distinct levels within the
-application, giving us plenty of room for customisations.
+由於 Twig 支援樣板繼承，我們接著使用 `三階層繼承 <http://symfony.com/doc/current/book/templating.html#three-level-inheritance>`_
+方法，這個方法讓我們可以在應用程式中透過三個獨立的層次調整畫面，提供更多客製空間。
 
-Main Template - Level 1
+主要樣板 - 第 1 層
 .......................
 
-Lets start by creating our basic block level template for symblog. We need 2
-files here, the template and the CSS. As Symfony2 supports
-`HTML5 <http://diveintohtml5.org/>`_ we will also be using it.
+現在就開始建立我們 symblog 的基礎區塊階層樣板，在這裡需要兩種檔案，樣板與 CSS。由於 Symfony2 支援 `HTML5 <http://diveintohtml5.org/>`_
+，我們也會使用到它。
 
 .. code-block:: html
 
@@ -364,32 +361,23 @@ files here, the template and the CSS. As Symfony2 supports
 
 .. note::
 
-    There are 3 external files pulled into the template, 1 JavaScript and 2 CSS.
-    The JavaScript file fixes the lack of HTML5 support in IE browsers pre version
-    9. The 2 CSS files import fonts from
-    `Google Web font <http://www.google.com/webfonts>`_.
+    在這個樣板引用了三個外部檔案， 1 個 JavaScript 與 2 個 CSS，這個 JavaScript 程式修正 IE 在 9 以前版本不支援
+    HTML5 的問題， 2 個 CSS 檔案匯入的字型是來自 `Google Web font <http://www.google.com/webfonts>`_ 。
 
-This template marks up the main structure of our blogging website. Most
-of the template consists of HTML, with the odd Twig directive. Its these
-Twig directives that we will examine now.
+這個樣板標示了我們部落格網站的主要結構，大部分的樣板由 HTML 組成，包含了少量的 Twig 指令，我們接著檢查這些 Twig 指令。
 
-We will start by focusing on the document HEAD. Lets look at the title:
+先將焦點放在文件的 HEAD 部份，從 title 開始看：
 
 .. code-block:: html
 
     <title>{% block title %}symblog{% endblock %} - symblog</title>
 
-The first thing you'll notice is the alien ``{%`` tag. Its not HTML, and its
-definitely not PHP. This is one of the 3 Twig tags. This tag is the Twig
-``Do something`` tag. It is used to execute statements such as control statements and
-for defining block elements. A full list of
-`control structures <http://www.twig-project.org/doc/templates.html#list-of-control-structures>`_
-can be found in the Twig Documentation. The Twig block we have defined in the
-title does 2 things; It sets the block identifier to title, and provides a
-default output between the block and endblock directives. By defining a block we
-can take advantage of Twig's inheritance model. For example, on a page to
-display a blog post we would want the page title to reflect the title of the
-blog. We can achieve this by extending the template and overriding the title block.
+第一個會你會注意到的是奇怪的 ``{%`` 標籤，這不是 HTML ，更不會是 PHP ，這是 3 個 Twig 標籤中的一個，這個標籤是 Twig
+ ``Do something`` 標籤，用來執行控制語法或是定義區塊元素的指令，完整的
+`控制結構 <http://www.twig-project.org/doc/templates.html#list-of-control-structures>`_
+可以在 Twig 手冊看到。我們在 title 定義的 Twig 區塊會做兩件事情，它會設定區塊識別為 title ，並且在 block 與 endblock
+之間提供一個預設輸出指令，透過定義區塊我們可以獲得 Twig 繼承模式的好處。舉例來說，在一篇部落格文章我們想要設定頁面標題
+來反應，我們可以繼承這個樣板並且覆蓋 title 區塊。
 
 .. code-block:: html
 
@@ -397,52 +385,41 @@ blog. We can achieve this by extending the template and overriding the title blo
 
     {% block title %}The blog title goes here{% endblock %}
 
-In the above example we have extended the applications base template that first
-defined the title block. You'll notice the template format used with the
-``extends`` directive is missing the ``Bundle`` and the ``Controller`` parts,
-remember the template format is ``bundle:controller:template``. By excluding the
-``Bundle`` and the ``Controller`` parts we are specifiying the use of the application
-level templates defined at ``app/Resources/views/``.
+在上面的例子中，我們延伸了應用程式的基礎樣板與前面定義的 title 區塊，你會注意到使用在 ``extends`` 中的樣板格式少了
+``Bundle`` 與 ``Controller`` 部份，記得樣板格式是 ``bundle:controller:template`` 。透過排除 ``Bundle`` 與
+ ``Controller`` 部份，我們是指定使用應用程式層級的樣板，會放在 ``app/Resources/views/`` 。
 
-Next we have defined another title block and put in some
-content, in this case the blog title. As the parent template already
-contains a title block, it is overridden by our new one. The title would now
-output as 'The blog title goes here - symblog'. This functionality provided by
-Twig will be used extensively when creating templates.
+接著我們定義另外一個 title 區塊，並且放入一些內容，這裡是放入部落格的標題。由於父樣板已經包含了 title 區塊，它會被我們
+的新樣板所覆蓋， title 區塊現在會輸出成 'The blog title goes here - symblog' 。這個 Twig 提供的功能在建立樣板時可以
+彈性運用。
 
-In the stylesheets block we are introduced to the next Twig tag, the ``{{`` tag,
-or the ``Say something`` tag.
+在樣式表區塊我們加入了下一個 Twig 標籤 ``{{`` ，或是稱之為 ``Say something`` 標籤。
 
 .. code-block:: html
 
     <link href="{{ asset('css/screen.css') }}" type="text/css" rel="stylesheet" />
 
-This tag is used to print the value of variable or expression. In the above example
-it prints out the return value of the ``asset`` function, which provides us with
-a portable way to link to the application assets, such as CSS, JavaScript, and images.
+這個標籤是用來印出變數或描述的數值，在上面的例子會印出 ``asset`` 方法所傳回的數值，這提供了我們一個可攜式方法來連結應用
+程式的資源，像是 CSS 、 JavaScript 與圖片。
 
-The ``{{`` tag can also be combined with filters to manipulate the output before
-printing.
+``{{`` 標籤也可以搭配過濾器在輸出前處理內容。
 
 .. code-block:: html
 
     {{ blog.created|date("d-m-Y") }}
 
-For a full list of filters check the
-`Twig Documentation <http://www.twig-project.org/doc/templates.html#list-of-built-in-filters>`_.
+完整的過濾器清單可以參考
+`Twig 手冊 <http://www.twig-project.org/doc/templates.html#list-of-built-in-filters>`_ 。
 
-The last Twig tag, which we have not seen in the templates is the comment tag ``{#``.
-Its usage is as follows:
+最後一個 Twig 標籤並沒有出現在樣板中，它是備註標籤 ``{#`` ，用起來像這樣：
 
 .. code-block:: html
 
     {# The quick brown fox jumps over the lazy dog #}
 
-No other concepts are introduced in this template. It provides the main
-layout ready for us to customise it as we need.
+在這個樣板中不會再加入其他概念，它提供了主要的版面準備讓我們在需要時進行客製。
 
-Next lets add some styles. Create a stylesheet at ``web/css/screen.css`` and add
-the following content. This will add styles for the main template.
+接著加入一些風格，建立一個風格表在 ``web/css/screen.css`` ，然後加入下面內容，這會在主要樣板中加入一些風格。
 
 .. code-block:: css
 
@@ -475,12 +452,11 @@ the following content. This will add styles for the main template.
 
     #footer { border-top: 1px solid #ccc; clear: both; text-align: center; padding: 10px; color: #aaa; }
 
-Bundle Template - Level 2
+軟體包樣板 - 第 2 層
 .........................
 
-We now move onto creating the layout for the Blog bundle. Create a file located at
-``src/Blogger/BlogBundle/Resources/views/layout.html.twig`` and add the
-following content.
+我們現在繼續往上建立部落格軟體包的版面，建立一個檔案在 ``src/Blogger/BlogBundle/Resources/views/layout.html.twig``
+然後放入下面內容。
 
 .. code-block:: html
 
@@ -491,32 +467,22 @@ following content.
         Sidebar content
     {% endblock %}
 
-At a first glance this template may seem a little simple, but its simplicity is
-the key. Firstly it extends the applications base template that we created earlier.
-Secondly it overrides the parent sidebar block with some dummy content. As the
-sidebar will be present on all pages of our blog it makes sense to perform the
-customisation at this level. You may ask why don't we just put the customisation
-in the application template as it will be present on all pages. This is simple,
-the application knows nothing about the Bundle and shouldn't. The Bundle should
-self contain all its functionality and rendering the sidebar is part of this
-functionality. OK, so why don't we just place the sidebar in each of the page
-templates? Again this is simple, we would have to duplicate the sidebar each
-time we added a page. Further this level 2 template gives us the flexibility in
-the future to add other customisations that all children templates will inherit.
-For example, we may want to change the footer copy on all pages, this would be a
-great place to do this.
+第一眼看到這個樣板時也許會覺得有點簡單，但簡單就是個關鍵。第一是它延伸了我們之前建立的應用程式基礎樣板，其次是它
+用一些測試內容覆蓋了原本的 sidebar 區塊。由於 sidebar 會出現在部落格的所有頁面，通常在這個階層做些客製是正確的。
+你也許會問為什麼不把客製的部份放在之前的應用程式樣板，這樣一來就可以出現在所有頁面。這很簡單，應用程式並不知道
+軟體包的任何資訊，也不應該知道。軟體包應該要自己包含所有功能，產生 sidebar 區塊就是這些功能之一。至於為什麼不將
+它放在每一頁的樣板，這也很簡單，因為這樣一來我們建立一個新頁面時就得複製 sidebar 一次。進一步的，這個第 2 層樣板
+提供了彈性，讓我們可以加入所有子樣板都會用到的客製並且讓它們繼承。舉例來說，我們也許想要調整每一頁的頁尾，這時候
+就適合在這個階層調整。
 
-Page Template - Level 3
+頁面樣板 - 第 3 層
 .......................
 
-Finally we are ready for the controller layout. These layouts will commonly be
-related to a controller action, i.e., the blog show action will have a
-blog show template.
+最後我們準備好要製作 controller 的版面，這些版面通常會跟 controller 的方法產生關聯，例如 show 這個方法就會對應到
+一個部落格的樣板 show 。
 
-Lets start by creating the controller for the homepage and its template. As this
-is the first page we are creating we need to create the controller. Create the
-controller at ``src/Blogger/BlogBundle/Controller/PageController.php`` and add
-the following:
+我們開始建立首頁的 controller 與它的樣板，由於這是我們第一個建立的頁面，我們需要建立 controller 。將 controller
+建立在 ``src/Blogger/BlogBundle/Controller/PageController.php`` 並且放入下面內容：
 
 .. code-block:: php
 
@@ -535,8 +501,7 @@ the following:
         }
     }
 
-Now create the template for this action. As you can see in the controller action
-we are going to render the Page index template. Create the template at
+接著建立這個方法的樣板，如同在 controller 方法中看到的，我們要建立用來產生首頁的樣板，將它建立在
 ``src/Blogger/BlogBundle/Resources/views/Page/index.html.twig``
 
 .. code-block:: html
@@ -548,14 +513,11 @@ we are going to render the Page index template. Create the template at
         Blog homepage
     {% endblock %}
 
-This introduces the final template format we can specify. In this example
-the template ``BloggerBlogBundle::layout.html.twig`` is extended where
-the ``Controller`` part of the template name is ommitted. By excluding the
-``Controller`` part we are specifiying the use of the Bundle level template
-created at ``src/Blogger/BlogBundle/Resources/views/layout.html.twig``.
+這放入了我們可以指定的最後樣板格式，在這個例子中，樣板 ``BloggerBlogBundle::layout.html.twig``
+繼承的來源中，名稱省略了 ``Controller`` 部份。當我們排除了 ``Controller`` 部份時，我們就是在指定使用軟體包
+層級的樣板，它被放在 ``src/Blogger/BlogBundle/Resources/views/layout.html.twig`` 。
 
-Now lets add a route for our homepage. Update the Bundle routing config located
-at ``src/Blogger/BlogBundle/Resources/config/routing.yml``.
+接著為我們的首頁新增一個網址路徑，更新軟體包網址路徑設定在 ``src/Blogger/BlogBundle/Resources/config/routing.yml``
 
 .. code-block:: yaml
 
@@ -566,35 +528,27 @@ at ``src/Blogger/BlogBundle/Resources/config/routing.yml``.
         requirements:
             _method:  GET
 
-Lastly we need to remove the default route for the Symfony2 welcome screen.
-Remove the ``_welcome`` route at the top of the ``dev`` routing file located at
-``app/config/routing_dev.yml``.
+最後我們需要移除預設的 Symfony2 歡迎頁面網址路徑，也就是移除在網址路徑檔 ``app/config/routing_dev.yml`` 中 ``dev``
+區域的  ``_welcome`` 網址路徑。
 
-We are now ready to view our blogger template. Point your browser to
-``http://symblog.dev/app_dev.php/``.
+我們現在已經可以檢視部落格的樣板，用你的瀏覽器打開 ``http://symblog.dev/app_dev.php/`` 。
 
 .. image:: /_static/images/part_1/homepage.jpg
     :align: center
     :alt: symblog main template layout
 
-You should see the basic layout of the blog, with
-the main content and sidebar reflecting the blocks we have overridden in the relevant
-templates.
+你應該可以看到部落格的基本樣板，包含我們在相關樣板覆寫的主要內容與 sidebar 對應區塊。
 
-The About Page
+關於我們頁面
 --------------
 
-The final task in this part of the tutorial will be creating a static page for the
-about page. This will demonstrate how to link pages together, and further enforce the
-Three Level Inheritance approach we have adopted.
+這個教學的最後一個任務就是建立一個關於我們靜態頁面，這會展示如何去將頁面連結在一起，進一步強調我們採用的三階層繼承方法。
 
-The Route
+網址路徑
 ~~~~~~~~~
 
-When creating a new page, one of the first tasks should be creating the route for it.
-Open up the ``BloggerBlogBundle`` routing file located at
-``src/Blogger/BlogBundle/Resources/config/routing.yml`` and append the following routing
-rule.
+建立一個新頁面時，第一個應該是建立對應的網址路徑。開啟 ``BloggerBlogBundle`` 的網址路徑檔案
+``src/Blogger/BlogBundle/Resources/config/routing.yml`` 並且附加下面的路徑規則。
 
 .. code-block:: yaml
 
@@ -605,12 +559,11 @@ rule.
         requirements:
             _method:  GET
 
-The Controller
+關於 Controller
 ~~~~~~~~~~~~~~
 
-Next open the ``Page`` controller located at
-``src/Blogger/BlogBundle/Controller/PageController.php`` and add the action
-to handle the about page.
+接著開啟 ``Page`` controller ，檔案在 ``src/Blogger/BlogBundle/Controller/PageController.php`` 並且新增處理關於我們
+頁面的方法。
 
 .. code-block:: php
 
@@ -625,12 +578,10 @@ to handle the about page.
         }
     }
 
-The View
+關於 View
 ~~~~~~~~
 
-For the view, create a new file located at
-``src/Blogger/BlogBundle/Resources/views/Page/about.html.twig`` and copy in the
-following content.
+關於 view ，建立一個新檔案在 ``src/Blogger/BlogBundle/Resources/views/Page/about.html.twig`` 並且複製下面內容。
 
 .. code-block:: html
 
@@ -656,18 +607,14 @@ following content.
         </article>
     {% endblock %}
 
-The about page is nothing spectacular. Its only action is to render a template file
-with some dummy content. It does however bring us on to the next task.
+關於我們頁面沒有特別的地方，唯一的方法只是用來透過測試內容產生樣板檔案。不過它依然可以帶我們繼續前進到下一個任務。
 
-Linking the pages
+連結這些頁面
 ~~~~~~~~~~~~~~~~~
 
-We now have the about page ready to go. Have a look at ``http://symblog.dev/app_dev.php/about``
-to see this. As it stands there is no way for a user of your blog to view the about page,
-short of typing in the full URL just like we did. As you'd expect Symfony2 provides both
-sides to the routing equation. It can match routes as we have seen, and can also
-generate URLs from these routes. You should always use the routing functions provided
-by Symfony2. Never in your application should you be tempted to put the following.
+我們現在已經有關於我們頁面，可以直接看看 ``http://symblog.dev/app_dev.php/about`` 。由於一般使用者是看不到這個頁面
+，除非像我們手動輸入完整的網址。可以預期的， Symfony2 提供了兩邊對等的路徑功能，它可以比對我們看到的路徑，也可以產生
+這些路徑所對應的網址。建議一定要使用 Symfony2 的路徑功能，不要在應用程式冒險放入下面這樣的連結。
 
 .. code-block:: html+php
 
@@ -675,24 +622,17 @@ by Symfony2. Never in your application should you be tempted to put the followin
 
     <?php $this->redirect("/contact"); ?>
 
-You may be wondering what's wrong with this approach, it may be the way you always
-link your pages together. However, there are a number of problems with this approach.
+你也許想知道這個方法錯在哪裡，這也許是你經常用來連結頁面的方式，不過這個方法會有下面問題：
 
-1. It uses a hard link and ignores the Symfony2 routing system entirely. If you wanted to change
-   the location of the contact page at any point you would have to find all references to the hard
-   link and change them.
-2. It will ignore your environment controllers. Environments is something we haven't really explained yet
-   but you have been using them. The ``app_dev.php`` front controller provides us access to our application
-   in the ``dev`` environment. If you were to replace the ``app_dev.php`` with ``app.php`` you will be
-   running the application in the ``prod`` environment. The significance of these environments will
-   be explained further in the tutorial but for now it's important to note that the hard link
-   defined above does not maintain the current environment we are in as the front controller is
-   not prepended to the URL.
+1. 它使用了實際連結並且完全忽略 Symfony2 的網址路徑系統，如果你想要修改聯絡我們頁面的位置，你必需要找到所有使用實際
+   連結的位置並且進行修改。
+2. 它會忽略環境中的 controllers ，雖然我們還沒解釋環境是什麼，但是你已經在使用了。 ``app_dev.php`` 前端 controller
+   讓我們可以在 ``dev`` 環境中存取應用程式。如果你把 ``app_dev.php`` 改為 ``app.php`` ，應用程式就會在 ``prod`` 環境
+   下執行。這些環境的重要性會在後面的教學做更多的說明，不過現在很重要的是需要注意，上面定義的實際連結不會依據我們目前的
+   環境調整，因為前端 controller 並沒有包含在網址中。
 
-The correct way to link pages together is with the ``path`` and ``url`` methods provided by Twig. They are
-both very similar, except the ``url`` method will provide us with absolute URLs. Lets
-update the main application template located at ``app/Resources/views/base.html.twig`` to link
-to the about page and homepage together.
+連結頁面的正確方法是使用 Twig 提供的 ``path`` 與 ``url`` 方法，它們都很像，只是 ``url`` 方法會給我們完整的網址。我們來
+調整主要應用程式樣板 ``app/Resources/views/base.html.twig`` 來連結關於我們與首頁。
 
 .. code-block:: html
 
@@ -707,13 +647,10 @@ to the about page and homepage together.
         </nav>
     {% endblock %}
 
-Now refresh your browser to see the Home and About page links working as expected. If you view the source
-for the pages you will notice the link has been prefixed with ``/app_dev.php/``. This
-is the front controller I was explaining above, and as you can see the use of ``path`` has maintained
-it.
+接著重新整理瀏覽器可以看到 Home 與 About 頁面連結可以運作了，如果你檢視頁面原始碼會發現，連結前面都會加上 ``/app_dev.php/``
+這就是上面提到的前端 controller ，而且會看到 ``path`` 的使用會處理這個部份。
 
-Finally lets update the logo links to redirect you back to the homepage. Update the
-template located at ``app/Resources/views/base.html.twig``.
+最後讓我們更新主要圖示連結到首頁，更新位於 ``app/Resources/views/base.html.twig`` 的樣板。
 
 .. code-block:: html
 
@@ -723,13 +660,11 @@ template located at ``app/Resources/views/base.html.twig``.
         <h3>{% block blog_tagline %}<a href="{{ path('BloggerBlogBundle_homepage') }}">creating a blog in Symfony2</a>{% endblock %}</h3>
     </hgroup>
     
-Conclusion
+結論
 ----------
 
-We have covered the basic areas with regards to a Symfony2 application including getting
-the application configured and up and running. We have started to explore the fundamental concepts
-behind a Symfony2 application, including Routing and the Twig templating engine.
+我們已經提到 Symfony2 應用程式的基礎部份，包含設定與執行它。我們開始探索在 Symfony2 應用程式背後的一些基礎概念，包含網址
+路徑與 Twig 樣板引擎。
 
-Next we will look at creating the Contact page. This page is slightly more involved than the About page
-as it allows users to interact with a web form to send us enquiries. The next chapter will introduce
-concpets including Validators and Forms.
+接著我們會介紹如何建立一個聯絡我們頁面，這個頁面比關於我們要來的深入些，它讓使用者可以透過網頁表單寄給我們問題來互動，
+下一個章節會介紹包括欄位驗證與表單。
