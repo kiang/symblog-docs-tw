@@ -1,20 +1,16 @@
-[Part 5] - Customising the view: Twig extensions, The sidebar and Assetic
+[Part 5] - 客製化樣板: Twig extension, 側欄和Assetic
 =========================================================================
 
-Overview
+總覽
 --------
 
-This chapter will continue to build on the frontend of symblog. We will tweak
-the homepage to display information regarding comments for a blog post along
-with addressing SEO by adding the blog title to the URL. We will also begin work
-on the sidebar to add 2 common blog components; The Tag Cloud and the Latest
-Comments. We will explore the various environments in Symfony2 and learn how to
-run symblog in the production environment. The Twig templating engine will be
-extended to provide a new filter, and we introduce Assetic to manage the
-website asset files. At the end of this chapter you will have integrated
-comments into the homepage, have a Tag Cloud and Latest Comments component on the
-sidebar and will have used Assetic to manage the asset files. You will also have seen
-symblog running in the production environment.
+這個章節將會繼續打造 symblog 的前台。我們將調整首頁資訊以顯示日誌文章的回應，
+並將文章標題加入URL中做SEO。我們也會在側欄加上兩個部落格常用的元件; 標籤雲
+以及最新回應。我們將會探討Symfony2的各個執行環境並且學習如何在發行環境底下執行
+symblog。Twig樣板引擎可以被擴充提供新的filter功能，並且我們將使用Assetic來
+管理網站的靜態資源。結束這個章節後，您會將日誌文章回應整合到首頁，側欄加上
+標籤雲以及最新回應，並且學會使用Assetic來管理靜態資源。你將會看到symfblog在
+發行環境底下執行。
 
 The Homepage - Blogs and Comments
 ---------------------------------
