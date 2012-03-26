@@ -1,87 +1,57 @@
-[Part 3] - The Blog Model: Using Doctrine 2 and Data Fixtures
+[Part 3] - 關於 Blog Model： 使用 Doctrine 2 與資料裝置
 =============================================================
 
-Overview
+概要
 --------
 
-This chapter will begin to explore the blog model. The model will be implemented
-using the `Doctrine 2 <http://www.doctrine-project.org/projects/orm>`_ Object
-Relation Mapper (ORM). Doctrine 2 provides us with persistence for our PHP
-objects. It also provides a proprietary SQL dialect
-called the Doctrine Query Language (DQL). In addition to Doctrine 2, we will also be
-introduced to the concept of Data Fixtures. Data fixtures are a
-mechanism to populate our development and testing databases with suitable test
-data. At the end of this chapter you will have defined the blog model, updated
-the database to reflect the new model, and created some data fixtures. You will
-also have built the basics of the show blog page.
+這一章會開始探索 blog model，這個 model 會使用 `Doctrine 2 <http://www.doctrine-project.org/projects/orm>`_
+物件關聯對映 (ORM) 實做，Doctrine 2 提供我們 PHP 物件的儲存，也提供了特有的 SQL 語法，我們稱之為
+Doctrine 查詢語言 (DQL)。除了 Doctrine 2 之外，我們也會介紹測試資料的概念。資料裝置是一個技巧，用來在開發與測試
+資料庫中產生適當的測試資料。這個章節完成後，你會得到一個定義好的 blog model 、更新過的資料庫來反映新的 model
+以及建立一些資料裝置。你也會建立顯示部落格頁面的基礎。
 
-Doctrine 2: The Model
+Doctrine 2：關於 Model
 ---------------------
 
-For our blog to function we need a way to persist data. Doctrine 2 provides
-an ORM library designed exactly for this purpose. The Doctrine 2 ORM sits on top of a
-powerful
-`Database Abstraction Layer <http://www.doctrine-project.org/projects/dbal>`_
-that gives us storage abstraction via the PHP PDO. This allows us to use a number
-of different storage engines including MySQL, PostgreSQL and SQLite. We will
-use MySQL for our storage engine, but any other engine could easily be
-substituted. 
+為了要讓我們的部落格功能運作，我們需要一個儲存資料的方式， Doctrine 2 提供一個專門處理這個用途的 ORM 函式庫。
+Doctrine 2 ORM 基於一個強大的 `資料庫抽象層 <http://www.doctrine-project.org/projects/dbal>`_ 延伸，讓我們可以
+透過 PHP PDO 達到資料儲存的抽象化，所以我們可以使用許多不同的儲存引擎，包含 MySQL 、 PostgreSQL 與 SQLite 。我們
+會使用 MySQL 作為主要儲存引擎，但是可以輕易的替換為其他引擎。
 
 .. tip::
 
-    If you are not familiar with ORMs, we will explain the basic principle of them.
-    The definition from
-    `Wikipedia <http://en.wikipedia.org/wiki/Object-relational_mapping>`_ reads:
+    如果你對於 ORMs 不熟悉，我們針對一些基礎概念做介紹。
+    來自 `Wikipedia <http://en.wikipedia.org/wiki/Object-relational_mapping>`_ 的定義：
 
-    "Object-relational mapping (ORM, O/RM, and O/R mapping) in computer software
-    is a programming technique for converting data between incompatible type
-    systems in object-oriented programming languages. This creates, in effect, a
-    "virtual object database" that can be used from within the programming
-    language."
+    "物件關聯對映 (ORM, O/RM, and O/R mapping) 在電腦軟體領域是一個程式設計技巧，主要是為了將彼此不相容的系統轉換
+    為物件導向程式語言，結果造成了一個 "虛擬物件資料庫" ，可以在程式設計時使用。"
     
-    What the ORM facilitates is translating the data from a relational database
-    such as MySQL into PHP objects that we can manipulate. This allows us to
-    encapsuate the functionality we require on a table within a class. Think of a
-    user table, it probably has fields like username, password, first_name,
-    last_name, email and dob. With an ORM this becomes a class with members username,
-    password, first_name, etc which allows us to call methods such as ``getUsername()`` and
-    ``setPassword()``. ORMs go much further than this though, they are also able to
-    retrieve related tables for us, either at the same time as we retrieve the user object, or
-    lazily later on. Now consider our user has some friends related to it. This would
-    be a friends table, storing the primary key of the user table within it. Using
-    the ORM we could now make a call such as ``$user->getFriends()`` to retrieve objects
-    of the friends table. If that's not enough, the ORM also deals with persitence
-    so we can create objects in PHP, call a method such as ``save()`` and let the ORM
-    deal with the details of actually persisting the data to the database. As we are
-    using the Doctrine 2 ORM library, you will become much more familiar with
-    what an ORM is as we progress through this tutorial.
+    ORM 幫助我們將來自關聯資料庫（像是 MySQL）的資料轉換為 PHP 物件進行處理，讓我們可以將一個資料表所需要的功能封
+    裝在一個物件中。舉例來說，一個使用者資料表可能包含像是帳號、密碼、姓氏、姓名、信箱與生日等欄位，在 ORM 中他們
+    就會變成一個物件的屬性，讓我們可以執行像是 ``getUsername()`` 與 ``setPassword()`` 這樣的方法。 ORMs 其實還有
+    比這更多的部份，它們也可以幫我們取得相關資料表的資料，可能是在取得使用者物件的同時，或是在晚點用到的時候。現在
+    想想，我們的使用者可能有些相關的朋友，這可以是一個朋友資料表，儲存來自使用者資料表的主鍵，使用 ORM 我們可以執行
+    像是 ``$user->getFriends()`` 方法來取得朋友資料表的資料。如果這樣還不夠，ORM 也可以處理資料的儲存，我們可以在
+    PHP 建立物件，然後呼叫一個方法 ``save()`` ，讓 ORM 處理實際儲存資料到資料庫的細節。由於我們使用 Doctrine 2 ORM
+    函式庫，你將會在這個教學進行的過程中越來越熟悉 ORM 是什麼。
 
 .. note::
 
-    While this tutorial will use the Doctrine 2 ORM library, you could opt to use
-    the Doctrine 2 Object Document Mapper (ODM) library. There are a number of
-    variations of this library including implementations for
-    `MongoDB <http://www.mongodb.org/>`_ and
-    `CouchDB <http://couchdb.apache.org/>`_.
-    See the `Doctrine Projects <http://www.doctrine-project.org/projects>`_
-    page for more information.
+    由於這個教學使用 Doctrine 2 ORM 函式庫，你可以選擇改用 Doctrine 2 類別文件對映 (ODM) 函式庫，這個函式庫提供了
+    許多實做，像是 `MongoDB <http://www.mongodb.org/>`_ 與 `CouchDB <http://couchdb.apache.org/>`_ 。參考
+    `Doctrine 專案 <http://www.doctrine-project.org/projects>`_ 頁來取得更多資訊。
 
-    There is also a
-    `cookbook <http://symfony.com/doc/current/cookbook/doctrine/mongodb.html>`_
-    article that explains how to setup ODM with Symfony2.
+    在 `cookbook <http://symfony.com/doc/current/cookbook/doctrine/mongodb.html>`_ 也有一篇文章介紹如何在
+    Symfony2 設定 ODM 。
 
-The Blog Entity
+Blog 實體
 ~~~~~~~~~~~~~~~
 
-We will begin by creating the ``Blog`` entity class. We have already been introduced to
-entities in the previous chapter when we created the ``Enquiry`` entity.
-As the purpose of an entity is to hold data, it makes perfect sense to use
-one to represent a blog entry. By defining an entity we are not automatically
-saying the data will be mapped to the database. We saw this with our ``Enquiry``
-entity where the data held in the entity was just emailed to the webmaster.
+我們用建立 ``Blog`` 實體類別作為開始，在上一個章節我們在建立 ``Enquiry`` 實體時已經介紹過實體，一個實體的目的是保留
+資料，正確的觀念是用一個實體來代表一筆 blog 資料。在建立一個實體時我們並沒有說資料會自動對應到資料庫，在 ``Enquiry``
+實體可以看到，保留在實體的資料只是用來發送郵件給管理員。
 
-Create a new file located at ``src/Blogger/BlogBundle/Entity/Blog.php`` and
-paste in the following.
+建立一個新檔案在 ``src/Blogger/BlogBundle/Entity/Blog.php`` ，並且貼上下面內容：
 
 .. code-block:: php
 
@@ -110,22 +80,15 @@ paste in the following.
     }
 
 
-As you can see this is simple PHP class. It extends no parent and has no
-accessors. Each of the members is declared as protected so we are unable to
-access them when operating on an object of this class. We could declare the
-getters and setters for these attributes ourself, but Doctrine 2 provides a
-task to do this. After all, writing accessors is not the most exhilarating of
-coding tasks.
+如你所見，這是個簡單的 PHP 類別，它沒有從任何父項目延伸，也沒有存取方法，每個定義的屬性都是 protected ，所以我們無法在
+操作這個類別的物件時存取它們，我們可以為這些屬性自己宣告取得與設定方法，不過 Doctrine 2 提供了一個工具可以作到，畢竟設
+計存取方法並不是程式設計中最有趣的任務。
 
-Before we can run this task, we need to inform Doctrine 2 how the ``Blog``
-entity should be mapped to the database. The information is specified as metadata
-using Doctrine 2 mappings. The metadata can be specified in and number of formats
-including ``YAML``, ``PHP``, ``XML`` and ``Annotations``. We will use
-``Annotations`` in this tutorial. It is important to note that not all members
-in the entity need to be persisted, so we won't provide metadata for these.
-This gives us the flexibility to choose only the members we require Doctrine 2 to
-map to the database. Replace the content of the ``Blog`` entity class located at
-``src/Blogger/BlogBundle/Entity/Blog.php`` with the following.
+在執行這個工具前，我們需要提醒 Doctrine 2 ``Blog`` 實體應該要怎麼對映到資料庫，這些資訊會透過後設資料在 Doctrine 2 指
+定，後設資料可以透過許多格式設定，包括 ``YAML`` 、 ``PHP`` 、 ``XML`` 與 ``Annotations`` ，我們在這個教學會使用
+``Annotations`` 。需要特別注意的是，在實體中並非所有屬性都必須被儲存，所以我們不需要為那些屬性提供後設資料。這讓我們可
+以彈性選擇我們要 Doctrine 2 對映到資料庫的屬性。用下面內容取代原本放在 ``src/Blogger/BlogBundle/Entity/Blog.php`` 的
+ ``Blog`` 實體類別。
 
 .. code-block:: php
 
