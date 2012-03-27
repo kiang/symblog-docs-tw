@@ -7,22 +7,20 @@
 這個章節將會繼續打造 symblog 的前台。我們將調整首頁資訊以顯示日誌文章的回應，
 並將文章標題加入URL中做SEO。我們也會在側欄加上兩個部落格常用的元件; 標籤雲
 以及最新回應。我們將會探討Symfony2的各個執行環境並且學習如何在發行環境底下執行
-symblog。Twig樣板引擎可以被擴充提供新的filter功能，並且我們將使用Assetic來
+symblog。Twig樣板引擎可以被擴充提供新的過濾器功能，並且我們將使用Assetic來
 管理網站的靜態資源。結束這個章節後，您會將日誌文章回應整合到首頁，側欄加上
 標籤雲以及最新回應，並且學會使用Assetic來管理靜態資源。你將會看到symfblog在
 發行環境底下執行。
 
-The Homepage - Blogs and Comments
+首頁 - 日誌文章以及回應
 ---------------------------------
 
-So far the homepage lists the latest blog entries but it doesn't give any
-information regarding the comments for those blogs. Now that we have the
-``Comment`` entity built we can revisit the homepage to provide this information.
-As we have set up the link between ``Blog`` and ``Comment`` entities we know
-Doctrine 2 will be able to retrieve the comments for a blog (remember we added a
-``$comments`` member to the ``Blog`` entity). Lets update the homepage view template
-located at ``src/Blogger/BlogBundle/Resources/views/Page/index.html.twig`` with
-the following.
+到目前為止首頁會列出最新的文章清單，但並不會列出跟這些文章相關的回應。既然我們
+已經建立出``Comment`` entity，我們可以重新造訪首頁並提供這些資訊。自從我們設定
+好``Blog``和``Comment``的關聯後，我們知道Doctrine2就可以從文章中提取出回應內容。
+(還記得我們在``Blog`` entity中加入了``$comments``這個成員變數)。
+我們更新一下首頁的樣板
+位於 ``src/Blogger/BlogBundle/Resources/views/Page/index.html.twig`` 根據以下內容
 
 .. code-block:: html
 
@@ -38,14 +36,13 @@ the following.
     
     {# .. #}
 
-We have used the ``comments`` getter to retrieve the blog comments and then passed
-the collection through the Twig ``length`` filter. If you have a look
-at the homepage now via ``http://symblog.dev/app_dev.php/`` you will see the
-number of comments for each blog being displayed.
+我們必須使用``comments``這個方法取得日誌文章回應並且將結果傳遞給Twig
+的``length``過濾器。如果根據``http://symblog.dev/app_dev.php/``造訪首頁，
+你將會看到每個日誌文章的回應被顯示出來。
 
-As explained above, we already informed Doctrine 2 that the ``$comments`` member of the
-``Blog`` entity is mapped to the ``Comment`` entity. We achieved this in the previous chapter
-with the following metadata in the ``Blog`` entity located at
+如同之前所描述的，我們已經在Doctrine 2中宣告``Blog`` entity的``$comments``
+成員是關聯到``Comment`` entity。
+我們在之前的章節有提及在``Blog`` entity中加上這樣的註解宣告，檔案位置在
 ``src/Blogger/BlogBundle/Entity/Blog.php``.
 
 .. code-block:: php
@@ -57,10 +54,10 @@ with the following metadata in the ``Blog`` entity located at
      */
     protected $comments;
 
-So we know Doctrine 2 is aware of the relationship between blogs and comments, but
-how did it populate the ``$comments`` member with the related ``Comment``
-entities. If you remember back to the ``BlogRepository`` method we created (shown
-below) to get the homepage blogs we made no selection to retrieve the related ``Comment`` entities.
+雖然我們知道Doctrine 2會探查出日誌文章跟回應之間的關聯，但他是如何統計出
+``$comments``這個成員變數關聯的``Comment`` entity。如果你回憶一下之前建立的
+``BlogRepository``這個方法(如下面所示)來取得首頁的日誌文章，我們無法取得關聯的
+``Comment`` entity。
 
 .. code-block:: php
 
@@ -79,10 +76,9 @@ below) to get the homepage blogs we made no selection to retrieve the related ``
                   ->getResult();
     }
     
-However, Doctrine 2 uses a process called lazy loading where the ``Comment`` entities are
-retrieved from the database as and when required, in our case when the call to
-``{{ blog.comments|length }}`` is made. We can demonstrate this process using
-the developer toolbar. We have already started to explore the basics of the developer
+然而，Doctrine 2 使用了一個步驟稱做延遲載入，在我們的案例中
+當呼叫``{{ blog.comments|length }}``時，``Comment`` entity 才會從資料庫中
+被提取出來。我們可以使用開發者工具列來展示這個步驟。We have already started to explore the basics of the developer
 toolbar and its now time to introduce one of its most useful features, the Doctrine 2
 profiler. The Doctrine 2 profiler can be accessed by clicking the last icon in
 the developer toolbar. The number next to this icon shows the number of queries
