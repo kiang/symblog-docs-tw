@@ -150,24 +150,17 @@ Blog 實體
         protected $updated;
     }
 
-
-First we import and alias the Doctrine 2 ORM Mappings namespace. This allows
-us to use ``annotations`` to describe the metadata for the entity. The
-metadata provides information on how the members should be mapped to the
-database.
+首先我們匯入與設定 Doctrine 2 ORM 對映命名空間，這讓我們可以使用 ``annotations`` 來描述實體的後設資料。這個後設資料提
+供了屬性如何對映到資料庫的資訊。
 
 .. tip::
 
-    We have only used a small subset of the provided Doctrine 2 mapping types.
-    A full list of
-    `mapping types <http://www.doctrine-project.org/docs/orm/2.0/en/reference/basic-mapping.html#doctrine-mapping-types>`_
-    can be found on the Doctrine 2 website. Other mapping types will
-    be introduced later in the tutorial.
+    我們只有使用 Doctrine 2 對映類型的一小部份，完整的清單可以參考
+    `對映類型 <http://www.doctrine-project.org/docs/orm/2.0/en/reference/basic-mapping.html#doctrine-mapping-types>`_
+    ，這來自 Doctrine 2 網站。其他對映類型會在後面的教學介紹。
 
-The keen eyed among you may have noticed that the ``$comments`` member has no
-metadata attached. This is because we don't need this persisted, it will just
-provide a collection of comments related to a blog post. If you think of this without
-the database in mind it makes sense. The following code snippets will demonstrate this.
+眼睛尖一點可以發現屬性 ``$comments`` 沒有附加後設資料，因為我們並不需要保存它，它只會提供一個部落格文章相關的評論集合，
+在這裡可以不需要把資料庫放在心上，下面的程式碼會做個示範。
 
 .. code-block:: php
 
@@ -182,9 +175,7 @@ the database in mind it makes sense. The following code snippets will demonstrat
     $comment->setComment("Symfony2 rocks!");
     $blog->addComment($comment);
 
-The above snippet demonstrates the normal behavior you'd want from a blog
-and comment class. Internally the ``$blog->addComment()`` method could be implemented
-as follows.
+上面的程式碼展示在文章與評論類別常見的行為， ``$blog->addComment()`` 方法在程式內部可以這樣子實做：
 
 .. code-block:: php
 
@@ -198,8 +189,7 @@ as follows.
         }
     }
 
-The ``addComment`` method just adds a new comment object to the blog's ``$comments``
-member. Retrieving the comments would also be simple.
+ ``addComment`` 方法只是把一個新的評論加入到文章的 ``$comments`` 屬性，取得評論的方式也相當簡單。
 
 .. code-block:: php
 
@@ -213,80 +203,65 @@ member. Retrieving the comments would also be simple.
         }
     }
 
-As you can see the ``$comments`` member is just a list of ``Comment`` objects.
-Doctrine 2 doesn't change how this works. Doctrine 2 will be able to automatically
-populate this ``$comments`` member with objects related to the ``blog`` object.
+如你所見， ``$comments`` 屬性只是一群 ``Comment`` 物件清單， Doctrine 2 不會異動這個邏輯，
+Doctrine 2 會自動將 ``blog`` 類別有關的物件放入 ``$comments`` 屬性。
 
-Now that we have told Doctrine 2 how to map the entity members, we can generate
-the accessor methods using the following.
+現在我們已經告訴 Doctrine 2 如何對映實體屬性，我們可以透過下面指令產生存取方法：
 
 .. code-block:: bash
 
     $ php app/console doctrine:generate:entities Blogger
 
 
-You will notice the ``Blog`` Entity has been updated with accessor methods. Each time
-we make a change to the ORM metadata for our entity classes we can run this to generate
-any additional acccessors. This command will not make amendments to accessors that
-already existing in the entity, so your existing accessor methods will never be overridden
-by this command. This is important as you may later customise some of the default
-accessors.
+你會注意到 ``Blog`` 實體會更新存取方法，每次我們異動實體類別的 ORM 後設資料，我們可以執行這個指令
+產生其他的存取方法，這個指令不會異動實體中已經存在的方法，所以這個指令不會覆蓋舊有存取方法，重點在
+於你接下來也許會客製一些預設存取方法。
 
 .. tip::
 
-    While we have used ``annotations`` in our entity, it is possible to convert
-    the mapping information into the other supported mapping formats using the
-    ``doctrine:mapping:convert`` task. For example, the following command will
-    convert the mappings in the above entity into the ``yaml`` format.
+    當我們在實體中使用 ``annotations`` ，我們可以透過 ``doctrine:mapping:convert`` 指令將對映資訊
+    轉換為支援的格式，例如，下面的指令會將上面的實體轉換為 ``yaml`` 格式。
 
     .. code-block:: bash
 
         $ php app/console doctrine:mapping:convert --namespace="Blogger\BlogBundle\Entity\Blog" yaml src/Blogger/BlogBundle/Resources/config/doctrine
 
-    This will create a file located at
+    這會建立一個檔案放在
     ``src/Blogger/BlogBundle/Resources/config/doctrine/Blogger.BlogBundle.Entity.Blog.orm.yml``
-    that will contain the ``blog`` entity mappings in ``yaml`` format.
+    ，這個檔案會包含 ``yaml`` 格式的 ``blog`` 實體對映。
 
-The database
+關於資料庫
 ~~~~~~~~~~~~
 
-Creating the database
+建立資料庫
 .....................
 
-If you followed along in chapter 1 of the tutorial, you should have
-used the web configurator to set the database settings. If you didn't, update the
-``database_*`` options in the parameters file located at ``app/config/parameters.ini``.
+如果你看過這個教學的第一章，你應該已經用過網頁設定精靈來設定資料庫，如果沒有，可以直接調整
+ ``app/config/parameters.ini`` 中的 ``database_*`` 選項。
 
-It's now time to create the database using another Doctrine 2 task. This task only
-creates the database, it does not create any tables inside the database.
-If a database with the same name already exists the task will throw an error and
-the existing database will be left intact.
+現在可以用 Doctrine 2 來建立資料庫，這個指令只有建立資料庫，不會在資料庫中建立任何資料表。如果同樣
+名稱的資料庫已經存在，這個指令會產生錯誤，不會去異動現有資料庫。
 
 .. code-block:: bash
 
     $ php app/console doctrine:database:create
 
-We are now ready to create the ``Blog`` entity representation in the database.
-There are 2 ways we can achieve this. We can use the Doctrine 2 schema
-tasks to update the database or we can use the more powerful Doctrine 2
-migrations. For now we will use the schema task. Doctrine Migrations will
-be introduced in the following chapter.
+我們已經準備好在資料庫建立代表 ``Blog`` 實體的代表，我們有兩個方法可以作到，我們可以使用 Doctrine 2
+schema 指令來更新資料庫，或是使用更強大的 Doctrine 2 migrations 。現在我們會使用 schema 指令，
+Doctrine Migrations 會在後面章節介紹。
 
-Creating the blog table
+建立 blog 資料表
 .......................
 
-To create the blog table in our database we can run the following
-doctrine task.
+要在資料庫建立 blog 資料表可以執行下面 doctrine 指令。
 
 .. code-block:: bash
 
     $ php app/console doctrine:schema:create
 
-This will execute the SQL needed to generate the database schema for the ``blog``
-entity. You can also pass in the ``--dump-sql`` option for the task to dump
-out the SQL instead of executing it against the database. If you view your
-database you will see the blog table has been created, with the fields we
-setup mapping information for.
+這會執行需要的 SQL 來產生 ``blog`` 實體的資料庫結構，你也可以在這個指令傳入選項 ``--dump-sql`` 以
+輸出 SQL 取代在資料庫執行。如果檢查你的資料庫，應該可以看到已經建立了 blog 資料表，欄位如同我們所設定
+的對映資訊。
 
 .. tip::
 
