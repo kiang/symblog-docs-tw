@@ -150,24 +150,17 @@ Blog 實體
         protected $updated;
     }
 
-
-First we import and alias the Doctrine 2 ORM Mappings namespace. This allows
-us to use ``annotations`` to describe the metadata for the entity. The
-metadata provides information on how the members should be mapped to the
-database.
+首先我們匯入與設定 Doctrine 2 ORM 對映命名空間，這讓我們可以使用 ``annotations`` 來描述實體的後設資料。這個後設資料提
+供了屬性如何對映到資料庫的資訊。
 
 .. tip::
 
-    We have only used a small subset of the provided Doctrine 2 mapping types.
-    A full list of
-    `mapping types <http://www.doctrine-project.org/docs/orm/2.0/en/reference/basic-mapping.html#doctrine-mapping-types>`_
-    can be found on the Doctrine 2 website. Other mapping types will
-    be introduced later in the tutorial.
+    我們只有使用 Doctrine 2 對映類型的一小部份，完整的清單可以參考
+    `對映類型 <http://www.doctrine-project.org/docs/orm/2.0/en/reference/basic-mapping.html#doctrine-mapping-types>`_
+    ，這來自 Doctrine 2 網站。其他對映類型會在後面的教學介紹。
 
-The keen eyed among you may have noticed that the ``$comments`` member has no
-metadata attached. This is because we don't need this persisted, it will just
-provide a collection of comments related to a blog post. If you think of this without
-the database in mind it makes sense. The following code snippets will demonstrate this.
+眼睛尖一點可以發現屬性 ``$comments`` 沒有附加後設資料，因為我們並不需要保存它，它只會提供一個部落格文章相關的評論集合，
+在這裡可以不需要把資料庫放在心上，下面的程式碼會做個示範。
 
 .. code-block:: php
 
@@ -182,9 +175,7 @@ the database in mind it makes sense. The following code snippets will demonstrat
     $comment->setComment("Symfony2 rocks!");
     $blog->addComment($comment);
 
-The above snippet demonstrates the normal behavior you'd want from a blog
-and comment class. Internally the ``$blog->addComment()`` method could be implemented
-as follows.
+上面的程式碼展示在文章與評論類別常見的行為， ``$blog->addComment()`` 方法在程式內部可以這樣子實做：
 
 .. code-block:: php
 
@@ -198,8 +189,7 @@ as follows.
         }
     }
 
-The ``addComment`` method just adds a new comment object to the blog's ``$comments``
-member. Retrieving the comments would also be simple.
+ ``addComment`` 方法只是把一個新的評論加入到文章的 ``$comments`` 屬性，取得評論的方式也相當簡單。
 
 .. code-block:: php
 
@@ -213,110 +203,89 @@ member. Retrieving the comments would also be simple.
         }
     }
 
-As you can see the ``$comments`` member is just a list of ``Comment`` objects.
-Doctrine 2 doesn't change how this works. Doctrine 2 will be able to automatically
-populate this ``$comments`` member with objects related to the ``blog`` object.
+如你所見， ``$comments`` 屬性只是一群 ``Comment`` 物件清單， Doctrine 2 不會異動這個邏輯，
+Doctrine 2 會自動將 ``blog`` 類別有關的物件放入 ``$comments`` 屬性。
 
-Now that we have told Doctrine 2 how to map the entity members, we can generate
-the accessor methods using the following.
+現在我們已經告訴 Doctrine 2 如何對映實體屬性，我們可以透過下面指令產生存取方法：
 
 .. code-block:: bash
 
     $ php app/console doctrine:generate:entities Blogger
 
 
-You will notice the ``Blog`` Entity has been updated with accessor methods. Each time
-we make a change to the ORM metadata for our entity classes we can run this to generate
-any additional acccessors. This command will not make amendments to accessors that
-already existing in the entity, so your existing accessor methods will never be overridden
-by this command. This is important as you may later customise some of the default
-accessors.
+你會注意到 ``Blog`` 實體會更新存取方法，每次我們異動實體類別的 ORM 後設資料，我們可以執行這個指令
+產生其他的存取方法，這個指令不會異動實體中已經存在的方法，所以這個指令不會覆蓋舊有存取方法，重點在
+於你接下來也許會客製一些預設存取方法。
 
 .. tip::
 
-    While we have used ``annotations`` in our entity, it is possible to convert
-    the mapping information into the other supported mapping formats using the
-    ``doctrine:mapping:convert`` task. For example, the following command will
-    convert the mappings in the above entity into the ``yaml`` format.
+    當我們在實體中使用 ``annotations`` ，我們可以透過 ``doctrine:mapping:convert`` 指令將對映資訊
+    轉換為支援的格式，例如，下面的指令會將上面的實體轉換為 ``yaml`` 格式。
 
     .. code-block:: bash
 
         $ php app/console doctrine:mapping:convert --namespace="Blogger\BlogBundle\Entity\Blog" yaml src/Blogger/BlogBundle/Resources/config/doctrine
 
-    This will create a file located at
+    這會建立一個檔案放在
     ``src/Blogger/BlogBundle/Resources/config/doctrine/Blogger.BlogBundle.Entity.Blog.orm.yml``
-    that will contain the ``blog`` entity mappings in ``yaml`` format.
+    ，這個檔案會包含 ``yaml`` 格式的 ``blog`` 實體對映。
 
-The database
+關於資料庫
 ~~~~~~~~~~~~
 
-Creating the database
+建立資料庫
 .....................
 
-If you followed along in chapter 1 of the tutorial, you should have
-used the web configurator to set the database settings. If you didn't, update the
-``database_*`` options in the parameters file located at ``app/config/parameters.ini``.
+如果你看過這個教學的第一章，你應該已經用過網頁設定精靈來設定資料庫，如果沒有，可以直接調整
+ ``app/config/parameters.ini`` 中的 ``database_*`` 選項。
 
-It's now time to create the database using another Doctrine 2 task. This task only
-creates the database, it does not create any tables inside the database.
-If a database with the same name already exists the task will throw an error and
-the existing database will be left intact.
+現在可以用 Doctrine 2 來建立資料庫，這個指令只有建立資料庫，不會在資料庫中建立任何資料表。如果同樣
+名稱的資料庫已經存在，這個指令會產生錯誤，不會去異動現有資料庫。
 
 .. code-block:: bash
 
     $ php app/console doctrine:database:create
 
-We are now ready to create the ``Blog`` entity representation in the database.
-There are 2 ways we can achieve this. We can use the Doctrine 2 schema
-tasks to update the database or we can use the more powerful Doctrine 2
-migrations. For now we will use the schema task. Doctrine Migrations will
-be introduced in the following chapter.
+我們已經準備好在資料庫建立代表 ``Blog`` 實體的代表，我們有兩個方法可以作到，我們可以使用 Doctrine 2
+schema 指令來更新資料庫，或是使用更強大的 Doctrine 2 migrations 。現在我們會使用 schema 指令，
+Doctrine Migrations 會在後面章節介紹。
 
-Creating the blog table
+建立 blog 資料表
 .......................
 
-To create the blog table in our database we can run the following
-doctrine task.
+要在資料庫建立 blog 資料表可以執行下面 doctrine 指令。
 
 .. code-block:: bash
 
     $ php app/console doctrine:schema:create
 
-This will execute the SQL needed to generate the database schema for the ``blog``
-entity. You can also pass in the ``--dump-sql`` option for the task to dump
-out the SQL instead of executing it against the database. If you view your
-database you will see the blog table has been created, with the fields we
-setup mapping information for.
+這會執行需要的 SQL 來產生 ``blog`` 實體的資料庫結構，你也可以在這個指令傳入選項 ``--dump-sql`` 以
+輸出 SQL 取代在資料庫執行。如果檢查你的資料庫，應該可以看到已經建立了 blog 資料表，欄位如同我們所設定
+的對映資訊。
 
 .. tip::
 
-    We have used a number of the Symfony2 command line task now, and in true
-    command line task format they all provide help by specifying the ``--help``
-    option. To see the help details for the ``doctrine:schema:create`` task,
-    run the following
+    我們已經使用了一些 Symfony2 命令列指令，實際上命令列指令格式中都有提供說明，可以透過指定 ``--help``
+    選項。例如想要看 ``doctrine:schema:create`` 指令的說明細節，可以這樣子執行
 
     .. code-block:: bash
 
         $ php app/console doctrine:schema:create --help
 
-    The help information will be output showing the usage, and available
-    options. Most tasks come with a number of options that can be set to
-    customise the running of the task.
+    說明資訊會輸出顯示用法與參數等，大部分的指令都有一些參數能夠用來客製執行的指令。
 
-Integrating the Model with the View. Showing a blog entry
+整合 Model 在 View 中，顯示一個部落格文章
 ---------------------------------------------------------
 
-Now we have the ``Blog`` entity created, and the database updated to reflect this,
-we can start integrating the model into the view. We will start by building the
-show page of our blog.
+現在我們已經建立了 ``Blog`` 實體，資料庫也已經更新來反應這個異動，我們可以開始將 model 整合到 view 中，
+我們要開始建立部落格的顯示頁。
 
-The Show Blog Route
+顯示部落格的網址路徑
 ~~~~~~~~~~~~~~~~~~~
 
-We begin by creating a route for the blog ``show`` action. A blog will be identified
-by its unique ID, so this ID will need to be present in the URL. Update the
-``BloggerBlogBundle`` routing located at ``src/Blogger/BlogBundle/Resources/config/routing.yml``
-with the following
+我們開始先為部落格的 ``show`` 方法建立一個網址路徑，一篇部落格可以透過唯一的 ID 做識別，所以這個 ID 必
+需要出現在網址中。用下面的內容更新 ``BloggerBlogBundle`` 的網址路徑，檔案在
+``src/Blogger/BlogBundle/Resources/config/routing.yml``
 
 .. code-block:: yaml
 
@@ -328,26 +297,21 @@ with the following
             _method:  GET
             id: \d+
 
-As the blog ID must be present in the URL, we have specified an ``id`` placeholder.
-This means URLs like ``http://symblog.co.uk/1`` and ``http://symblog.co.uk/my-blog``
-will match this route. However, we know the blog ID must be a integer (it's defined this
-way in the entity mappings) so we can add a constraint that specifies this route
-only matches when the ``id`` parameter contains an integer. This is achieved with the
-``id: \d+`` route requirement. Now only the first URL example of the previous would match,
-``http://symblog.co.uk/my-blog`` would no longer match this route. You can also
-see a matching route will execute the ``show`` action of the ``BloggerBlogBundle``
-``Blog`` controller. This controller is yet to be created.
+由於網址必須使用 ID ，我們指定了一個 ``id`` 替位符號，這表示像是 ``http://symblog.co.uk/1`` 與
+``http://symblog.co.uk/my-blog`` 的網址會符合這個網址路徑，不過我們知道部落格的 ID 必須是數字（
+在實體對映時是這樣子定義的），所以我們可以加入一個限制來指定這個網址路徑只在 ``id`` 包含一個數字
+時符合，這是透過在網址路徑要求中設定 ``id: \d+`` 達到，這樣一來之前提到的網址就只有第一個符合，
+``http://symblog.co.uk/my-blog`` 就不再符合這個網址路徑。你也會看到符合這個網址路徑會執行
+``BloggerBlogBundle`` 中 ``Blog`` controller 的 ``show`` 方法，只是這個 controller 還沒建立。
 
-The Show Controller Action
+顯示 Controller 方法
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The glue between the Model and the View is the controller, so this is where we
-will begin creating the show page. We could add the ``show`` action to our existing
-``Page`` controller but as this page is concerned with showing ``blog`` entities
-it would be better suited in its own ``Blog`` controller.
+Model 與 View 之間的介質就是 controller ，所以我們會在這兒建立顯示頁。我們可以將 ``show`` 方法加入到
+已經存在的 ``Page`` controller ，不過因為這個頁面是用來顯示 ``blog`` 實體，將它放在自己的 ``Blog``
+controller 會比較適合。
 
-Create a new file located at ``src/Blogger/BlogBundle/Controller/BlogController.php``
-and paste in the following.
+建立一個新檔案在 ``src/Blogger/BlogBundle/Controller/BlogController.php`` 並且貼入下面內容。
 
 .. code-block:: php
 
@@ -382,18 +346,16 @@ and paste in the following.
         }
     }
 
-We have created a new Controller for the ``Blog`` entity and defined the ``show`` action.
-As we specified a ``id`` parameter in the ``BloggerBlogBundle_blog_show`` routing
-rule, it will be passed in as an argument to the ``showAction`` method. If we had specified
-more parameters in the routing rule, they would also be passed in as separate arguments.
+我們已經為 ``Blog`` 實體建立一個新 Controller ，並且定義一個 ``show`` 方法，由於我們在網址路徑
+``BloggerBlogBundle_blog_show`` 定義了一個 ``id`` 參數，它會被傳進 ``showAction`` 方法作為參數。
+如果我們在網址路徑中指定了更多參數，他們會被視為獨立的參數傳入。
 
 .. tip::
 
-    The controller actions will also pass over an object of
-    ``Symfony\Component\HttpFoundation\Request`` if you specify this as a parameter.
-    This can be useful when dealing with forms. We have already used a form
-    in chapter 2, but we did not use this method as we used one of the
-    ``Symfony\Bundle\FrameworkBundle\Controller\Controller`` helper methods as follows.
+    如果你指定了 ``Symfony\Component\HttpFoundation\Request`` 作為參數，這個 controller 方法也會
+    傳入該物件，這在處理表單的時候很實用，我們在第 2 章已經使用過一個表單，不過我們沒有使用這個方法，
+    因為我們使用了一個來自 ``Symfony\Bundle\FrameworkBundle\Controller\Controller`` 的輔助方法，
+    像這樣：
 
     .. code-block:: php
 
@@ -404,7 +366,7 @@ more parameters in the routing rule, they would also be passed in as separate ar
             $request = $this->getRequest();
         }
 
-    We could have instead written this as follows.
+    我們可以將它改寫為這樣。
 
     .. code-block:: php
 
@@ -417,50 +379,40 @@ more parameters in the routing rule, they would also be passed in as separate ar
             // ..
         }
     
-    Both methods achieve the same task. If your controller did not extend the
-    ``Symfony\Bundle\FrameworkBundle\Controller\Controller`` helper class
-    you would not be able to use the first method.
+    兩個方法都可以達成同樣任務，如果你的 controller 沒有繼承
+    ``Symfony\Bundle\FrameworkBundle\Controller\Controller`` 輔助類別，你就無法使用第一個方法。
 
-Next we need to retrieve the ``Blog`` entity from the database. We first
-use another helper method of the ``Symfony\Bundle\FrameworkBundle\Controller\Controller``
-class to get the Doctrine2 Entity Manager. The job of the
-`Entity Manager <http://www.doctrine-project.org/docs/orm/2.0/en/reference/working-with-objects.html>`_
-is to handle the retrieval and persistence of objects to and from the database. We
-then use the ``EntityManager`` object to get the Doctrine2 ``Repository`` for the
-``BloggerBlogBundle:Blog`` entity. The syntax specified here is simply
-a short cut that can be used with Doctrine 2 instead of specifying the full
-entity name, i.e. ``Blogger\BlogBundle\Entity\Blog``. With the repository object
-we call the ``find()`` method passing in the ``$id`` argument.
-This method will retrieve the object by its primary key.
+接著我們需要從資料庫取得 ``Blog`` 實體，我們先用 ``Symfony\Bundle\FrameworkBundle\Controller\Controller``
+的另外一個輔助方法來取得 Doctrine2 實體管理器，
+`實體管理器 <http://www.doctrine-project.org/docs/orm/2.0/en/reference/working-with-objects.html>`_
+是用來在表單與資料庫之間處理物件的取得與儲存，我們使用 ``EntityManager`` 物件為 ``BloggerBlogBundle:Blog``
+取得 Doctrine2 ``Repository`` ，在這裡 Doctrine 2 可以指定縮寫語法來取代像是 ``Blogger\BlogBundle\Entity\Blog``
+這樣的完整實體名稱，透過 repository 物件我們可以執行 ``find()`` 方法來傳入 ``$id`` 參數，這個方法會透過它的主鍵
+取得對映的物件。
 
-Finally we check that an entity was found, and pass this entity over to the view.
-If no entity was found a ``createNotFoundException`` is thrown. This will
-ultimately generate a ``404 Not Found`` response.
+最後我們檢查發現找到一個實體，並且將這個實體傳遞給 view 。如果找不到實體就會丟出 ``createNotFoundException``
+這個例外，這最後會產生一個 ``404 Not Found`` 回應。
 
 .. tip::
 
-    The repository object gives you access to a number of useful helper methods
-    including
+    這個 repository 物件讓你可以存取許多實用的輔助方法，像是：
 
     .. code-block:: php
 
-        // Return entities where 'author' matches 'dsyph3r'
+        // 傳回 'author' 符合 'dsyph3r' 的實體
         $em->getRepository('BloggerBlogBundle:Blog')->findBy(array('author' => 'dsyph3r'));
 
-        // Return one entity where 'slug' matches 'symblog-tutorial'
+        // 傳回 'slug' 符合 'symblog-tutorial' 的一個實體
         $em->getRepository('BloggerBlogBundle:Blog')->findOneBySlug('symblog-tutorial');
 
-    We will create our own custom Repository classes in the next chapter
-    when we require more complex queries.
+    我們在下一個章節會建立我們自訂的 Repository 類別，這是在我們需要比較複雜的查詢時進行。
 
-The View
+關於 View
 ~~~~~~~~
 
-Now we have built the ``show`` action for the ``Blog`` controller we can focus
-on displaying the ``Blog`` entity. As specified in the ``show`` action the
-template ``BloggerBlogBundle:Blog:show.html.twig`` will be rendered. Let's create
-this template located at ``src/Blogger/BlogBundle/Resouces/views/Blog/show.html.twig``
-and paste in the following.
+現在我們已經在 ``Blog`` controller 建立了 ``show`` 方法，我們可以專注在顯示 ``Blog`` 實體。由於在 ``show`` 方法
+已經指定，所以會透過樣板 ``BloggerBlogBundle:Blog:show.html.twig`` 表示，我們來建立這個放在
+ ``src/Blogger/BlogBundle/Resouces/views/Blog/show.html.twig`` 的樣板檔案，並且貼入下面內容。
 
 .. code-block:: html
     
@@ -482,20 +434,15 @@ and paste in the following.
         </article>
     {% endblock %}
 
-As you'd expect we begin by extending the ``BloggerBlogBundle`` main layout.
-Next we override the page title with the title of the blog. This will
-be useful for SEO as the page title of the blog is more descriptive
-than the default title that is set. Lastly we override
-the body block to output the ``Blog`` entity conent. We use the ``asset`` function
-again here to render the blog image. The blog images should be placed in the
-``web/images`` folder.
+如同你猜的，我們開始延伸 ``BloggerBlogBundle`` 的主要版面，接著我們用部落格標題覆寫頁面標題，這在進行 SEO 相當有
+幫助，因為部落格的頁面標題會比已經設定的預設標題更具代表性。最後我們覆寫 body 區塊來輸出 ``Blog`` 實體內容。我們
+在這裡再次使用 ``asset`` 方法來產生部落格圖片，這個部落格圖片應該會放在 ``web/images`` 資料夾。
 
 CSS
 ...
 
-In order to ensure the blog show page looks beautiful, we need to add some styling.
-Update the stylesheet located at ``src/Blogger/BlogBundle/Resouces/public/css/blog.css``
-with the following.
+為了要確保部落格顯示頁看起來美觀，我們需要加入一些風格。用下面內容更新位於
+``src/Blogger/BlogBundle/Resouces/public/css/blog.css`` 的風格表。
 
 .. code-block:: css
 
@@ -509,39 +456,31 @@ with the following.
     .blog img.large { width: 300px; min-height: 165px; }
 
 .. note::
-
-    If you are not using the symlink method for referencing bundle assets into the
-    ``web`` folder you must re-run the assets install task now to copy over the
-    changes to your CSS.
+    如果你不是使用符號連結方式在 ``web`` 資料夾參照軟體包的資源，你現在會需要重新執行資源安裝指令來將異動過的 CSS
+    複製過來。
 
     .. code-block:: bash
 
         $ php app/console assets:install web
 
 
-As we have now built the controller and the view for the ``show`` actions
-lets have a look at the show page. Point your browser to
-``http://symblog.dev/app_dev.php/1``. Not the page you were expecting?
+我們現在已經建立了 ``show`` 方法的 controller 與 view ，現在可以看看這個顯示頁。將 ``http://symblog.dev/app_dev.php/1``
+輸入瀏覽器的網址列，發現不是你預期的頁面？
 
 .. image:: /_static/images/part_3/404_not_found.jpg
     :align: center
     :alt: Symfony2 404 Not Found Exception
 
-Symfony2 has generated a ``404 Not Found`` response. This is because we
-have no data in our database, so no entity with ``id`` equal to 1 could be found.
+Symfony2 產生了一個 ``404 Not Found`` 回應，這是因為資料庫沒有任何資料，所以找不到 ``id`` 等於 1 的實體。
 
-You could simply insert a row into the blog table of your database, but we will use
-a much better method; Data Fixtures.
+你可以輕易的新增一筆資料到 blog 資料表，不過我們要使用一個更好的方式，資料裝置。
 
-Data Fixtures
+資料裝置
 -------------
 
-We can use fixtures to populate the database with some sample/test data. To do this
-we use the Doctrine Fixtures extension and bundle. The Doctrine Fixtures
-extension and bundle do not come with the Symfony2 Standard Distribution, we need to
-manually install them. Fortunately this is an easy task. Open up the deps file located
-in the project root and add the Doctrine fixtures extension and bundle to it as
-follows.
+我們可以透過裝置來產生一些範例/測試資料進資料庫，我們透過 Doctrine Fixtures 外掛與軟體包做到。 Doctrine Fixtures
+外掛與軟體包並沒有附在 Symfony2 標準版中，我們需要手動安裝。幸運的是，我們有個簡單的指令，開啟專案根目錄的檔案 deps
+並且像下面這樣新增 Doctrine Fixtures 外掛與軟體包。
 
 .. code-block:: text
 
@@ -552,32 +491,27 @@ follows.
         git=http://github.com/symfony/DoctrineFixturesBundle.git
         target=/bundles/Symfony/Bundle/DoctrineFixturesBundle
 
-Next update the vendors to reflect these changes.
+接著更新 vendors 來反應這些異動
 
 .. code-block:: bash
 
     $ php bin/vendors install
 
-This will pull down the latest version of each of the repositories from Github and
-install them to the required location.
+這會從 Github 下載個別程式庫的最新版本，並且安裝在必要得位置。
 
 .. note::
 
-    If you are using a machine that does not have Git installed you will need to manually
-    download and install the extension and bundle.
+    如果你正在操作一個沒有安裝 Git 的機器，你會需要手動下載與安裝外掛與軟體包。
 
-    doctrine-fixtures extension: `Download <https://github.com/doctrine/data-fixtures>`_
-    the current version of the package from GitHub and extract to the following location
-    ``vendor/doctrine-fixtures``.
+    doctrine-fixtures 外掛：從 GitHub `下載 <https://github.com/doctrine/data-fixtures>`_ 軟體目前版本並且解
+    壓縮到 ``vendor/doctrine-fixtures`` 。
 
-    DoctrineFixturesBundle: `Download <https://github.com/symfony/DoctrineFixturesBundle>`_
-    the current version of the package from GitHub and extract to the following location
-    ``vendor/bundles/Symfony/Bundle/DoctrineFixturesBundle``.
+    DoctrineFixturesBundle: 從 GitHub `下載 <https://github.com/symfony/DoctrineFixturesBundle>`_ 軟體目前版
+    本並且解壓縮到 ``vendor/bundles/Symfony/Bundle/DoctrineFixturesBundle`` 。
 
-Next update the ``app/autoloader.php`` file to register the new namespace.
-As DataFixtures are also in the ``Doctrine\Common`` namespace they must be placed above the existing
-``Doctrine\Common`` directive as they specify a new path. Namespaces are checked from top
-to bottom so more specific namespaces need to be registered before less specific ones.
+接著更新 ``app/autoloader.php`` 檔案來註冊新的命名空間，由於 DataFixtures 也在 ``Doctrine\Common`` 命名空間，
+他們必須被放在現有 ``Doctrine\Common`` 上面，因為他們指定了一個新路徑。命名空間是從上而下檢查，所以比較多特定的
+命名空間需要放在比較少特定的之前。
 
 .. code-block:: php
 
@@ -590,8 +524,7 @@ to bottom so more specific namespaces need to be registered before less specific
     // ...
     ));
 
-Now let's register the ``DoctrineFixturesBundle`` in the kernel located at
-``app/AppKernel.php``
+接著在核心 ``app/AppKernel.php`` 註冊 ``DoctrineFixturesBundle`` 
 
 .. code-block:: php
 
@@ -606,11 +539,11 @@ Now let's register the ``DoctrineFixturesBundle`` in the kernel located at
         // ...
     }
 
-Blog Fixtures
+部落格裝置
 ~~~~~~~~~~~~~
 
-We are now ready to define some fixtures for our blogs. Create a fixture file at
-``src/Blogger/BlogBundle/DataFixtures/ORM/BlogFixtures.php`` and add the following content:
+我們現在已經準備好為部落格定義一些裝置，在 ``src/Blogger/BlogBundle/DataFixtures/ORM/BlogFixtures.php`` 建立一個
+裝置檔案，並且放入下面內容：and add the following content:
 
 .. code-block:: php
 
@@ -682,10 +615,9 @@ We are now ready to define some fixtures for our blogs. Create a fixture file at
     
     }
 
-The fixture file demonstrates a number of important features when using Doctrine 2,
-including how to persist entities to the database.
+這個裝置檔案展示一些使用 Doctrine 2 的重要功能，包含如何儲存資料到資料庫。
 
-Let's look at how we create one blog entry.
+看看我們怎麼建立一篇部落格。
 
 .. code-block:: php
 
@@ -702,73 +634,53 @@ Let's look at how we create one blog entry.
 
     $manager->flush();
 
-We start by creating an object of ``Blog`` and setting some values for its
-members. At this point Doctrine 2 knows nothing about the ``Entity`` object. It's
-only when we make a call to ``$manager->persist($blog1)`` that we instruct
-Doctrine 2 to start managing this entity object. The ``$manager`` object here
-is an instance of the ``EntityManager`` object we saw earlier when retrieving
-entites from the database. It is important to note that while
-Doctrine 2 is now aware of the entity object, it is still not persisted to the
-database. A call to ``$manager->flush()`` is required for this. The flush
-method causes Doctrine 2 to actually interact with the database and action all the
-entities it is managing. For best performance you should group Doctrine 2
-operations together and flush all the actions in one go. This is how we have
-done so in our fixtures. We create each entity, ask Doctrine 2 to manage it and
-then flush all operations at the end.
+我們先建立一個 ``Blog`` 物件並且為它的屬性設定一些數值，在這裡 Doctrine 2 並不知道 ``Entity`` 物件，只有在我們執行
+了 ``$manager->persist($blog1)`` 時我們才指示 Doctrine 2 開始管理這個實體物件，而 ``$manager`` 物件是之前在從資料
+庫取得資料時看到的 ``EntityManager`` 物件實例。需要注意的是，當 Doctrine 2 知道了實體物件，它還沒儲存到資料庫中，需要呼
+叫 ``$manager->flush()`` 才可以，這個方法讓 Doctrine 2 實際與資料庫互動以及操作管理中的所有實體。為了要取得比較好的效能
+，你應該要把 Doctrine 2 的操作集中，並且一次執行所有操作，這就是我們在裝置中進行的方式，我們建立個別實體、要求 Doctrine 2
+去管理它，接著最後執行所有操作。
 
 .. tip:
 
-    You may have noticed the setting of the ``created`` and ``updated`` members. This is not
-    an ideal way to set these fields as you'd expect them to be set automatically
-    when an object is created or updated. Doctrine 2 provides a way for us to achieve this
-    which we will explore shortly.
+    你也許已經注意到 ``created`` 與 ``updated`` 屬性的設定，這並不是一個設定這些欄位的理想方法，因為你會愈其他們在物件建
+    立或更新時自動設定， Doctrine 2 提供一個方法幫我們做到，我們稍候會看看這個部份。
 
-Loading the fixtures
+載入裝置
 ~~~~~~~~~~~~~~~~~~~~
 
-We are now ready to load the fixtures into the database.
+我們現在已經準備好要載入裝置到資料庫中。
 
 .. code-block:: bash
 
     $ php app/console doctrine:fixtures:load
 
-If we have a look at the show page at ``http://symblog.dev/app_dev.php/1``
-you should see a blog the blog entry.
+如果我們看一下 ``http://symblog.dev/app_dev.php/1`` 顯示頁，你應該可以看到一篇部落格文章。
 
 .. image:: /_static/images/part_3/blog_show.jpg
     :align: center
     :alt: The symblog blog show page
 
-Try changing the ``id`` parameter in the URL to 2. You should see the next blog entry
-being shown.
+試著修改網址中的參數 ``id`` 為 2 ，你應該會看到它顯示下一篇部落格文章。
 
-If you have a look at the URL ``http://symblog.dev/app_dev.php/100`` you should see
-a ``404 Not Found`` exception being thrown. You'd expect this as there is no ``Blog``
-entity with an ID of 100. Now try the URL ``http://symblog.dev/app_dev.php/symfony2-blog``.
-Why don't we get a ``404 Not Found`` exception? This is because the ``show`` action is
-never executed. The URL fails to match any route in the application because of the
-``\d+`` requirement we set on the ``BloggerBlogBundle_blog_show`` route. This
-is why you see a ``No route found for "GET /symfony2-blog"`` exception.
+如果你輸入網址 ``http://symblog.dev/app_dev.php/100`` ，你應該會看到它丟出一個 ``404 Not Found`` 例外，你應該會希望這個
+訊息換成找不到 ID 為 100 的文章。現在試試網址 ``http://symblog.dev/app_dev.php/symfony2-blog`` ，為什麼我們不會得到一個
+``404 Not Found`` 例外？這是因為 ``show`` 方法並沒有執行，這個網址無法符合應用中的任何網址路徑，因為我們在網址路徑
+``BloggerBlogBundle_blog_show`` 設定了要求為 ``\d+`` ，這是為什麼你會看到一個 ``No route found for "GET /symfony2-blog"``
+例外。
 
-Timestamps
+時間標記
 ----------
 
-Finally in this chapter we will look at the 2 timestamp members on the ``Blog`` entity;
-``created`` and ``updated``. The functionality for these 2 members is commonly referred to as
-the ``Timestampable`` behavior. These members hold the time the blog was created and
-the time the blog was last updated. As we don't want to have to manually set these fields
-each time we create or update a blog, we can use Doctrine 2 to help us.
+在這一章最後我們會看到 ``Blog`` 的兩個時間標記屬性 ``created`` 與 ``updated`` ，這兩個屬性的功能常常涉及到 ``Timestampable``
+行為，這些屬性保留了部落格建立與最後更新的時間，由於我們不想要每次建立一篇部落格就手動設定這些欄位，我們可以透過 Doctrine 2
+協助。
 
-Doctrine 2 comes with an
-`Event System <http://www.doctrine-project.org/docs/orm/2.0/en/reference/events.html>`_
-that provides
-`Lifecycle Callbacks <http://www.doctrine-project.org/docs/orm/2.0/en/reference/events.html#lifecycle-callbacks>`_.
-We can use these callback events to register our entities to be notified of events
-during the entity lifetime. Some example of events we can be notified about
-include before an update happens, after a persist happens and after a remove happens.
-In order to use Lifecycle Callbacks on our entity we need to register the entity for them.
-This is done using metadata on the entity. Update the ``Blog`` entity located at
-``src/Blogger/BlogBundle/Entity/Blog.php`` with the following.
+Doctrine 2 提供了一個 `事件系統 <http://www.doctrine-project.org/docs/orm/2.0/en/reference/events.html>`_ ，提供
+`生命週期回叫 <http://www.doctrine-project.org/docs/orm/2.0/en/reference/events.html#lifecycle-callbacks>`_ 。我們可以使用
+這些回叫事件來註冊我們的實體在生命週期中的事件被提醒，一些我們可以被提醒的事件範例，包含在更新發生前、在一個儲存發生後以及在一個
+移除發生後，我們需要為他們註冊實體來使用生命週期回叫功能，這可以透過使用實體的後設資料完成，透過下面內容更新位於
+``src/Blogger/BlogBundle/Entity/Blog.php`` 的 ``Blog`` 實體。
 
 .. code-block:: php
 
@@ -787,9 +699,7 @@ This is done using metadata on the entity. Update the ``Blog`` entity located at
         // ..
     }
 
-Now let's add a method in the ``Blog`` entity that registers for the ``preUpdate``
-event. We also add a constructor to set default values for the ``created`` and
-``updated`` members.
+現在在 ``Blog`` 實體加入一個方法來註冊 ``preUpdate`` 事件，我們也新增一個建構子來設定 ``created`` 與 ``updated`` 屬性的預設值。
 
 .. code-block:: php
 
@@ -824,31 +734,23 @@ event. We also add a constructor to set default values for the ``created`` and
         // ..
     }
 
-We register the ``Blog`` entity to be notified on the ``preUpdate`` event to set the
-``updated`` member value. Now when you re-run the load fixtures task you will notice the
-``created`` and ``updated`` members are set automatically.
+我們為 ``Blog`` 註冊在 ``preUpdate`` 事件發生時被提醒來設定 ``updated`` 屬性值，現在你可以重新執行載入裝置指令，你會注意到
+``created`` 與 ``updated`` 屬性會自動設定。
 
 .. tip::
 
-    As timestampable members are such a common requirement for entities, there is
-    a bundle available that supports them. The
+    由於時間標記屬性是常見的實體要求，有一個軟體包提供這個功能，
     `StofDoctrineExtensionsBundle <https://github.com/stof/StofDoctrineExtensionsBundle>`_
-    provides a number of useful Doctrine 2 extensions including Timestampable,
-    Sluggable, and Sortable.
+    提供了一些實用的 Doctrine 2 外掛，包含 Timestampable 、 Sluggable 與 Sortable 。
 
-    We will look at integrating this bundle later in the tutorial. The eager
-    ones among you can check the
+    我們會試著在這個教學後面整合這個軟體包，有心的朋友可以先看看
     `cookbook <http://symfony.com/doc/current/cookbook/doctrine/common_extensions.html>`_
-    for a chapter on this topic.
+    關於這個主題的章節。
 
-Conclusion
+結論
 ----------
 
-We have covered a number of concepts for dealing with models in Doctrine 2.
-We also looked at defining Data fixtures to provide us will an easy way to get
-suitable test data into our application duration development and testing.
+我們已經提到一些處理 Doctrine 2 models 的概念，我們也看到定義資料裝置讓我們在開發與測試時可以應用輕易取得適當的測試資料。
 
-Next we will look at extending the model further by adding the comment entity.
-We will start to construct the homepage and create a custom Repository to do this.
-We will also introduce the concept of Doctrine Migrations and how forms
-interact with Doctrine 2 to allow comments to be posted for a blog.
+接著我們會試著透過加入評論實體來延伸更多 model 功能，我們會開始建置首頁與建立一個自訂 Repository 來達到，我們也會介紹
+Doctrine Migrations 的概念與表單如何與 Doctrine 2 互動來讓評論發表到一篇部落格中。
