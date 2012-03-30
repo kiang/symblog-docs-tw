@@ -16,9 +16,9 @@ symblog 。 Twig 樣板引擎可以被擴充提供新的過濾器功能，並且
 ---------------------------------
 
 到目前為止首頁會列出最新的文章清單，但並不會列出跟這些文章相關的回應。既然我們
-已經建立出 ``Comment`` entity ，我們可以重新造訪首頁並提供這些資訊。自從我們設定
+已經建立出 ``Comment`` 實體，我們可以重新造訪首頁並提供這些資訊。自從我們設定
 好 ``Blog`` 和 ``Comment`` 的關聯後，我們知道 Doctrine2 就可以從文章中提取出回應內容。
-(還記得我們在 ``Blog`` entity 中加入了 ``$comments`` 這個成員變數)。
+(還記得我們在 ``Blog`` 實體中加入了 ``$comments`` 這個成員變數)。
 我們更新一下首頁的樣板
 位於 ``src/Blogger/BlogBundle/Resources/views/Page/index.html.twig`` 根據以下內容
 
@@ -40,9 +40,9 @@ symblog 。 Twig 樣板引擎可以被擴充提供新的過濾器功能，並且
 的 ``length`` 過濾器。如果根據 ``http://symblog.dev/app_dev.php/`` 造訪首頁，
 你將會看到每個日誌文章的回應被顯示出來。
 
-如同之前所描述的，我們已經在 Doctrine 2 中宣告 ``Blog`` entity 的 ``$comments`` 
-成員是關聯到 ``Comment`` entity 。
-我們在之前的章節有提及在 ``Blog`` entity 中加上這樣的註解宣告，檔案位置在
+如同之前所描述的，我們已經在 Doctrine 2 中宣告 ``Blog`` 實體的 ``$comments`` 
+成員是關聯到 ``Comment`` 實體。
+我們在之前的章節有提及在 ``Blog`` 實體中加上這樣的註解宣告，檔案位置在
 ``src/Blogger/BlogBundle/Entity/Blog.php`` .
 
 .. code-block:: php
@@ -55,9 +55,9 @@ symblog 。 Twig 樣板引擎可以被擴充提供新的過濾器功能，並且
     protected $comments;
 
 雖然我們知道 Doctrine 2 會探查出日誌文章跟回應之間的關聯，但他是如何統計出
-``$comments`` 這個成員變數關聯的 ``Comment`` entity 。如果你回憶一下之前建立的
+``$comments`` 這個成員變數關聯的 ``Comment`` 實體。如果你回憶一下之前建立的
 ``BlogRepository`` 這個方法 (如下面所示) 來取得首頁的日誌文章，我們無法取得關聯的
-``Comment`` entity 。
+``Comment`` 實體。
 
 .. code-block:: php
 
@@ -77,7 +77,7 @@ symblog 。 Twig 樣板引擎可以被擴充提供新的過濾器功能，並且
     }
     
 然而，Doctrine 2 使用了一個步驟稱做延遲載入，在我們的案例中
-當呼叫 ``{{ blog.comments|length }}`` 時， ``Comment`` entity 才會從資料庫中
+當呼叫 ``{{ blog.comments|length }}`` 時， ``Comment`` 實體才會從資料庫中
 被提取出來。我們可以使用開發者工具列來展示這個步驟。我們已經開始探索開發者
 工具列的一些基本功能並且開始介紹一個實用的功能， Doctrine 2 剖析器。開啟 Doctrine 2
 剖析器可以點擊開發者工具列的最後一個小圖示。小圖示左邊的數字表示目前這個 HTTP 請求
@@ -95,19 +95,18 @@ symblog 。 Twig 樣板引擎可以被擴充提供新的過濾器功能，並且
     :alt: Developer toolbar - Doctrine 2 queries
 
 如同上面你看到的螢幕擷圖，對首頁的請求執行了許多資料庫查詢。第二個資料庫查詢
-取得了 blog entity ，並且被當作 ``BlogRepository`` 類別的 ``getLatestBlogs()``
+取得了 blog 實體，並且被當作 ``BlogRepository`` 類別的 ``getLatestBlogs()``
 成員方法回傳值。根據這個查詢你會得到一些查詢會將某個日誌的文章回應從資料庫中
 一次取出。我們可以由查詢句中的 ``WHERE t0.blog_id = ?`` 得知，這裡的 ``?`` 會被
 每一行 Parameters 中的數值 (blog Id) 所取代。這裡的每個查詢句的結果就是在首頁樣板裡呼叫 
 呼叫 ``{{ blog.comments }}`` 的回傳值。每次這個函數被執行時， Doctrine 2 會啟用
-延遲載入 ``Comment`` entity 關聯到 ``Blog`` entity。
+延遲載入 ``Comment`` 實體關聯到 ``Blog`` 實體。
 
-While lazy loading is very effective at retrieving related entities from the database,
-its not always the most efficient way to achieve this task. Doctrine 2 provides the ability
-to ``join`` related entities together when querying the database. This way we can
-pull the ``Blog`` and related ``Comment`` entities out from the database in one query.
-Update the ``QueryBuilder`` code in the ``BlogRepository`` located at
-``src/Blogger/BlogBundle/Repository/BlogRepository.php`` to join on the comments.
+從資料庫中載入關聯的實體時採用延遲載入的方式是非常有效的，但他卻不是最有效率的
+方法來處理工作。當查詢資料庫時 Doctrine 2 提供了 ``join`` 的能力將相關的實體合併。
+使用這個方法我們可以將 ``Blog`` 以及關聯的 ``Comment`` 實體在一次的查詢中從資料庫
+取出。更新一下 ``BlogRepository`` 中的 ``QueryBuilder`` 程式碼位置在
+``src/Blogger/BlogBundle/Repository/BlogRepository.php`` 將文章回應 join 近來。
 
 .. code-block:: php
 
