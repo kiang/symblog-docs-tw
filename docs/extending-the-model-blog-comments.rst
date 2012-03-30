@@ -1,43 +1,34 @@
-[Part 4] - The Comments Model: Adding comments,  Doctrine Repositories and Migrations
+[Part 4] - 關於 Comments Model：新增評論、Doctrine資料庫與搬遷
 =====================================================================================
 
-Overview
+概要
 --------
 
-This chapter will build on the blog model we defined in the previous chapter. We
-will create the comment model, which will handle comments for blog posts. We
-will be introduced to creating relationships between models, as a blog post can
-contain many comments. We will use the Doctrine 2 QueryBuilder and Doctrine 2
-Repository classes to retrieve entities from the database. The concept of
-Doctrine 2 Migrations will also be explored which provide a programmatic way to
-deploy changes to the database. At the end of this chapter you will have created
-the comment model and linked it together with the blog model. We will also have
-created the homepage, and provided the ability for users to submit comments
-for a blog post.
+這一章會基於上一章定義的部落格 model 做延伸，我們會建立評論 model ，用來處理部落格文章的評論。
+我們會介紹與建立兩個 models 之間的關聯，通常一篇部落格文章可以包含多篇評論。我們會使用 Doctrine 2
+查詢精靈與 Doctrine 2 資料庫類別從資料庫取得資料。我們也會嘗試使用 Doctrine 2 的搬遷功能，這個功能
+提供一個程式化的方式來佈署資料庫異動。在這一章結束後，你會完成與部落格 model 連結在一起的評論 model
+，我們也會建立首頁與提供使用者發表評論到部落格文章的功能。
 
 
-The Homepage
+關於首頁
 ------------
 
-We will begin this chapter by building the homepage. In true blogger fashion it will
-display snippets of each blog post, ordered from newest to oldest. The full
-blog post will be available via links to the blog show page. As we have already
-built the route, controller and view for the homepage we can simply update these.
+我們先開始建立首頁，一般部落格流行在這裡顯示每篇部落格文章的摘要，從最新的排到最舊的，完整的部落格
+文章會在點選連結後進入部落格展示頁。由於我們已經建立首頁的網址路徑、 controller 與 view ，我們只要
+簡單的更新它就好。
 
-Retrieving the blogs: Querying the model
+取得部落格文章：查詢 model
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In order to display the blogs, we need to retrieve them from the database.
-Doctrine 2 provides the
-`Doctrine Query Language <http://www.doctrine-project.org/docs/orm/2.1/en/reference/dql-doctrine-query-language.html>`_
-(DQL) and a
-`QueryBuilder <http://www.doctrine-project.org/docs/orm/2.1/en/reference/query-builder.html>`_
-to achieve this (You can also run raw SQL through Doctrine 2 but this method is
-discouraged as it takes away the database abstraction Doctrine 2 gives us).
-We will use the ``QueryBuilder`` as it provides a nice object oriented way for us to generate
-DQL, which we can use to query the database. Lets update the ``index`` action of the ``Page`` controller
-located at ``src/Blogger/BlogBundle/Controller/PageController.php``
-to pull the blogs from the database.
+為了要顯示部落格文章，我們需要從資料庫取得他們，Doctrine 2 提供了
+`Doctrine 查詢語言 <http://www.doctrine-project.org/docs/orm/2.1/en/reference/dql-doctrine-query-language.html>`_
+(DQL) 以及一個
+`查詢精靈 <http://www.doctrine-project.org/docs/orm/2.1/en/reference/query-builder.html>`_
+來達成這個目的（你也可以在 Doctrine 2 直接使用原始的 SQL ，不過不建議使用這個方法，因為這樣就無法
+享受 Doctrine 2 給我們的資料抽象化功能）。我們會使用 ``QueryBuilder`` ，因為它提供一個物件導向方式
+給我們去產生 DQL ，我們可以用來查詢資料庫。現在更新位於 ``src/Blogger/BlogBundle/Controller/PageController.php``
+``Page`` controller 中的 ``index`` 方法來從資料庫取得部落格文章。
 
 .. code-block:: php
 
@@ -64,22 +55,16 @@ to pull the blogs from the database.
         // ..
     }
 
-We begin by getting an instance of the ``QueryBuilder`` from the ``EntityManager``. This
-allows us to start constructing the query using the many methods the ``QueryBuilder``
-provides. The full list of available methods are available via the ``QueryBuilder``
-documentation. A good place to start is with the
-`helper methods <http://www.doctrine-project.org/docs/orm/2.1/en/reference/query-builder.html#helper-methods>`_.
-These are the methods we use, such as ``select()``, ``from()`` and ``addOrderBy()``.
-As with previous interactions with Doctrine 2, we can use the short hand notation
-to reference the ``Blog`` entity via ``BloggerBlogBundle:Blog`` (remember this
-is the same as doing ``Blogger\BlogBundle\Entity\Blog``). When we have finished
-specifying the criteria for the query, we call the ``getQuery()`` method which returns
-a ``DQL`` instance. We are not able to get results from the ``QueryBuilder`` object, we must
-always convert this to a ``DQL`` instance first. The ``DQL`` instance provides the ``getResult()``
-method that returns a collection of ``Blog`` entities. We will see later that the ``DQL`` instance
-has a
-`number of methods <http://www.doctrine-project.org/docs/orm/2.1/en/reference/dql-doctrine-query-language.html#query-result-formats>`_
-for returning results including ``getSingleResult()`` and ``getArrayResult()``.
+我們從 ``EntityManager`` 取得一個 ``QueryBuilder`` 實體開始，這讓我們透過 ``QueryBuilder`` 提供的
+許多方法開始建立查詢。完整的可用方法可以參考 ``QueryBuilder`` 的手冊，建議可以從
+`輔助方法 <http://www.doctrine-project.org/docs/orm/2.1/en/reference/query-builder.html#helper-methods>`_.
+開始。我們使用了包括 ``select()`` 、 ``from()`` 與 ``addOrderBy()`` 方法，就之前與 Doctrine 2 互動
+的經驗，我們可以使用縮寫方式 ``BloggerBlogBundle:Blog`` 來參照 ``Blog`` 實體（需要記住是這跟
+``Blogger\BlogBundle\Entity\Blog`` 一樣意思）。當我們完成指定查詢條件，我們呼叫 ``getQuery()`` 方法
+來傳回一個 ``DQL`` 實例。我們還無法從 ``QueryBuilder`` 物件取得結果，我們一定要先將它轉換為一個 ``DQL``
+實例， ``DQL`` 實例提供了 ``getResult()`` 方法來傳回 ``Blog`` 實體的集合。稍候我們會看到 ``DQL`` 實例
+提供了 `許多方法 <http://www.doctrine-project.org/docs/orm/2.1/en/reference/dql-doctrine-query-language.html#query-result-formats>`_
+來取得結果，包含 ``getSingleResult()`` 與 ``getArrayResult()`` 。
 
 The View
 ........
