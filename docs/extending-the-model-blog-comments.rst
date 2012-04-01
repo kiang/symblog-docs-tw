@@ -66,13 +66,11 @@
 提供了 `許多方法 <http://www.doctrine-project.org/docs/orm/2.1/en/reference/dql-doctrine-query-language.html#query-result-formats>`_
 來取得結果，包含 ``getSingleResult()`` 與 ``getArrayResult()`` 。
 
-The View
+關於 View
 ........
 
-Now we have a collection of ``Blog`` entities we need to display them.
-Replace the content of the homepage template located at
-``src/Blogger/BlogBundle/Resources/views/Page/index.html.twig``
-with the following.
+現在我們有一些 ``Blog`` 資料，我們需要顯示他們。用下面內容去取代 ``src/Blogger/BlogBundle/Resources/views/Page/index.html.twig``
+的首頁樣板
 
 .. code-block:: html
     
@@ -104,9 +102,7 @@ with the following.
         {% endfor %}
     {% endblock %}
 
-We introduce one of the Twig control structures here, the ``for..else..endfor``
-structure. If you have not used a templating engine before you are probably
-familiar with the following PHP snippet.
+我們在這裡加入了一個 Twig 控制結構 ``for..else..endfor`` ，如果你過去沒使用過樣板引擎，你也應該熟悉下面這樣的程式碼：
 
 .. code-block:: php
 
@@ -119,24 +115,18 @@ familiar with the following PHP snippet.
         <p>There are no blog entries</p>
     <?php endif ?>
 
-The Twig ``for..else..endfor`` control structure is a much cleaner way of
-achieving this task. Most of the code within the homepage template is concerned with
-outputting the blog information in HTML. However, there are a few things we need
-to note. Firstly, we make use of the Twig ``path`` function to generate the
-routes for the blog show page. As the blog show page requires a blog ``ID`` to
-be present in the URL, we need to pass this as an argument into the ``path``
-function. This can be seen with the following.
+Twig 的 ``for..else..endfor`` 控制結構可以更簡潔的達成這個任務，在首頁樣板中大部分程式碼都是關於以 HTML 格式輸出部落格
+資訊，不過有些事情我們需要留意。首先，我們使用了 Twig 的 ``path`` 函式來產生顯示部落格的網址，由於顯示頁面網址會需要部落格
+的 ``ID`` ，我們需要將它傳給 ``path`` 函式作為參數，就像這樣：
 
 .. code-block:: html
     
     <h2><a href="{{ path('BloggerBlogBundle_blog_show', { 'id': blog.id }) }}">{{ blog.title }}</a></h2>
     
-Secondly we output the blog content using ``<p>{{ blog.blog(500) }}</p>``.
-The ``500`` argument we pass in, is the max length of the blog post we want to
-receive back from the function. For this to work we need to update the
-``getBlog`` method that Doctrine 2 generated for us previously. Update the
-``getBlog`` method in the ``Blog`` entity located at
-``src/Blogger/BlogBundle/Entity/Blog.php``.
+接著我們用 ``<p>{{ blog.blog(500) }}</p>`` 輸出部落格內容，傳入的參數 ``500`` 是我們希望從函式接收到的部落格文章最大長度，
+要讓這個功能運作，我們需要更新 Doctrine 2 之前為我們產生的 ``getBlog`` 方法，它被放在 ``src/Blogger/BlogBundle/Entity/Blog.php``
+的 ``Blog`` 實體中。
+.
 
 .. code-block:: php
 
@@ -149,41 +139,31 @@ receive back from the function. For this to work we need to update the
             return $this->blog;
     }
 
-As the usual behavior of the ``getBlog`` method should be to return the entire blog
-post, we set the ``$length`` parameter to have a default of ``null``. If ``null``
-is passed in, the entire blog post is returned.
+由於一般 ``getBlog`` 行為應該會傳回整篇部落格文章，我們將 ``$length`` 參數預設值設定為 ``null`` ，如果傳入 ``null`` 就會
+傳回整篇部落格文章。
 
-Now if you point your browser to ``http://symblog.dev/app_dev.php/`` you should
-see the homepage displaying the latest blog post entries. You should also be able to navigate
-to the full blog post for each entry by clicking the blog title or the
-'continue reading...' link.
+如果你用瀏覽器打開 ``http://symblog.dev/app_dev.php/`` ，你應該會看到顯示最新部落格文章的首頁，也應該能夠點選個別文章的
+標題或 'continue reading...' 連結來檢視整篇文章。
 
 .. image:: /_static/images/part_4/homepage.jpg
     :align: center
     :alt: symblog homepage
 
-While we can query for entities in the controller, it is not the best place to.
-The querying would be better placed outside of the controller for a number of reasons:
+雖然我們可以直接在 controller 中查詢資料，但那並不是最好的方式，基於下面幾個理由，我們最好將查詢工作放到 controller 以外的
+地方。
 
-    1. We would be unable to reuse the query elsewhere in the application, without
-       duplicating the ``QueryBuilder`` code.
-    2. If we did duplicate the ``QueryBuilder`` code, we would have to make multiple
-       modifications in the future if the query needed changing.
-    3. Separating the query and the controller would allow us to test the query
-       independently of the controller.
+    1. 我們在應用程式裡會無法在其他地方重複使用這個查詢，除非要複製整個 ``QueryBuilder`` 的程式碼。
+    2. 如果我們複製了 ``QueryBuilder`` 程式碼，我們會需要在未來查詢需求改變時做多個修改。
+    3. 將查詢與 controller 分開可以讓我們獨立測試查詢。
 
-Doctrine 2 provides the Repository classes to facilitate this.
+Doctrine 2 提供了資料庫類別來協助這個部份。
 
-Doctrine 2 Repositories
+Doctrine 2 資料庫
 -----------------------
 
-We have already be introduced to the Doctrine 2 Repository classes in the previous
-chapter when we created the blog show page. We used the default implementation of the
-``Doctrine\ORM\EntityRepository`` class to retrieve a blog entity from the
-database via the ``find()`` method. As we want to create a custom query, we
-need to create a custom repository. Doctrine 2 is able to assist in this task.
-Update the ``Blog`` entity metadata located in the file at
-``src/Blogger/BlogBundle/Entity/Blog.php``.
+我們在之前建立部落格顯示頁的章節已經介紹過 Doctrine 2 資料庫類別，我們用 ``Doctrine\ORM\EntityRepository`` 類別預設版本的
+ ``find()`` 方法來從資料庫取得資料。由於我們想要建立一個自訂查詢，我們需要建立一個自訂的資料庫類別， Doctrine 2 可以在這裡
+提供一些幫助。更新放在 ``src/Blogger/BlogBundle/Entity/Blog.php`` 的 ``Blog`` 實體後設資料。
 
 
 .. code-block:: php
@@ -199,17 +179,14 @@ Update the ``Blog`` entity metadata located in the file at
         // ..
     }
 
-You can see we have specified the namespace location for the ``BlogRepository`` class
-that this entity is associated with. As we have updated the Doctrine 2 metadata
-for the ``Blog`` entity, we need to rerun the ``doctrine:generate:entities`` task
-as follows.
+你可以看到我們在這個實體的關聯位置指定了 ``BlogRepository`` 類別的命名空間位置，在更新了 ``Blog`` 實體在 Doctrine 2 的後設
+資料後，我們需要像下面這樣傳回 ``doctrine:generate:entities`` 的結果。
 
 .. code-block:: bash
 
     $ php app/console doctrine:generate:entities Blogger
     
-Doctrine 2 will have created the shell class for the ``BlogRepository`` located at
-``src/Blogger/BlogBundle/Repository/BlogRepository.php``.
+Doctrine 2 會在 ``src/Blogger/BlogBundle/Repository/BlogRepository.php`` 建立 ``BlogRepository`` 的殼類別。
 
 .. code-block:: php
 
@@ -231,10 +208,8 @@ Doctrine 2 will have created the shell class for the ``BlogRepository`` located 
 
     }
 
-The ``BlogRepository`` class extends the  ``EntityRepository``
-class which provides the ``find()`` method we used earlier. Lets update the
-``BlogRepository`` class, moving the ``QueryBuilder`` code from the ``Page``
-controller into it.
+這個 ``BlogRepository`` 類別繼承了  ``EntityRepository`` 類別，藉此提供之前使用的 ``find()`` 方法。我們可以更新
+``BlogRepository`` 類別，將 ``QueryBuilder`` 程式碼從 ``Page`` controller 移動到這裡。
 
 .. code-block:: php
 
@@ -267,16 +242,11 @@ controller into it.
         }
     }
 
-We have created the method ``getLatestBlogs`` which will return the
-latest blog entries, much in the same way the controller ``QueryBuilder`` code did.
-In the repository class we have direct access to the ``QueryBuilder`` via the
-``createQueryBuilder()`` method. We have also added a default ``$limit`` parameter
-so we can limit the number of results to return. The result of the query
-is much the same as it was in the controller. You may have noticed that we did not
-need to specify the entity to use via the ``from()`` method. That's because we
-are within the ``BlogRepository`` which is associated with the ``Blog`` entity.
-If we look at the implementation of the ``createQueryBuilder`` method in the
-``EntityRepository`` class we can see the ``from()`` method is called for us.
+我們已經建立了 ``getLatestBlogs`` 方法來傳回最新的部落格文章，就像是在 controller 中使用的 ``QueryBuilder``
+程式碼。在資料庫類別我們透過 ``createQueryBuilder()`` 方法直接存取 ``QueryBuilder`` ，我們也加入一個預設的參數
+ ``$limit`` ，藉此限制傳回的資料數量。查詢的結果跟在 controller 中沒有兩樣。你也許注意到我們不需要透過 ``from()``
+方法來指定要使用的實體，因為我們是在 ``BlogRepository`` 中操作，它已經與 ``Blog`` 產生關聯。如果我們看到
+``EntityRepository`` 類別中的 ``createQueryBuilder`` 方法實做方式，我們可以看到它幫我們呼叫了 ``from()`` 方法。
 
 .. code-block:: php
     
@@ -288,7 +258,7 @@ If we look at the implementation of the ``createQueryBuilder`` method in the
             ->from($this->_entityName, $alias);
     }
 
-Finally lets update the ``Page`` controller ``index`` action to use the ``BlogRepository``.
+最後我們更新 ``Page`` controller 的 ``index`` 方法來使用 ``BlogRepository`` 。
 
 .. code-block:: php
 
@@ -311,9 +281,7 @@ Finally lets update the ``Page`` controller ``index`` action to use the ``BlogRe
         // ..
     }
 
-Now when you refresh the homepage it should display exactly the same as before.
-All we have done is refactored our code so the correct classes are performing
-the correct tasks.
+現在當你重新整理首頁應該會看到跟之前顯示的沒兩樣，我們所做的只是重構我們的程式碼，讓正確的類別執行正確的工作。
 
 More on the Model: Creating the Comment Entity
 ----------------------------------------------
