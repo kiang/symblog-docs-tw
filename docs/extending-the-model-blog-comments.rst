@@ -1,4 +1,4 @@
-[Part 4] - 關於 Comments Model：新增評論、Doctrine資料庫與搬遷
+[Part 4] - 關於 Comments Model：新增評論、Doctrine貯藏庫與搬遷
 =====================================================================================
 
 概要
@@ -6,7 +6,7 @@
 
 這一章會基於上一章定義的部落格 model 做延伸，我們會建立評論 model ，用來處理部落格文章的評論。
 我們會介紹與建立兩個 models 之間的關聯，通常一篇部落格文章可以包含多篇評論。我們會使用 Doctrine 2
-查詢精靈與 Doctrine 2 資料庫類別從資料庫取得資料。我們也會嘗試使用 Doctrine 2 的搬遷功能，這個功能
+查詢精靈與 Doctrine 2 貯藏庫類別從資料庫取得資料。我們也會嘗試使用 Doctrine 2 的搬遷功能，這個功能
 提供一個程式化的方式來佈署資料庫異動。在這一章結束後，你會完成與部落格 model 連結在一起的評論 model
 ，我們也會建立首頁與提供使用者發表評論到部落格文章的功能。
 
@@ -156,13 +156,13 @@ Twig 的 ``for..else..endfor`` 控制結構可以更簡潔的達成這個任務�
     2. 如果我們複製了 ``QueryBuilder`` 程式碼，我們會需要在未來查詢需求改變時做多個修改。
     3. 將查詢與 controller 分開可以讓我們獨立測試查詢。
 
-Doctrine 2 提供了資料庫類別來協助這個部份。
+Doctrine 2 提供了貯藏庫類別來協助這個部份。
 
-Doctrine 2 資料庫
+Doctrine 2 貯藏庫
 -----------------------
 
-我們在之前建立部落格顯示頁的章節已經介紹過 Doctrine 2 資料庫類別，我們用 ``Doctrine\ORM\EntityRepository`` 類別預設版本的
- ``find()`` 方法來從資料庫取得資料。由於我們想要建立一個自訂查詢，我們需要建立一個自訂的資料庫類別， Doctrine 2 可以在這裡
+我們在之前建立部落格顯示頁的章節已經介紹過 Doctrine 2 貯藏庫類別，我們用 ``Doctrine\ORM\EntityRepository`` 類別預設版本的
+ ``find()`` 方法來從資料庫取得資料。由於我們想要建立一個自訂查詢，我們需要建立一個自訂的貯藏庫類別， Doctrine 2 可以在這裡
 提供一些幫助。更新放在 ``src/Blogger/BlogBundle/Entity/Blog.php`` 的 ``Blog`` 實體後設資料。
 
 
@@ -243,7 +243,7 @@ Doctrine 2 會在 ``src/Blogger/BlogBundle/Repository/BlogRepository.php`` 建�
     }
 
 我們已經建立了 ``getLatestBlogs`` 方法來傳回最新的部落格文章，就像是在 controller 中使用的 ``QueryBuilder``
-程式碼。在資料庫類別我們透過 ``createQueryBuilder()`` 方法直接存取 ``QueryBuilder`` ，我們也加入一個預設的參數
+程式碼。在貯藏庫類別我們透過 ``createQueryBuilder()`` 方法直接存取 ``QueryBuilder`` ，我們也加入一個預設的參數
  ``$limit`` ，藉此限制傳回的資料數量。查詢的結果跟在 controller 中沒有兩樣。你也許注意到我們不需要透過 ``from()``
 方法來指定要使用的實體，因為我們是在 ``BlogRepository`` 中操作，它已經與 ``Blog`` 產生關聯。如果我們看到
 ``EntityRepository`` 類別中的 ``createQueryBuilder`` 方法實做方式，我們可以看到它幫我們呼叫了 ``from()`` 方法。
@@ -710,37 +710,32 @@ Doctrine 2 搬遷外掛與軟體包並不存在於 Symfony2 標準版本，我�
         }
     }
         
-As with the modifications we made the ``BlogFixtures`` class, the ``CommentFixtures``
-class also extends the ``AbstractFixture`` class and  implements the ``OrderedFixtureInterface``.
-This means we must also implement the ``getOrder()`` method. This time we set the
-return value to 2, ensuring these fixtures will be loaded after the blog fixtures.
+跟我們在 ``BlogFixtures`` 類別做的異動一樣， ``CommentFixtures`` 類別也繼承了 ``AbstractFixture`` 類別與實做
+``OrderedFixtureInterface`` 。這表示我們也必須實做 ``getOrder()`` 方法，這次我們將傳回的值設定為 2 ，這樣可以確保
+這些裝置在部落格裝置之後載入。
 
-We can also see how the references to the ``Blog`` entities we created earlier
-are being used.
+我們也可以看看我們之前建立的 ``Blog`` 資料可以如何使用。
 
 .. code-block:: php
 
     $comment->setBlog($manager->merge($this->getReference('blog-2')));
 
-We are now ready to load the fixtures into the database.
+我們現在已經準備好將裝置載入資料庫中。
 
 .. code-block:: bash
 
     $ php app/console doctrine:fixtures:load
     
-Displaying Comments
+顯示評論
 -------------------
 
-We can now display the comments related to each blog post. We begin by
-updating the ``CommentRepository`` with a method to retrieve the latest approved
-comments for a blog post.
+我們現在可以在每一篇文章顯示相關的評論，先更新 ``CommentRepository`` ，透過一個方法來取得一篇文章最新通過審核的評論。
 
-Comment Repository
+評論貯藏庫
 ~~~~~~~~~~~~~~~~~~
 
-Open the ``CommentRepository`` class located at
-``src/Blogger/BlogBundle/Repository/CommentRepository.php`` and replace its
-content with the following.
+開啟位於 ``src/Blogger/BlogBundle/Repository/CommentRepository.php`` 的 ``CommentRepository`` 類別，用下面內容取代
+原有程式：
 
 .. code-block:: php
 
@@ -776,24 +771,20 @@ content with the following.
         }
     }
     
-The method we have created will retrieve comments for a blog post. To do this
-we need to add a where clause to our query. The where clause uses a named parameter
-that is set using the ``setParameter()`` method. You should always use parameters
-instead of setting the values directly in the query like so
+這個我們建立的方法會取得一篇文章的評論，要這麼做我們需要加入一個 where 條件到查詢中，這個 where 條件使用一個透過
+``setParameter()`` 方法設定的特定參數。你應該要使用參數而非直接在查詢中設定數值，像這樣：
     
 .. code-block:: php
 
     ->where('c.blog = ' . blogId)
 
-In this example the value of ``$blogId`` will not be sanitized and could leave the
-query open to an SQL injection attack.
+在這個例子， ``$blogId`` 的數值不會經過過濾，而且可能造成查詢存在著 SQL 插入攻擊風險。
 
-Blog Controller
+部落格 Controller
 ---------------
 
-Next we need to update the ``show`` action of the ``Blog`` controller to retrieve
-the comments for the blog. Update the ``Blog`` controller located at
-``src/Blogger/BlogBundle/Controller/BlogController.php`` with the following.
+接著我們需要更新 ``Blog`` controller 的 ``show`` 方法來取得文章的評論。用下面內容更新放在
+``src/Blogger/BlogBundle/Controller/BlogController.php`` 的 ``Blog`` controller 。
 
 .. code-block:: php
     
@@ -816,20 +807,14 @@ the comments for the blog. Update the ``Blog`` controller located at
         ));
     }
 
-We use the new method on the ``CommentRepository`` to retrieve the approved comments
-for the blog. The ``$comments`` collection is also passed into the template.
+我們在 ``CommentRepository`` 使用新方法來取得通過審核的評論， ``$comments`` 集合也會傳給樣板。
 
-Blog show template
+部落格顯示樣板
 ~~~~~~~~~~~~~~~~~~
 
-Now we have a list of comments for the blog we can update the blog show template
-to display the comments. We could simply place the rendering of the comments
-directly in the blog show template, but as comments are their own entity, it would
-be better to separate the rendering into another template, and include that
-template. This would allow us to reuse the comment rendering template elsewhere in the
-application. Update the blog show template located at
-``src/Blogger/BlogBundle/Resources/views/Blog/show.html.twig`` with the
-following.
+現在我們有這個部落格的評論清單，我們可以更新部落格顯示樣板來顯示評論，我們可以直接在部落格顯示樣板中放入評論的顯示，
+不過由於評論有著他們自己的實體，比較建議將顯示的部份分離為另外一個樣板，然後引用進來，這可以讓我們在應用程式中重複運
+用評論顯示樣板。用下面內容更新位於 ``src/Blogger/BlogBundle/Resources/views/Blog/show.html.twig`` 的顯示樣板。
 
 .. code-block:: html
 
@@ -848,19 +833,15 @@ following.
         </section>
     {% endblock %}
     
-You can see the use of a new Twig tag, the ``include`` tag. This will include the
-content of the template specified by ``BloggerBlogBundle:Comment:index.html.twig``.
-We can also pass over any number of arguments to the template. In this case, we need
-to pass over a collection of ``Comment`` entities to render.
+你可以看到使用了一個新的 Twig 標籤， ``include`` 標籤。這會引用 ``BloggerBlogBundle:Comment:index.html.twig``
+所指定的樣板內容，我們也可以傳任意數量的參數給樣板。在這個例子中，我們需要傳過去一個 ``Comment`` 資料的集合來顯示。
 
-Comment show template
+評論顯示樣板
 ~~~~~~~~~~~~~~~~~~~~~
 
-The ``BloggerBlogBundle:Comment:index.html.twig`` we are including above does
-not exist yet so we need to create it. As this is just a template, we don't need
-to create a route or a controller for this, we only need the template file. Create
-a new file located at ``src/Blogger/BlogBundle/Resources/views/Comment/index.html.twig``
-and paste in the following.
+我們在上面引用的 ``BloggerBlogBundle:Comment:index.html.twig`` 還不存在，所以我們需要建立它。由於這只是個樣板，
+我們不需要為它建立一個網址路徑或 controller ，我們只需要樣板檔案。用下面內容建立一個檔案在
+``src/Blogger/BlogBundle/Resources/views/Comment/index.html.twig`` ：
 
 .. code-block:: html
 
@@ -877,22 +858,16 @@ and paste in the following.
         <p>There are no comments for this post. Be the first to comment...</p>
     {% endfor %}
 
-As you can see we iterate over a collection of ``Comment`` entities and display
-the comments. We also introduce one of the other nice Twig functions, the ``cycle``
-function. This function will cycle through the values in the array you
-pass it as each iteration of the loop progresses. The current loop iteration value
-is obtained via the special ``loop.index0`` variable. This keeps a count of the
-loop iterations, starting at 0. There are a number of other
-`special variables <http://www.twig-project.org/doc/templates.html#for>`_
-available when we are within a loop code block. You may also notice the setting
-of an HTML ID to the ``article`` element. This will allow us to later create
-permalinks to created comments.
+如你所見，我們迭代了一個 ``Comment`` 資料集合並且顯示評論，我們也使用了一個好用的 Twig 方法 ``cycle`` ，這個方法會
+在每次迴圈進行迭代時循環使用你傳進來的陣列數值，目前迴圈迭代數值是透過特別的變數 ``loop.index0`` 取得，這個變數保留了
+一個迴圈迭代的計數器，從 0 開始。還有很多其他的 `特別變數 <http://www.twig-project.org/doc/templates.html#for>`_
+可以用在迴圈程式碼區塊中。你也許也注意到為 ``article`` 元素設定的 HTML 編號，這可以讓我們稍候建立評論的永久連結。
 
-Comment show CSS
+評論顯示 CSS
 ~~~~~~~~~~~~~~~~
 
-Finally lets add some CSS to keep the comments looking stylish. Update the stylesheet
-located at ``src/Blogger/BlogBundle/Resorces/public/css/blog.css`` with the following.
+最後我們加一些 CSS 來讓評論看起來有點風格，用下面內容更新位於 ``src/Blogger/BlogBundle/Resorces/public/css/blog.css``
+的檔案。
 
 .. code-block:: css
 
@@ -906,45 +881,36 @@ located at ``src/Blogger/BlogBundle/Resorces/public/css/blog.css`` with the foll
 
 .. note::
 
-    If you are not using the symlink method for referencing bundle assets into the
-    ``web`` folder you must re-run the assets install task now to copy over the
-    changes to your CSS.
+    如果你不是使用符號連結方法來在 ``web`` 目錄參照軟體包資源，你現在需要重新執行資源安裝指令來複製在 CSS 的異動。
 
     .. code-block:: bash
 
         $ php app/console assets:install web
         
-If you now have a look at one of the blog show pages, eg
-``http://symblog.dev/app_dev.php/2`` you should see the blog comments output.
+如果你現在打開其中一篇文章的顯示頁面，像是 ``http://symblog.dev/app_dev.php/2`` ，你應該可以看到部落格評論的輸出。
 
 .. image:: /_static/images/part_4/comments.jpg
     :align: center
     :alt: symblog show blog comments
     
-Adding Comments
+新增評論
 ---------------
 
-The last part of the chapter will add the functionality for users to add
-comments to blog post. This will be possible via a form on the blog show page. We
-have already been introduced to creating forms in Symfony2 when we created the
-contact form. Rather than creating the comment form manually, we can use Symfony2
-to do this for us. Run the following task to generate the ``CommentType`` class for
-the ``Comment`` entity.
+這個章節的最後一部分會加入一個功能讓使用者把評論加到文章中，這可以透過一個部落格顯示頁的表單處理。我們在建立聯絡表單
+時已經介紹過如何使用 Symfony2 表單，與其手動建立評論表單，我們這次讓 Symfony2 幫我們完成。執行下面指令來為 ``Comment``
+實體產生 ``CommentType`` 類別。
 
 .. code-block:: bash
     
     $ php app/console generate:doctrine:form BloggerBlogBundle:Comment
     
-You'll notice again here, the use of the short hand version to specify the
-``Comment`` entity.
+你會發現我們在這裡使用縮寫版本來指定 ``Comment`` 實體。
 
 .. tip::
 
-    You may have noticed the task ``doctrine:generate:form`` is also available.
-    This is the same task just namespaced differently.
+    你也許注意到還有一個 ``doctrine:generate:form`` 指令，這是同樣的指令，只是使用了不一樣的命名空間。
     
-The generate form task has created the ``CommentType`` class located at
-``src/Blogger/BlogBundle/Form/CommentType.php``.
+產生表單的指令建立了 ``CommentType`` 類別在 ``src/Blogger/BlogBundle/Form/CommentType.php`` 。
 
 .. code-block:: php
 
