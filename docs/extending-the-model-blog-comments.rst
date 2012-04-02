@@ -283,16 +283,14 @@ Doctrine 2 會在 ``src/Blogger/BlogBundle/Repository/BlogRepository.php`` 建�
 
 現在當你重新整理首頁應該會看到跟之前顯示的沒兩樣，我們所做的只是重構我們的程式碼，讓正確的類別執行正確的工作。
 
-More on the Model: Creating the Comment Entity
+更多關於 Model 的部份：建立評論實體
 ----------------------------------------------
 
-Blogs are only half the story when it comes to blogging. We also need to allow readers
-the ability to comment on blog posts. These comments also need to be persisted, and linked
-to the ``Blog`` entity as a blog can contain many comments.
+文章在部落格這股風潮只佔了一半的重要性，我們還需要讓讀者能夠評論文章，這些文章需要被保留與連結 ``Blog`` 實體，
+因為一篇文章可以包含多個評論。
 
-We will start by defining the basics of the ``Comment`` Entity class.
-Create a new file located at ``src/Blogger/BlogBundle/Entity/Comment.php`` and
-paste in the following.
+我們開始定義 ``Comment`` 實體類別的基礎，建立一個檔案在 ``src/Blogger/BlogBundle/Entity/Comment.php`` 並且
+放入下面內容：
 
 .. code-block:: php
 
@@ -365,14 +363,11 @@ paste in the following.
         }
     }
 
-Most of what you see here, we have already covered in the previous chapter,
-however we have used metadata to set up a link to the ``Blog`` entity. As a
-comment is for a blog, we have setup a link in the ``Comment`` entity to
-the ``Blog`` entity it belongs to. We do this by specify a ``ManyToOne`` link targeting the
-``Blog`` entity. We also specify that the inverse of this link will be available
-via ``comments``. To create this inverse, we need to update the ``Blog`` entity
-so Doctrine 2 knows that a blog can contain many comments. Update the ``Blog``
-entity located at ``src/Blogger/BlogBundle/Entity/Blog.php`` to add this mapping.
+在這裡看到大部分的程式碼在上一個章節都提過，不過我們這裡使用後設資料去設定連結 ``Blog`` 實體。由於一個評論只會
+針對一篇文章，我們設定 ``Comment`` 實體的連結屬於  ``Blog`` 實體，我們以指定一個 ``ManyToOne`` 連結對象為
+``Blog`` 實體，以及相反的連結可以透過 ``comments`` 存取。要建立相反的連結，我們需要更新 ``Blog`` 實體，讓
+Doctrine 2 知道一篇文章可以包含許多評論，所以更新 ``src/Blogger/BlogBundle/Entity/Blog.php`` 的 ``Blog``
+實體來加入下面對映。
 
 .. code-block:: php
 
@@ -411,43 +406,34 @@ entity located at ``src/Blogger/BlogBundle/Entity/Blog.php`` to add this mapping
         // ..
     }
 
-There are a few changes to point out here. First we add metadata to the ``$comments``
-member. Remember in the previous chapter we didn't add any metadata for this member
-because we didn't want Doctrine 2 to persist it. This is still true, however, we
-do want Doctrine 2 to be able to populate this member with the relevant ``Comment``
-entities. That is what the metadata achieves. Secondly, Doctrine 2 requires
-that we default the ``$comments`` member to an ``ArrayCollection`` object.
-We do this in the ``constructor``. Also, note the ``use`` statement to import the
-``ArrayCollection`` class.
+在這裡有一些異動需要說明，首先我們加入了後設資料到屬性 ``$comments`` ，記得在上一個章節我們在這個屬性沒有加入
+任何後設資料，因為我們不希望 Doctrine 2 保留它。這還是一樣，只是我們想要 Doctrine 2 能夠將相關的 ``Comment``
+資料放入這個屬性，這就是後設資料的目的。其次， Doctrine 2 要求我們 ``$comments`` 屬性預設必須是一個
+``ArrayCollection`` 物件，我們在 ``constructor`` 進行。也需要注意在 ``use`` 語法中匯入了 ``ArrayCollection``
+類別。
 
-As we have now created the ``Comment`` entity, and updated the ``Blog`` entity,
-lets get Doctrine 2 to generate the accessors. Run the following Doctrine 2
-task as before to achieve this.
+我們現在已經建立了 ``Comment`` 實體、更新了 ``Blog`` 實體，接著我們讓 Doctrine 2 產生存取器，像之前一樣執行下面
+Doctrine 2 的指令就可以。
 
 .. code-block:: bash
 
     $ php app/console doctrine:generate:entities Blogger
     
-Both entities should now be up-to-date with the correct accessor methods. You will
-also notice the ``CommentRepository`` class has been created at
-``src/Blogger/BlogBundle/Repository/CommentRepository.php`` as we specified this in the
-metadata.
+現在兩個實體應該都有最新、正確的存取器方法，你也會注意到多了 ``src/Blogger/BlogBundle/Repository/CommentRepository.php``
+這個 ``CommentRepository`` 類別，如同我們在後設資料所指定的。
 
-Finally we need to update the database to reflect the changes to our entities. We
-could use the ``doctrine:schema:update`` task as follows to do this, but instead
-we will introduce Doctrine 2 Migrations.
+最後我們需要更新資料庫來反應這些實體的異動，我們可以接著執行 ``doctrine:schema:update`` 指令來做到，不過這裡我們
+要介紹 Doctrine 2 搬遷 。
 
 .. code-block:: bash
 
     $ php app/console doctrine:schema:update --force
 
-Doctrine 2 Migrations
+Doctrine 2 搬遷
 -------------------
 
-The Doctrine 2 Migrations extension and bundle do not come with the Symfony2 Standard
-Distribution, we need to manually install them as we did with the Data Fixtures
-extension and bundle. Open up the ``deps`` file located in the project root and add the
-Doctrine 2 Migrations extension and bundle to it as follows.
+Doctrine 2 搬遷外掛與軟體包並不存在於 Symfony2 標準版本，我們需要像是之前處理資料裝置外掛與軟體包一樣手動安裝它們
+，請打開放在專案根目錄的檔案 ``deps`` ，並且像下面這樣新增 Doctrine 2 搬遷外掛與軟體包。
 
 .. code-block:: text
     
@@ -458,32 +444,27 @@ Doctrine 2 Migrations extension and bundle to it as follows.
         git=http://github.com/symfony/DoctrineMigrationsBundle.git
         target=/bundles/Symfony/Bundle/DoctrineMigrationsBundle
 
-Next update the vendors to reflect these changes.
+接著更新 vendors to 來反應這些異動。
 
 .. code-block:: bash
 
     $ php bin/vendors install
 
-This will pull down the latest version of each of the repositories from Github and
-install them to the required locations.
+這會從 Github 下載每個函式庫的最新版本並且安裝到需要的位置。
 
 .. note::
 
-    If you using a machine that does not have Git installed you will need to manually
-    download and install the extension and bundle.
+    如果你使用的電腦沒有安裝 Git ，你會需要手動下載與安裝這個外掛與軟體包。
 
-    doctrine-migrations extension: `Download <http://github.com/doctrine/migrations>`_
-    the current version of the package from GitHub and extract to the following location
-    ``vendor/doctrine-migrations``.
+    doctrine-migrations 外掛：從 GitHub `下載 <http://github.com/doctrine/migrations>`_ 目前版本並且解壓縮到
+    ``vendor/doctrine-migrations`` 。
 
-    DoctrineMigrationsBundle: `Download <http://github.com/symfony/DoctrineMigrationsBundle>`_
-    the current version of the package from GitHub and extract to the following location
-    ``vendor/bundles/Symfony/Bundle/DoctrineMigrationsBundle``.
+    DoctrineMigrationsBundle: 從 GitHub `下載 <http://github.com/symfony/DoctrineMigrationsBundle>`_ 目前版本
+    並且解壓縮到 ``vendor/bundles/Symfony/Bundle/DoctrineMigrationsBundle`` 。
 
-Next update the ``app/autoload.php`` file to register the new namespace.
-As Doctrine 2 Migrations are also in the ``Doctrine\DBAL`` namespace they must be placed above the existing
-``Doctrine\DBAL`` setting as they specify a new path. Namespaces are checked from top
-to bottom so more specific namespaces need to be registered before less specific ones.
+接著更新檔案 ``app/autoload.php`` 來註冊新的命名空間，由於 Doctrine 2 搬遷也在 ``Doctrine\DBAL`` 命名空間，他們
+必須被放在既有的 ``Doctrine\DBAL`` 設定，因為他們指定一個新的路徑。命名空間是由上而下檢查，所以特定的命名空間需要
+在非特定的之前註冊。
 
 .. code-block:: php
 
@@ -496,7 +477,7 @@ to bottom so more specific namespaces need to be registered before less specific
     // ...
     ));
 
-Now lets register the bundle in the kernel located at ``app/AppKernel.php``.
+接著在核心檔案 ``app/AppKernel.php`` 註冊這個軟體包。
 
 .. code-block:: php
 
@@ -513,68 +494,48 @@ Now lets register the bundle in the kernel located at ``app/AppKernel.php``.
 
 .. warning::
 
-    The Doctrine 2 Migrations library is still in alpha state so its use on
-    production servers should be discouraged for now.
+    Doctrine 2 搬遷函式庫還在開發階段，所以現在還不建議將它用在正式主機上。
 
-We are now ready to update the database to reflect the entity changes. This
-is a 2 step process. First we need to get Doctrine 2 Migrations to work out the differences
-between the entities and the current database schema. This is done with the 
-``doctrine:migrations:diff`` task. Secondly we need to actually perform the migration
-based on the previously created diff. This is done with the
-``doctrine:migrations:migrate`` task.
+我們現在已經準備好更新資料庫來反應這些實體異動，這個過程有兩個步驟，第一我們需要讓 Doctrine 2 搬遷來比對實體與目前
+資料庫結構之間的差異，這是透過指令 ``doctrine:migrations:diff`` 完成。接著我們需要基於上一步的異動細節來執行搬遷
+操作，這是透過 ``doctrine:migrations:migrate`` 指令。
 
-Run the following 2 commands to update the database schema.
+執行下面兩個指令來更新資料庫結構。
 
 .. code-block:: bash
 
     $ php app/console doctrine:migrations:diff
     $ php app/console doctrine:migrations:migrate
 
-Your database will now reflect the latest entity changes and contain the new
-comment table.
+你的資料庫現在會同步最新的實體異動以及加入新的評論資料表。
 
 .. note::
 
-    You will also notice a new table in the database called ``migration_versions``.
-    This stores the migration version numbers so the migration task is able to
-    see what the current version of the database is.
+    你也會發現資料庫多了一個新的資料表 ``migration_versions`` ，它保存了搬遷的版本編號，讓搬遷指令可以知道目前資料
+    庫的版本為何。
     
 .. tip::
 
-    Doctrine 2 Migrations are a great way to update the production database as
-    the changes can be done programatically. This means we can integrate this
-    task into a deployment script so the database is updated automatically when
-    we deploy a new release of the application. Doctrine 2 Migrations also allow
-    us to roll back the changes as every created Migration has a ``up`` and ``down``
-    method. To roll back to a previous version you need to specify the version number
-    you would like to roll back to using the following task.
+    Doctrine 2 搬遷用來更新正式資料庫非常方便，因為它可以透過程式化的方式進行，這表示我們可以將這個指令整合到佈署程
+    式中，這樣一來我們在佈署應用程式的新版本時就可以自動更新資料庫。 Doctrine 2 搬遷也允許我們還原異動，因為每個建立
+    的搬遷都有一個 ``up`` 與 ``down`` 方法，要還原到上個版本需要像下面這樣指定希望還原到哪個版本。
     
     .. code-block:: bash
     
         $ php app/console doctrine:migrations:migrate 20110806183439
         
-Data Fixtures: Revisited
+資料裝置：再次了解
 -------------------------
 
-Now we have the ``Comment`` entity created, lets add some fixtures for it.
-It is always a good idea to add some fixtures each time you create an entity.
-We know that a comment must have a related ``Blog`` entity set as its setup
-this way in the metadata, therefor when creating fixtures for ``Comment`` entities
-we will need to specify the ``Blog`` entity. We have already created the fixtures
-for the ``Blog`` entity so we could simply update this file to add the ``Comment``
-entities. This maybe manageable for now, but what happens when we later add users,
-blog categories, and a whole load of other entities to our bundle. A better way
-would be to create a new file for the ``Comment`` entity fixtures. The problem
-with this approach is how do we access the ``Blog`` entities from the blog
-fixtures.
+現在我們已經建立了 ``Comment`` 實體，接著為它建立一些裝置，每次建立一個實體之後就加入一些裝置是個不錯的習慣。我們知道
+一個評論必須有一個相關的 ``Blog`` 實體，因為後設資料裡面是這樣設定的，不過建立 ``Comment`` 實體的裝置時，我們會需要指
+定 ``Blog`` 實體，這樣子我們就可以直接更新這個檔案來加入 ``Comment`` 資料。現在也許還容易控制，不過如果我們後面開始加
+入會員、文章類別與完整功能的其他實體到我們的軟體包，比較建議為 ``Comment`` 實體裝置建立一個新檔案，這個方法的問題會出
+在我們如何從文章裝置中存取 ``Blog`` 資料。
 
-Fortunately this can be achieved easily by setting references to objects in one
-fixture file that other fixtures can access. Update the ``Blog`` entity
-``DataFixtures`` located at
-``src/Blogger/BlogBundle/DataFixtures/ORM/BlogFixtures.php`` with the following.
-The changes to note here are the extension of the ``AbstractFixture`` class and
-the implements of the ``OrderedFixtureInterface``. Also note the 2 new use
-statements to import these classes.
+幸運的是，我們可以輕易做到，只要在一個裝置檔案設定參照到其他物件，讓其他裝置可以存取。用下面內容更新放在
+``src/Blogger/BlogBundle/DataFixtures/ORM/BlogFixtures.php`` 的 ``Blog`` 實體裝置 ``DataFixtures`` 。這個異動需要
+注意的第方式 ``AbstractFixture`` 的延伸與 ``OrderedFixtureInterface`` 的實做，也要注意匯入那些類別的兩個新 use 語法。
 
 .. code-block:: php
 
@@ -609,17 +570,14 @@ statements to import these classes.
         }
     }
 
-We add references to the blog entities using the ``addReference()`` method.
-This first parameter is a reference identifier we can use the retrieve the object
-later. Finally we must implement the ``getOrder()`` method to specify the loading order
-of the fixtures. Blogs must be loaded before comments so we return 1.
+我們用 ``addReference()`` 方法來新增參照到文章，第一個參數是一個參照識別字元，我們可以用它在後面取得對應物件。最後我們
+必須實做 ``getOrder()`` 方法來指定裝置的載入順序，文章必須在評論之前載入，所以我們傳回 1 。
 
-Comment Fixtures
+評論裝置
 ~~~~~~~~~~~~~~~~
 
-We are now ready to define some fixtures for our ``Comment`` entity. Create a fixtures file
-at ``src/Blogger/BlogBundle/DataFixtures/ORM/CommentFixtures.php`` and add the
-following content:
+我們現在已經準備好為 ``Comment`` 實體定義一些裝置，建立一個裝置檔案到 ``src/Blogger/BlogBundle/DataFixtures/ORM/CommentFixtures.php``
+並且放入下面內容：
 
 .. code-block:: php
 
