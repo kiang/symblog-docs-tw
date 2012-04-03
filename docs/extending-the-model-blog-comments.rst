@@ -942,27 +942,20 @@ Doctrine 2 搬遷外掛與軟體包並不存在於 Symfony2 標準版本，我�
         }
     }
 
-We have already explored what is happening here in the previous ``EnquiryType``
-class. We could begin by customising this class now, but lets move onto displaying
-the form first. 
+在上一個 ``EnquiryType`` 類別中我們已經看過類似這裡的作法，我們可以從這裡的客製開始，不過先從顯示表單開始。
 
-Displaying the Comment Form
+顯示評論表單
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-As we want the user to add comments from the show blog page, we could create the
-form in the ``show`` action of the ``Blog`` controller and render the form
-directly in the ``show`` template. However, it would be better to separate this
-code as we did with displaying the comments. The difference between showing
-the comments and displaying the comment form is the comment form needs
-processing, so this time a controller is required. This introduces a method
-slightly different to the above where we just included a template.
+我們想要讓使用者可以在部落格顯示頁面新增評論，我們可以將表單建立在 ``Blog`` controller 的  ``show`` 方法，然後直接
+在 ``show`` 樣板產生表單。不過比較建議將程式碼分離，就像在顯示評論時一樣，顯示評論與顯示評論表單的差異在，評論表單需
+要進一步處理，所以這次需要一個 controller 。這裡介紹的方式跟上面只有引用樣板的方式有點差異。
 
-Routing
+網址路徑
 ~~~~~~~
 
-We need to create a new route to handle the processing of submitted forms. Add
-a new route to  the routing file located at
-``src/Blogger/BlogBundle/Resources/config/routing.yml``.
+我們需要建立一個新的網址路徑來處理送出的表單，新增下面的網址路徑到檔案
+``src/Blogger/BlogBundle/Resources/config/routing.yml`` 。
 
 .. code-block:: yaml
 
@@ -973,12 +966,11 @@ a new route to  the routing file located at
             _method:  POST
             blog_id: \d+
         
-The controller
+關於 controller
 ~~~~~~~~~~~~~~
 
-Next, we need to create the new ``Comment`` controller we have referenced above.
-Create a file located at ``src/Blogger/BlogBundle/Controller/CommentController.php`` and
-paste in the following.
+接著我們需要建立上面參照的新 ``Comment`` controller ，建立一個檔案在
+``src/Blogger/BlogBundle/Controller/CommentController.php`` 並且貼入下面內容。
 
 .. code-block:: php
 
@@ -1051,22 +1043,15 @@ paste in the following.
        
     }
     
-We create 2 actions in the ``Comment`` controller, one for ``new`` and one for
-``create``. The ``new`` action is concerned with displaying the comment form,
-the ``create`` action is concerned with processing the submission of the comment
-form. While this may seem like a big chuck of code, there is nothing new here,
-everything was covered in chapter 2 when we created the contact form. However,
-before moving on make sure you fully understand what is happening in the
-``Comment`` controller.
+我們在 ``Comment`` controller 建立了兩個方法，一個是 ``new`` ，另一個是 ``create`` 。 ``new`` 方法是用來顯示評論表
+單，而 ``create`` 方法是用來處理評論表單送出的資料。雖然看起來有一堆程式碼，但這裡沒有新東西，所有的東西在第二章介紹
+聯絡表單時就提過，不過在繼續往下看之前，請確認你完全了解 ``Comment`` controller 發生了什麼事。
 
-Form Validation
+表單驗證
 ~~~~~~~~~~~~~~~
 
-We don't want users to be able to submit blogs comments with blank ``user`` or
-``comment`` values. To achieve this we look back to the validators we were
-introduced to in part 2 when creating the enquiry form. Update the ``Comment``
-entity located at ``src/Blogger/BlogBundle/Entity/Comment.php`` with the
-following.
+我們不希望使用者提供的評論中 ``user`` 或 ``comment`` 是空白的，要處理這個部份我們可以回頭看第二部份介紹查詢表單時使用
+的驗證器，用下面內容更新位於 ``src/Blogger/BlogBundle/Entity/Comment.php`` 的 ``Comment`` 實體。
 
 .. code-block:: php
     
@@ -1096,18 +1081,14 @@ following.
         // ..
     }
 
-The constraints ensure that both the user and comment members must not be blank.
-We have also set the ``message`` option for both constraints to override the
-default ones. Remember to add the namespace for ``ClassMetadata`` and
-``NotBlank`` as shown above.
+這裡的限制確保了使用者與評論屬性不會是空白的，我們也在兩個限制中設定了 ``message`` 選項來取代預設值，記住要像上面這樣
+加入命名空間 ``ClassMetadata`` 與 ``NotBlank`` 。
 
-The view
+關於 view
 ~~~~~~~~
 
-Next we need to create the 2 templates for the ``new`` and ``create`` controller
-actions. First create  a new file
-located at ``src/Blogger/BlogBundle/Resources/views/Comment/form.html.twig``
-and paste in the following.
+接著我們需要建立兩個樣板給 ``new`` 與 ``create`` 方法，先建立一個檔案在 ``src/Blogger/BlogBundle/Resources/views/Comment/form.html.twig``
+並且貼入下面內容。
 
 .. code-block:: html
     
@@ -1120,13 +1101,11 @@ and paste in the following.
         </p>
     </form>
 
-The purpose of this template is simple, It just renders the comment form. You'll
-also notice the ``action`` of the form is to ``POST`` to the new route we created
-``BloggerBlogBundle_comment_create``.
+這個樣板的目的很單純，只是要顯示評論表單。你也會注意到表單的 ``action`` 會將資料 ``POST`` 到我們建立的新網址路徑
+``BloggerBlogBundle_comment_create`` 。
 
-Next lets add the template for the ``create`` view. Create a new file located at
-``src/Blogger/BlogBundle/Resources/views/Comment/create.html.twig``
-and paste in the following.
+接著我們新增 ``create`` 的樣板，建立一個檔案在 ``src/Blogger/BlogBundle/Resources/views/Comment/create.html.twig``
+並且貼入下面內容。
 
 .. code-block:: html
 
@@ -1139,14 +1118,11 @@ and paste in the following.
         {% include 'BloggerBlogBundle:Comment:form.html.twig' with { 'form': form } %}    
     {% endblock %}
 
-As the ``create`` action of the ``Comment`` controller deals with processing
-the form, it also needs to be able to display it, as there could be errors in the
-form. We reuse the ``BloggerBlogBundle:Comment:form.html.twig`` to render the
-actual form to prevent code duplication.
+由於 ``Comment`` controller 的 ``create`` 方法會處理表單資料，它也需要能夠顯示，因為可能在表單會有錯誤。我們重複使用
+``BloggerBlogBundle:Comment:form.html.twig`` 來顯示實際的表單，藉此避免重複的程式碼。
 
-Now lets update the blog show template to render the add blog form. Update the
-template located at ``src/Blogger/BlogBundle/Resources/views/Blog/show.html.twig``
-with the following.
+現在可以更新部落格顯示樣板來產生新增部落格表單，更新位於 ``src/Blogger/BlogBundle/Resources/views/Blog/show.html.twig``
+的樣板，放入下面內容。
 
 .. code-block:: html
 
@@ -1166,50 +1142,35 @@ with the following.
         </section>
     {% endblock %}
 
-We use another new Twig tag here, the ``render`` tag. This tag will render
-the contents of a controller into the template. In our case we render the 
-contents of the ``BloggerBlogBundle:Comment:new`` controller action.
+我們在這裡使用了另一個新的 Twig 標籤 ``render`` ，這個標籤會產生一個 controller 的內容來放入樣板，在我們的例子中，我
+們產生了 ``BloggerBlogBundle:Comment:new`` controller 方法的內容。
 
-If you now have a look at one of the blog show pages, such as
-``http://symblog.dev/app_dev.php/2`` you'll notice a Symfony2 exception is thrown.
+如果你現在看看其中一個部落格顯示頁面，像是 ``http://symblog.dev/app_dev.php/2`` ，你會發現出現了一個 Symfony2 例外。
 
 .. image:: /_static/images/part_4/to_string_error.jpg
     :align: center
     :alt: toString() Symfony2 Exception
     
-This exception is being thrown by the ``BloggerBlogBundle:Blog:show.html.twig``
-template. If we look at line 25 of the ``BloggerBlogBundle:Blog:show.html.twig``
-template we can see its the following line showing that the problem actually exists
-in the process of embedding the ``BloggerBlogBundle:Comment:create`` controller.
+這個例外是由 ``BloggerBlogBundle:Blog:show.html.twig`` 樣板產生，如果我們看到 ``BloggerBlogBundle:Blog:show.html.twig``
+樣板的第 25 行，我們會看到下面這行，這表示問題實際上存在於嵌入 ``BloggerBlogBundle:Comment:create`` controller 的處理
+中。
 
 .. code-block:: html
 
     {% render 'BloggerBlogBundle:Comment:create' with { 'blog_id': blog.id } %}
     
-If we look at the exception message further it gives us some more information
-about the nature of why the exception was caused.
+如果我們再仔細看例外訊息，它提供了一些關於例外發生原因的理由。
 
     Entities passed to the choice field must have a "__toString()" method defined
 
-This is telling us that a choice field that we are trying to render doesn't have
-a ``__toString()`` method set for the entity the choice field is associated with.
-A choice field is a form element that gives the user a number of choices,
-such as a ``select`` (drop down) element. You maybe wondering where are we rendering
-a choice field in the comment form? If you look at the comment form template again you will notice
-we render the form using the ``{{ form_widget(form) }}`` Twig function. This
-function outputs the entire form in its basic form. So lets go back to the class
-the form is created from, the ``CommentType`` class. We can see that a number of
-fields are being added to the form via the ``FormBuilder`` object. In particular
-we are adding a ``blog`` field.
+這告訴我們一個我們試著顯示的選擇欄位沒有為關聯的實體設定 ``__toString()`` 方法，一個選擇欄位是一個提供使用者一些選項的表單元素
+，想是 ``select`` (下拉選單)元素，你也許想知道我們在評論表單的哪裡產生一個選擇欄位，如果你再仔細看看評論表單樣板，你會注意到我們
+透過 Twig 方法 ``{{ form_widget(form) }}`` 來產生表單，這個方法用基本格式輸出整個表單。所以讓我們回到建立表單的來源類別
+``CommentType`` ，我們可以看到一些欄位透過 ``FormBuilder`` 物件加入到表單，特別的是我們新增了一個 ``blog`` 欄位。
 
-If you remember from chapter 2, we spoke about how the ``FormBuilder`` will try
-to guess the field type to output based on metadata related to the field. As we
-setup a relationship between ``Comment`` and ``Blog`` entities, the
-``FormBuilder`` has guessed the comment should be a ``choice`` field, which
-would allow the user to specify the blog post to attach the comment to. That is
-why we have a ``choice`` field in the form, and why the Symfony2 exception is
-being thrown. We can fix this problem by implementing the ``__toString()``
-method in the ``Blog`` entity.
+如果你還記得第二章，我們提到 ``FormBuilder`` 會如何猜測欄位輸出類型，也就是欄位的相關後設資料。因為我們設定了關聯在 ``Comment``
+與 ``Blog`` 實體間， ``FormBuilder`` 已經猜到評論也許是一個 ``choice`` 欄位，可以讓使用者指定要附加評論的對象，這是為什麼我們在
+表單中有一個 ``choice`` 欄位，也是為什麼 Symfony2 例外會發生。我們可以在 ``Blog`` 實體實做 ``__toString()`` 方法來修正這個問題。
 
 .. code-block:: php
     
@@ -1221,31 +1182,21 @@ method in the ``Blog`` entity.
 
 .. tip::
 
-    The Symfony2 error messages are very informative when describing the problem
-    that has occurred. Always read the error messages as they will usually make
-    the process of debug a lot easier. The error messages also provide a full
-    stack trace so you can see the steps that were taking to cause the error.
+    Symfony2 的錯誤訊息在描述已經發生的問題時提供許多資訊，記得仔細看錯誤訊息，它們通常可以讓除錯的過程簡單許多。錯誤訊息也會提供一個
+    完整的堆疊追蹤，所以你可以看到造成這個問題發生的詳細過程。
     
-Now when you refresh the page you should see the comment form output. You will
-also notice that some undesirable fields have been output such as ``approved``,
-``created``, ``updated`` and ``blog``. This is because we did not customise
-the generated ``CommentType`` class earlier.
+現在當你重新整理網頁，你應該可以看到評論表單輸出。你也會注意到一些不希望出現的欄位在輸出中，像是 ``approved`` 、 ``created`` 、 ``updated``
+與 ``blog`` ，這是因為我們還沒客製之前產生的 ``CommentType`` 類別。
 
 .. tip::
 
-    The fields being rendered all seem to be output as the correct type of fields.
-    The ``user`` fields is an ``text`` field, the ``comment`` field is a ``textarea``,
-    the 2 ``DateTime`` fields are a number of ``select`` fields allowing us to specify the
-    time, etc.
+    顯示的欄位似乎都輸出了正確的欄位邢台， ``user`` 欄位是一個 ``text`` 類型， ``comment`` 欄位則是一個 ``textarea`` ，兩個 ``DateTime``
+    欄位是一些 ``select`` 欄位讓我們指定時間等資訊。
     
-    This is because of the ``FormBuilders`` ability to guess the type of field
-    the member it is rendering requires. It is able to do this based on the metadata
-    you provide. As we have specified quite specific metadata for the ``Comment``
-    entity, the ``FormBuilder`` is able to make accurate guesses of the field types.
+    這是因為 ``FormBuilders`` 能夠猜測屬性在顯示時需要的欄位類型，它是透過你提供的後設資料做到。由於我們已經指定了 ``Comment`` 實體詳細的
+    後設資料， ``FormBuilder`` 就能夠正確的猜出欄位類型。
     
-Lets now update this class located at
-``src/Blogger/BlogBundle/Form/CommentType.php`` to output only the fields we
-need. 
+現在我們來更新位於 ``src/Blogger/BlogBundle/Form/CommentType.php`` 的這個類別，只輸出我們需要的欄位。
 
 .. code-block:: php
 
@@ -1266,13 +1217,9 @@ need.
         // ..
     }
 
-Now when you refresh the page only the user and comment fields are output. If
-you were to submit the form now, the comment would not actually be saved to the
-database. That's because the form controller does nothing with the ``Comment`` entity
-if the form passes validation. So how do we persist the ``Comment`` entity to the database.
-You have already seen how to do this when creating ``DataFixtures``. Update the
-``create`` action of the ``Comment`` controller to persist the ``Comment`` entity
-to the database.
+現在當你重新整理頁面，只會輸出使用者與評論欄位。如果你現在送出表單，評論並不會真的被儲存到資料庫中，因為表單的 controller 還沒有為 ``Comment``
+實體做任何事。如果表單通過了檢驗，我們應該要如何將 ``Comment`` 保存到資料庫？你已經在建立 ``DataFixtures`` 看過怎麼做，更新 ``Comment``
+controller 的 ``create`` 方法來儲存 ``Comment`` 實體到資料庫。
 
 .. code-block:: php
 
@@ -1302,29 +1249,21 @@ to the database.
         }
     }
 
-Persisting the ``Comment`` entity is as simple as a call to ``persist()`` and ``flush()``.
-Remember, the form just deals with PHP objects, and Doctrine 2 manages and persists
-these objects. There is no direct connection between submitting a form, and
-the submitted data being persisted to the database.
+保存 ``Comment`` 實體很簡單，只要呼叫 ``persist()`` 與 ``flush()`` 。記得，這個表單只處理 PHP 物件， Doctrine 2 負責管理與保存這些物件。
+在送出的表單與送出資料被保存到資料庫之兼併沒有直接的連結。
 
-You should now be able to add comments to the blog posts.
+你現在應該可以新增評論到文章中。
 
 .. image:: /_static/images/part_4/add_comments.jpg
     :align: center
     :alt: symblog add blog comments
     
-Conclusion
+結論
 ----------
 
-We have made good progress in this chapter. Our blogging website is starting to
-function more like you'd expect. We now have the basics of the homepage created
-and the comment entity. User can now post comments on blogs and read comments
-left by other user. We saw how to create fixtures that could be referenced
-across multiple fixture files and used Doctrine 2 Migrations to keep the database
-schema inline with the entity changes.
+我們在這個章節有了不錯的進展，我們的部落格網站開始像你預期一樣運作。我們現在建立了基本的首頁與評論實體，使用者可以發表評論到文章以及閱讀其他
+使用者留下的評論，我們看到如何建立裝置在多個裝置檔案間參照，並且使用了 Doctrine 2 搬遷來讓資料庫結構連結到實體異動。
 
-Next we will look at building the sidebar to include The Tag Cloud and Recent
-Comments. We will also extend Twig by creating our own custom filters. Finally
-we will look at using the Assetic asset library to assist us in managing our
-assets.
+接下來我們會看看建立一個選單列來包含標籤雲與最新評論，我們也會建立自訂的過濾器來延伸 Twig 功能，最後我們會看看如何使用 Assetic 資源函式庫來
+幫助我們管理我們的資源。
     
