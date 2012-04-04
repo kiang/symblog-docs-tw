@@ -1,31 +1,26 @@
-[Part 2] - Contact Page: Validators, Forms and Emailing
+[Part 2] - 聯絡頁面：驗證、表單與發信
 =======================================================
 
-Overview
+概要
 --------
 
-Now we have the basic HTML templates in places, its time to make one of the
-pages functional. We will begin with one of the simplest pages; The Contact
-page. At the end of this chapter you will have a Contact page that allows users
-to send the webmaster contact enquiries. These enquiries will be emailed to the
-webmaster.
+現在我們有基本的網頁樣板，現在就來讓其中一個頁面開始運作。我們會從最簡單的一頁開始，也就是聯絡頁。
+在這個章節結束後，你會有一個聯絡頁讓使用者發送資訊給網頁管理員，這些諮詢會直接發出信件給網頁管理員。
 
-The following areas will be demonstrated in this chapter:
+在這個章節會展示下面幾個主題：
 
-1. Validators
-2. Forms
-3. Setting bundle configuration values
+1. 驗證
+2. 表單
+3. 設定軟體包設定值
 
-Contact Page
+聯絡頁面
 ------------
 
-Routing
+網址路徑
 ~~~~~~~
 
-As with the about page we created in the last chapter, we will start by defining
-the contact page route. Open up the ``BloggerBlogBundle`` routing file located at
-``src/Blogger/BlogBundle/Resources/config/routing.yml`` and append the following routing
-rule.
+如同在上一個章節我們建立關於頁面時，我們是從定義聯絡頁的網址路徑開始的。開啟 ``BloggerBlogBundle``
+的網址路徑檔 ``src/Blogger/BlogBundle/Resources/config/routing.yml`` 並且附加下面的網址路徑規則。
 
 .. code-block:: yaml
 
@@ -36,15 +31,14 @@ rule.
         requirements:
             _method:  GET
 
-There is nothing new here, the rule matches on the pattern ``/contact``,
-for the HTTP ``GET`` method and executes the ``contact`` action of the ``Page`` controller in
-the ``BloggerBlogBundle``.
+在這裡沒有新東西，規則符合樣式 ``/contact`` 與 HTTP ``GET`` 方法時會執行 ``BloggerBlogBundle`` 中
+``Page`` controller 的 ``contact`` 方法。
 
 Controller
 ~~~~~~~~~~
 
-Next lets add the action for the contact page to the ``Page`` Controller in the
-``BloggerBlogBundle`` located at ``src/Blogger/BlogBundle/Controller/PageController.php``.
+接著我們在 ``BloggerBlogBundle`` 的 ``Page`` Controller 加入聯絡頁的方法，檔案在
+``src/Blogger/BlogBundle/Controller/PageController.php`` 。
 
 .. code-block:: php
 
@@ -56,14 +50,13 @@ Next lets add the action for the contact page to the ``Page`` Controller in the
     }
     // ..
 
-For now the action is very simple, it just renders the contact page view. We will
-come back to the controller later.
+現在這個方法非常簡單，只是產生聯絡頁畫面，我們後面會回來處理這裡。
 
 View
 ~~~~
 
-Create the contact page view at ``src/Blogger/BlogBundle/Resources/views/Page/contact.html.twig``
-and add the following content.
+在 ``src/Blogger/BlogBundle/Resources/views/Page/contact.html.twig`` 建立聯絡頁樣板並且加入下面
+內容
 
 .. code-block:: html
 
@@ -80,15 +73,13 @@ and add the following content.
         <p>Want to contact symblog?</p>
     {% endblock %}
 
-This template is also quite simple. It extends the ``BloggerBlogBundle`` layout
-template, overrides the title block to set a custom title and defines some
-content for the body block.
+這個樣板也很簡單，它延伸了 ``BloggerBlogBundle`` 版面樣板，覆蓋標題區塊來設定自訂標題，並且定義一些
+內容區塊的文字。
 
-Linking to the page
+連結到這一頁
 ~~~~~~~~~~~~~~~~~~~
 
-Lastly we need to update the link in the application template located
-at ``app/Resources/views/base.html.twig`` to link to the contact page.
+最後我們需要更新放在 ``app/Resources/views/base.html.twig`` 的應用程式樣板，放入連結指向聯絡頁。
 
 .. code-block:: html
 
@@ -103,20 +94,15 @@ at ``app/Resources/views/base.html.twig`` to link to the contact page.
         </nav>
     {% endblock %}
 
-If you point your browser to ``http://symblog.dev/app_dev.php/`` and click the
-contact link in the navigation bar, you should see a very basic contact page
-displayed. Now we have the page correctly setup, its time to start working on
-the Contact form. This is split into 2 distinct parts; The Validators and The
-Form. Before we can address the concept of Validators and the Form we need to
-think about how we will handle the data of the contact enquiry.
+如果用瀏覽器打開 ``http://symblog.dev/app_dev.php/`` 並且點選導覽列的聯絡連結，你應該可以看到一個
+非常基本的聯絡頁面，現在我們已經設定好聯絡頁，接著要開始處理聯絡表單。這會切割為兩個獨立的部份，就是
+驗證與表單。在我們開始介紹驗證與表單的概念前，我們需要思考要如何處理聯絡的資料。
 
-Contact Entity
+聯絡實體
 --------------
 
-Lets begin by creating a class that represents a contact enquiry from a user. We
-want to trap some basic information such as name, subject and enquiry body. Create
-a new file located at ``src/Blogger/BlogBundle/Entity/Enquiry.php`` and paste in the
-following content.
+我們開始建立一個類別來代表來自使用者的一個諮詢，我們想要納入一些基本的資訊，像是名稱、主旨與諮詢內容。
+建立一個檔案 ``src/Blogger/BlogBundle/Entity/Enquiry.php`` 並且貼入下面內容。
 
 .. code-block:: php
 
@@ -176,24 +162,20 @@ following content.
         }
     }
 
-As you can see this class just defines some protected members and the accessors
-for them. There is nothing here that defines how we validate the members, or
-how the members relate to form elements. We will
-come back to that later.
+如同你看到的，這個類別只是定義一些受保護的屬性與他們的存取器，在這裡我們沒有定義屬性的驗證或是屬性與表
+單元素的關聯，我們晚點會回來看這裡。
 
 
 .. note::
 
-    Lets take a quick aside to talk about the use of namespaces in Symfony2. The entity class
-    we have created sets the namespace to ``Blogger\BlogBundle\Entity``. As Symfony2
-    autoloading supports the
-    `PSR-0 standard <http://groups.google.com/group/php-standards/web/psr-0-final-proposal?pli=1>`_
-    the namespace directly maps to the Bundle folder structure. The ``Enquiry`` entity class
-    is located at ``src/Blogger/BlogBundle/Entity/Enquiry.php`` which ensures Symfony2 is able to
-    correctly autoload the class.
+    在這裡要簡短介紹一下 Symfony2 命名空間的用法，我們建立的一些實體類別設定了命名空間為
+    ``Blogger\BlogBundle\Entity`` ，由於 Symfony2 的自動載入功能支援
+    `PSR-0 標準 <http://groups.google.com/group/php-standards/web/psr-0-final-proposal?pli=1>`_
+    ，命名空間會直接對應到軟體包的資料夾結構，而 ``Enquiry`` 實體類別會被放在
+    ``src/Blogger/BlogBundle/Entity/Enquiry.php`` ，這樣可以確保 Symfony2 能夠正確的自動載入這個類別。
 
-    How does the Symfony2 autoloader know the ``Blogger`` namespace can be found in the ``src``
-    directory? This is thanks to the configurations in the autoloader at ``app/autoloader.php``
+    至於 Symfony2 自動載入功能如何知道命名空間 ``Blogger`` 可以在 ``src`` 資料夾找到，這就需要感謝我們
+    在 ``app/autoloader.php`` 的自動載入設定。
 
     .. code-block:: php
 
@@ -202,35 +184,26 @@ come back to that later.
             __DIR__.'/../src',
         ));
 
-    This statement registers a fallback for any namespaces not already registered.
-    As the ``Blogger`` namespace is not registered, the Symfony2 autoloader will
-    look for the required files in the ``src`` directory.
+    這個語法會註冊一個任何尚未註冊命名空間的最終處理，由於沒有註冊 ``Blogger`` 這個命名空間， Symfony2
+    自動載入器會在 ``src`` 資料夾找尋需要的檔案。
 
-    Autoloading and namespaces are a very powerful concept in Symfony2. If you
-    are getting errors where PHP is unable to find classes, its likely you have a
-    mistake in your namespace or folder structure. Also check the namespace
-    has been registered with the autoloader as shown above. You should not be tempted to
-    ``fix`` this by using the PHP ``require`` or ``include`` directives.
+    自動載入與命名空間在 Symfony2 是一個非常強大的概念，如果你遇到 PHP 無法找到類別的錯誤，通常這就是你
+    在命名空間或資料夾結構出了錯誤，同時也要檢查這個命名空間是不是已經像上面那樣在自動載入器註冊，千萬
+    不要嘗試直接用 PHP 的 ``require`` 或 ``include`` 來 ``修正`` 這個問題。
 
-Forms
+表單
 -----
 
-Next we will create the form. Symfony2 comes bundled with a very powerful form
-framework that makes the tedious task of dealing with forms easy. As with all
-Symfony2 components, it can be used outside of Symfony2 in your own projects.
-The `Form Component Source <https://github.com/symfony/Form>`_ is available on
-Github. We will begin by creating an ``AbstractType`` class that represents the enquiry form.
-We could have created the form directly in the controller and not
-bothered with this class, however separating the form into its own class allows
-us to reuse the form throughout the application. It also prevents us cluttering up
-the controller. After all, the controller is supposed to be simple. It
-purpose is to provide the glue between the Model and the View.
+接著我們會建立表單， Symfony2 附帶了一個非常強大的表單架構，這可以讓處理表單這個沉悶的工作變得容易。如同所有
+Symfony2 元件一樣，它可以在專案中被用在 Symfony2 以外的地方， `表單元件原始碼 <https://github.com/symfony/Form>`_
+可以透過 Github 下載。我們會開始建立一個 ``AbstractType`` 類別來代表諮詢表單，我們可以直接在 controller 中
+建立這個表單而不需要使用這個類別，不過將表單分離到獨立的類別讓我們在應用程式中可以重複使用這個表單。總之，
+controller 應該要簡潔，它的目的是在 Model 與 View 之間作為膠水。
 
 EnquiryType
 ~~~~~~~~~~~
 
-Create a new file located at ``src/Blogger/BlogBundle/Form/EnquiryType.php`` and
-paste in the following content.
+建立一個檔案在 ``src/Blogger/BlogBundle/Form/EnquiryType.php`` 並且貼入下面內容。
 
 .. code-block:: php
 
@@ -258,20 +231,16 @@ paste in the following content.
         }
     }
 
-The ``EnquiryType`` class introduces the ``FormBuilder`` class. The ``FormBuilder`` class
-is your best friend when it comes to creating forms. It is able to simplify the
-process of defining fields based on the metadata the field has. As our
-Enquiry entity is so simple we haven't defined any metadata yet so the ``FormBuilder``
-will default the field type to text input. This is suitable for most of the fields
-except body where we want a ``textarea``, and email where we want to take advantage of the
-new email input type in HTML5.
+這個 ``EnquiryType`` 類別使用了 ``FormBuilder`` 類別，當我們要建立表單時 ``FormBuilder`` 類別就是你最好的
+朋友，它可以基於欄位的後設資料簡化定義欄位的操作。由於我們的 Enquiry 實體非常簡單，我們還沒定義任何後設資料，
+所以 ``FormBuilder`` 預設都會將欄位類型設定為文字框，這在大部分欄位都合適，除了在內容欄位我們希望使用
+``textarea`` ，還有信箱欄位我們希望運用 HTML5 新加入的 email 輸入類型。
 
 .. note::
 
-    One key point to mention here is that the ``getName`` method should return
-    a unique identifier.
+    一個需要注意的第方式， ``getName`` 方法需要傳回一個唯一的識別字串。
 
-Creating the form in the controller
+在 controller 建立表單
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Now we have defined the ``Enquiry`` entity and ``EnquiryType``, we can update the contact action to
