@@ -62,7 +62,7 @@ PHP 或註解，建立樣板可以使用 Twig 或 PHP 。未來讓這個教學�
 翻譯
 ------------
 
-Spanish 西班牙文
+西班牙文
 ~~~~~~~
 
 Symblog 由 `Lisper <https://twitter.com/#!/esymfony>`_ 翻譯成 `西班牙文 <http://symblog.site90.net/>`_ 。
@@ -71,6 +71,11 @@ Symblog 由 `Lisper <https://twitter.com/#!/esymfony>`_ 翻譯成 `西班牙文 
 ~~~~~~~
 
 Symblog 由 `Clement Keirua <https://twitter.com/clemkeirua>`_ 翻譯為 `法文 <http://keiruaprod.fr/symblog-fr/>`_ 。
+
+正體中文
+~~~~~~~
+
+Symblog 由 `Ricky <https://github.com/RickySu>`_ 與 `kiang <https://github.com/kiang>`_ 翻譯為 `中文 <https://github.com/kiang/symblog-docs-tw>`_ 。
 
 作者
 ------
