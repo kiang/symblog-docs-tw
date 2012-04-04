@@ -1,19 +1,15 @@
-Creating a blog in Symfony2
+在 Symfony2 建立一個部落格
 ===========================
 
-Introduction
+介紹
 ------------
 
-This tutorial will guide you through the process of creating a full featured
-blogging website using `Symfony2 <http://symfony.com/>`_. The Standard
-Distribution of the Symfony2 framework will be used, which includes the main
-components you will need when building your own websites. The tutorial is split
-into a number of parts, each part covering different aspects of Symfony2 and its
-components. This tutorial is aimed to be worked through similar to the
-symfony 1 `Jobeet <http://www.symfony-project.org/jobeet/1_4/Doctrine/en/>`_
-tutorial.
+這個教學會透過建立一個完整功能的部落格網站來引導你使用 `Symfony2 <http://symfony.com/>`_ 。
+這裡使用了 Symfony2 的標準版本，它包含了在建立你自己網站時需要的主要元件。這個教學切割為多個部份
+，每個部份涵蓋了 Symfony2 不一樣的層面與元件。這個教學參考了 symfony 1 的
+`Jobeet <http://www.symfony-project.org/jobeet/1_4/Doctrine/en/>`_ 以類似手法製作。
 
-Tutorial Parts
+教學章節
 ~~~~~~~~~~~~~~
 
 .. toctree::
@@ -26,80 +22,68 @@ Tutorial Parts
     docs/customising-the-view-more-with-twig
     docs/testing-unit-and-functional-phpunit
 
-Demo Website
+展示網站
 ------------
 
-The symblog website can be viewed at
-`http://symblog.co.uk <http://symblog.co.uk/>`_. The source code is
-available via `Github <https://github.com/dsyph3r/symblog>`_. It follows
-along with each part of the tutorial
+這個 symblog 網站可以在 `http://symblog.co.uk <http://symblog.co.uk/>`_ 瀏覽，原始碼放在
+`Github <https://github.com/dsyph3r/symblog>`_ ，它遵循了這個教學的每個部份。
 
-Coverage
+涵蓋範圍
 --------
 
-This tutorial aims to cover the common tasks you are faced with when creating
-websites using Symfony2.
+這個教學的目標是涵蓋你在建置 Symfony2 網站常會遇到的任務。
 
-    1.  Bundles
+    1.  軟體包
     2.  Controllers
-    3.  Templating (Using TWIG)
+    3.  樣板 (使用 TWIG)
     4.  Model - Doctrine 2
-    5.  Migrations
-    6.  Data Fixtures
-    7.  Validators
-    8.  Forms
-    9.  Routing
-    10. Asset Management
-    11. Emailing
-    12. Environments
-    13. Customising Error pages
-    14. Security
-    15. The User & Sessions
-    16. CRUD Generation
-    17. Caching
-    18. Testing
-    19. Deployment
+    5.  搬遷 
+    6.  資料裝置
+    7.  驗證
+    8.  表單
+    9.  網址路徑
+    10. 資源管理
+    11. 發信
+    12. 環境
+    13. 自訂錯誤頁
+    14. 安全
+    15. 使用者與連線
+    16. 產生增刪改查功能
+    17. 快取
+    18. 測試
+    19. 佈署
 
-Symfony2 is highly customisable and provides a number of different ways to
-perform the same task. Some examples of this include writing configuration
-options in YAML, XML, PHP, or Annotation, and creating templates using Twig or
-PHP. To keep this tutorial simple we will use YAML and Annotations for
-configuration and Twig for templating. The
-`Symfony book <http://symfony.com/doc/current/book/index.html>`_
-provides a great resource for examples of how to use the other methods.
-If other people would like to contribute to the completion of alternative methods
-simply fork the repository on `Github <https://github.com/dsyph3r/symblog-docs>`_
-and send over the pull requests :)
+Symfony2 可以高度客製與提供許多不同的方法來完成同樣工作，像是寫入設定的選項有 YAML 、 XML 、
+PHP 或註解，建立樣板可以使用 Twig 或 PHP 。未來讓這個教學簡化，我們在設定部份會使用 YAML 與註解
+，樣板則是 Twig 。 `Symfony 手冊 <http://symfony.com/doc/current/book/index.html>`_ 提供了
+豐富的資源與範例說明如何使用其他方法。如果有其他人想要參與完成這個教學或是其他方式，只需要在
+`Github <https://github.com/dsyph3r/symblog-docs>`_ 建立一個衍生版本，然後發出 pull requests
 
-Translations
+翻譯
 ------------
 
-Spanish
+Spanish 西班牙文
 ~~~~~~~
 
-Symblog has been translated into `Spanish <http://symblog.site90.net/>`_ thanks to the contribution by
-`Lisper <https://twitter.com/#!/esymfony>`_.
+Symblog 由 `Lisper <https://twitter.com/#!/esymfony>`_ 翻譯成 `西班牙文 <http://symblog.site90.net/>`_ 。
 
-French
+法文
 ~~~~~~~
 
-Symblog has been translated into `French <http://keiruaprod.fr/symblog-fr/>`_ thanks to the contribution by
-`Clement Keirua <https://twitter.com/clemkeirua>`_.
+Symblog 由 `Clement Keirua <https://twitter.com/clemkeirua>`_ 翻譯為 `法文 <http://keiruaprod.fr/symblog-fr/>`_ 。
 
-Author
+作者
 ------
 
-This tutorial is being created by `dsyph3r <http://twitter.com/#!/dsyph3r>`_.
+這個教學是由 `dsyph3r <http://twitter.com/#!/dsyph3r>`_ 建立
 
-Contributing
+貢獻
 ------------
 
-The `source <https://github.com/dsyph3r/symblog-docs>`_ for this tutorial is available on
-Github. If you would like to improve and extend this tutorial simply fork the
-project and send over the pull requests. You can also raise issues using the
-`GitHub Issue Tracker <https://github.com/dsyph3r/symblog-docs/issues>`_. If any
-one is interested in creating a much more visually pleasing design please get in
-`touch <http://twitter.com/#!/dsyph3r>`_!
+這個教學的 `原始碼 <https://github.com/dsyph3r/symblog-docs>`_ 放在 Github ，如果你想要改善或是
+延伸這個教學，只要建立一個衍生版本然後發出回推請求。你也可以用 `GitHub Issue Tracker <https://github.com/dsyph3r/symblog-docs/issues>`_
+發表問題。如果你對於改善這個教學的視覺設計感興趣，請
+`與我聯繫 <http://twitter.com/#!/dsyph3r>`_!
 
 Credits
 -------
@@ -108,9 +92,9 @@ Special thanks to all the contributors of the
 `Official Symfony2 documentation <http://symfony.com/doc/current/>`_. This
 provided an invaluable resource of information.
 
-Flag Icons sourced from `famfamfam <http://www.famfamfam.com/lab/icons/flags/>`_.
+國旗圖示來自 `famfamfam <http://www.famfamfam.com/lab/icons/flags/>`_ 。
 
-Searching
+搜尋
 ---------
 
-Looking for a specific topic? Use the :ref:`search`.
+在找一個特定主題嗎？使用 :ref:`search` 。
