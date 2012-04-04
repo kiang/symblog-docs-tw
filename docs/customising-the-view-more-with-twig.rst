@@ -106,7 +106,7 @@ symblog 。 Twig 樣板引擎可以被擴充提供新的過濾器功能，並且
 方法來處理工作。當查詢資料庫時 Doctrine 2 提供了 ``join`` 的能力將相關的實體合併。
 使用這個方法我們可以將 ``Blog`` 以及關聯的 ``Comment`` 實體在一次的查詢中從資料庫
 取出。更新一下 ``BlogRepository`` 中的 ``QueryBuilder`` 程式碼位置在
-``src/Blogger/BlogBundle/Repository/BlogRepository.php`` 將文章回應 join 近來。
+``src/Blogger/BlogBundle/Repository/BlogRepository.php`` 將文章回應 join 進來。
 
 .. code-block:: php
 
@@ -126,19 +126,14 @@ symblog 。 Twig 樣板引擎可以被擴充提供新的過濾器功能，並且
                   ->getResult();
     }
 
-If you now refresh the homepage and examine the Doctrine 2 output in the developer
-toolbar you will notice the number of queries has dropped. You can also see the comment
-table has been joined to the blog table.
+如果現在你重新載入首頁並且檢視開發工具列中 Doctrine 2 的輸出，你會發現到減少了
+許多查詢句。你也可以看到日誌回應的表格被 join 到日誌文章表格裡。
 
-Lazy loading and joining related entities are both very powerful concepts but
-they need to be used correctly. The correct balance between the 2 needs to be
-found to ensure your application is running as efficiently as possible. At first
-it might seem great to join on every related entity so you never need to lazy
-load and your database query count will always remain low. However, its
-important to remember that the more information you retrieve from the database,
-the more processing needs to be done by Doctrine 2 to hydrate this into the
-entity objects. More data also means more memory is used by the server to store
-the entity objects.
+延遲載入和結合關聯的實體都是非常有力的概念但是他們必須被正確的使用。這兩者之間的
+平衡點必須被找尋出來以確保您的程式有效綠的被執行。首先最好將所有關聯的實體統統
+join 進來，所以你就不需要使用到延遲載入，並且你的資料庫查詢數量將維持在最低。
+然而，要記住很重要的，你從資料庫中取得越多的資訊，Doctrine 2 就得處理越多的步驟
+將這些實體物件結合起來。越多的資料表示你的伺服器得耗費越多的記憶體來除存這些實體物件。
 
 Before moving on lets make one minor addition to the homepage template for the
 number of comments we have just added. Update the homepage template located at
