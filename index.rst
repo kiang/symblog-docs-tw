@@ -75,7 +75,7 @@ Symblog 由 `Clement Keirua <https://twitter.com/clemkeirua>`_ 翻譯為 `法文
 正體中文
 ~~~~~~~
 
-Symblog 由 `Ricky <https://github.com/RickySu>`_ 與 `kiang <https://github.com/kiang>`_ 翻譯為 `中文 <https://github.com/kiang/symblog-docs-tw>`_ 。
+Symblog 由 `Ricky <https://github.com/RickySu>`_ 與 `kiang <https://github.com/kiang>`_ 翻譯為 `中文 <http://twpug.net/docs/symblog/>`_ 。
 
 作者
 ------

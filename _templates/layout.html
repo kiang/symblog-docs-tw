@@ -45,9 +45,9 @@
     #header ul.languages { list-style: none; text-align: right; margin-bottom: 0; display: inline-block; }
     #header .languages li { display: inline }
     #header .languages li a { display: inline-block; padding: 10px 10px 10px 25px; border-right: 1px solid #ccc; background-repeat: no-repeat; background-position: 5px center  }
-    #header .en { background-image: url('/_static/images/icons/languages/gb.png'); }
-    #header .es { background-image: url('/_static/images/icons/languages/es.png'); }
-    #header .fr { background-image: url('/_static/images/icons/languages/fr.png'); }
+    #header .en { background-image: url('http://twpug.net/docs/symblog/_static/images/icons/languages/gb.png'); }
+    #header .es { background-image: url('http://twpug.net/docs/symblog/_static/images/icons/languages/es.png'); }
+    #header .fr { background-image: url('http://twpug.net/docs/symblog/_static/images/icons/languages/fr.png'); }
     #header ul.navigation { list-style: none; text-align: right; margin-bottom: 0; display: inline-block; float: right; }
     #header .navigation li { display: inline }
     #header .navigation li a { display: inline-block; padding: 10px 15px; border-left: 1px solid #ccc; }
@@ -67,17 +67,17 @@
     .note {
         border-color: #00529B !important;
         background-color: #DBF3FF !important;
-        background-image: url('../_static/images/icons/note.png') !important;
+        background-image: url('http://twpug.net/docs/symblog/_static/images/icons/note.png') !important;
     }
     .tip {
         border-color: #4F8A10 !important;
         background-color: #E5F2D0 !important;
-        background-image:url('../_static/images/icons/tip.png') !important;
+        background-image:url('http://twpug.net/docs/symblog/_static/images/icons/tip.png') !important;
         }
     .warning {
         border-color: #9F6000 !important;
         background-color: #FFF7DB !important;
-        background-image: url('../_static/images/icons/warning.png') !important;
+        background-image: url('http://twpug.net/docs/symblog/_static/images/icons/warning.png') !important;
     }
 </style>
 {% endblock %}
@@ -93,7 +93,7 @@
                     <li><a href="http://keiruaprod.fr/symblog-fr/" class="fr">FR</a></li>
                 </ul>
                 <ul class="navigation">
-                    <li><a href="/">首頁</a></li>
+                    <li><a href="{{ pathto(master_doc) }}">首頁</a></li>
                     <li><a href="http://symblog.co.uk">展示</a></li>
                     <li><a href="https://github.com/kiang/symblog-docs-tw">原始碼</a></li>
                 </ul>
@@ -101,8 +101,8 @@
         </div>
 
         <hgroup>
-            <h2><a href="/">symblog</a></h2>
-            <h3><a href="/">在 Symfony2 建立一個部落格</a></h3>
+            <h2><a href="{{ pathto(master_doc) }}">symblog</a></h2>
+            <h3><a href="{{ pathto(master_doc) }}">在 Symfony2 建立一個部落格</a></h3>
         </hgroup>
     </header>
 
