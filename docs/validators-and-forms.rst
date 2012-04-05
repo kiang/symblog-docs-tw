@@ -243,9 +243,8 @@ EnquiryType
 在 controller 建立表單
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Now we have defined the ``Enquiry`` entity and ``EnquiryType``, we can update the contact action to
-use them. Replace the content of the contact action located at
-``src/Blogger/BlogBundle/Controller/PageController.php`` with the following.
+現在我們已經定義了 ``Enquiry`` 實體與 ``EnquiryType`` ，我們可以更新聯繫方法來使用它們。用下面內容取代
+``src/Blogger/BlogBundle/Controller/PageController.php`` 。
 
 .. code-block:: php
 
@@ -273,27 +272,20 @@ use them. Replace the content of the contact action located at
         ));
     }
 
-We begin by creating an instance of the ``Enquiry`` entity. This entity represent
-the data of a contact enquiry. Next we create the actual form. We specify the
-``EnquiryType`` we created earlier, and pass in our enquiry entity object. The
-``createForm`` method is able to use these 2 blueprints to create a form representation.
+我們開始先建立一個 ``Enquiry`` 實體的實例，這個實體代表一個聯繫的資料。接著我們建立實際的表單，指定之前
+建立的 ``EnquiryType`` ，然後傳給查詢實體物件。這個 ``createForm`` 方法會透過兩個藍圖來建立代表的表單。
 
-As this controller action will deal with displaying and processing the submitted form, we
-need to check the HTTP method. Submitted forms are usually sent via ``POST``, and our
-form will be no exception. If the request method is ``POST``, a call to ``bindRequest``
-will transform the submitted data back to the members of our ``$enquiry`` object. At
-this point the ``$enquiry`` object now holds a representation of what the user submitted.
+由於這個 controller 方法會處理顯示與送出的表單，我們需要檢查 HTTP 方法。送出的表單通常會透過 ``POST``
+方法，我們這個表單也沒有例外。如果請求的方法是 ``POST`` ，會呼叫 ``bindRequest`` 來傳送送出的資料給我們
+``$enquiry`` 物件的屬性，在這裡 ``$enquiry`` 物件現在保留了使用者送出的資料。
 
-Next we make a check to see if the form is valid. As we have specified no validators
-at the point, the form will always be valid.
+接著我們驗證一下表單內容，只是我們還沒指定任何驗證器，所以表單的內容會直接通過檢查。
 
-Finally we specify the template to render. Note that we are now also passing
-over a view representation of the form to the template. This object allow us to
-render the form in the view.
+最後我們指定一個要顯示的樣板，需要注意我們現在也將表單在 view 的代表傳送給樣板，這個物件讓我們可以在 view
+產生表單。
 
-As we have used 2 new classes in our controller we need to import the namespaces.
-Update the controller file located at ``src/Blogger/BlogBundle/Controller/PageController.php``
-with the following. The statements should be placed under the existing ``use`` statement.
+因為我們在 controller 使用了兩個新類別，我們需要匯入命名空間。用下面內容更新
+``src/Blogger/BlogBundle/Controller/PageController.php`` ，這些語法應該要放在現有的 ``use`` 下面。
 
 .. code-block:: php
 
@@ -310,16 +302,13 @@ with the following. The statements should be placed under the existing ``use`` s
     class PageController extends Controller
     // ..
 
-Rendering the form
+產生表單
 ~~~~~~~~~~~~~~~~~~
 
-Thanks to Twig's methods rendering forms is very simple. Twig provides a
-layered system for form rendering that allows you to render the form as one entire
-entity, or as individual errors and elements, depending on the level of customisation
-you require.
+感謝 Twig 提供的方法讓產生表單非常容易， Twig 提供一個分層系統來產生表單，讓你可以為整個實體產生表單，或
+是獨立的錯誤與元素，就看你需要在哪個層次進行客製化。
 
-To demonstrate the power of Twig's methods we can use the following snippet
-to render the entire form.
+為了展示 Twig 方法的強大，我們用下面的程式碼來產生整個表單。
 
 .. code-block:: html
 
@@ -329,12 +318,10 @@ to render the entire form.
         <input type="submit" />
     </form>
 
-While this is very useful for prototyping and simple forms it has its limitations
-when extended customisations are needed, which is often the case with forms.
+這對於雛型或是簡單的表單很實用，只是它在需要延伸客製時就會有所侷限，而這個情形在表單經常發生。
 
-For our contact form, we will opt for the middle ground. Replace the template
-code located at ``src/Blogger/BlogBundle/Resources/views/Page/contact.html.twig``
-with the following.
+在我們的聯絡表單中，我們會選擇中間的方法。用下面內容替代
+``src/Blogger/BlogBundle/Resources/views/Page/contact.html.twig`` 的樣板程式碼。
 
 .. code-block:: html
 
@@ -364,41 +351,32 @@ with the following.
         </form>
     {% endblock %}
 
-As you can see, we use 4 new Twig methods to render the form.
+如同你所看到，我們使用 4 個新的 Twig 方法來產生表單。
 
-The first method ``form_enctype`` sets the form content type. This must be set
-when your form deals with file uploads. Our form doesn't have any use for this
-method but its always good practice to use this on all forms in the event
-that you may add file uploads in the future. Debugging a form that handles file
-uploads that has no content type set can be a real head scratcher!
+第一個方法是 ``form_enctype`` ，設定了表單內容類型，這在表單處理檔案上傳時就會必須設定。我們的表單用不到
+這個方法，不過養成習慣在所有表單加入它是建好事，也許未來你就會需要加入檔案上傳欄位。檔案上傳的除錯如果是
+因為沒有設定內容類型，經常會讓人想破頭。
 
-The second method ``form_errors`` will render any errors the form has in the event
-that validation failed.
+第二個方法 ``form_errors`` 會在表單驗證失敗時產生錯誤訊息。
 
-The third method ``form_row`` outputs the entire elements related to each form field.
-This include any errors for the field, the field label and the actual field
-element.
+第三個方法 ``form_row`` 輸出每個表單欄位的整個元素，這包含了欄位的錯誤、欄位標籤與實際的欄位元素。
 
-Finally we use the ``form_rest`` method. Its always a safe bet to use the method at the
-end of the form to render any fields you may have forgotten, including hidden
-fields and the Symfony2 Form CSRF token.
+最後我們使用 ``form_rest`` 方法，在表單最後使用這個方法會比較安全，它會產生你也許遺忘的欄位，像是隱藏欄位
+以及 Symfony2 表單 CSRF 權杖。
 
 .. note::
 
-    Cross-site request forgery (CSRF) is explained in details in the
-    `Forms chapter <http://symfony.com/doc/current/book/forms.html#csrf-protection>`_
-    of the Symfony2 book.
+    跨網站偽造請求 (CSRF) 在 Symfony2 手冊的
+    `表單章節 <http://symfony.com/doc/current/book/forms.html#csrf-protection>`_
+    有詳細說明。
 
 
-Styling the form
+裝飾表單
 ~~~~~~~~~~~~~~~~
 
-If you view the contact form now via ``http://symblog.dev/app_dev.php/contact``
-you will notice it doesn't look that appealing. Lets add some styles to improve
-this look. As the styles are specific to the form within our Blog bundle
-we will create the styles in a new stylesheet within the bundle itself. Create a
-new file located at ``src/Blogger/BlogBundle/Resources/public/css/blog.css`` and
-paste in the following content.
+如果你看到 ``http://symblog.dev/app_dev.php/contact`` 的聯絡表單，你會發現它看起來不是很舒服。我們加入
+一些風格來改善畫面。由於這些風格是針對我們部落格軟體包的表單，我們會在軟體包中建立這個風格表。請建立一個
+檔案在 ``src/Blogger/BlogBundle/Resources/public/css/blog.css`` 並且貼入下面內容。
 
 .. code-block:: css
 
@@ -414,13 +392,9 @@ paste in the following content.
     form.blogger ul li { color: #ff0000; margin-bottom: 5px; }
 
 
-We need to let the application know we want to use this stylesheet. We could
-import the stylesheet into the contact template but as other templates will
-also use this stylesheet later, it makes sense to import it into the
-``BloggerBlogBundle`` layout we created in chapter 1. Open up the
-``BloggerBlogBundle`` layout located at
-``src/Blogger/BlogBundle/Resources/views/layout.html.twig`` and replace
-with the following content.
+我們需要讓應用程式知道我們想使用這個風格表，我們可以直接匯入這個風格表到聯絡樣板，不過由於其他樣板在後面也
+會用到這個風格表，比較建議將它匯入到我們在第一章建立的 ``BloggerBlogBundle`` 版面，開啟位於
+``src/Blogger/BlogBundle/Resources/views/layout.html.twig`` 的 ``BloggerBlogBundle`` 並且替換下面內容。
 
 .. code-block:: html
 
@@ -436,15 +410,12 @@ with the following content.
         Sidebar content
     {% endblock %}
 
-You can see we have defined a stylesheet block to override the stylesheet block
-defined in the parent template. However, its important to notice the call to the
-``parent`` method. This will import the content from the stylesheets block in
-the parent template located at ``app/Resources/base.html.twig``, allowing us
-to append our new stylesheet. After all, we don't want to replace the existing stylesheets.
+你可以看到我們定義了一個風格表區塊來覆蓋父樣板定義的同樣區塊，不過需要注意的是呼叫 ``parent`` 方法部份，這
+會匯入放在 ``app/Resources/base.html.twig`` 父樣板中的風格表區塊內容，讓我們可以附加新的風格，畢竟我們並不
+想替換已經存在的風格表。
 
-In order for the ``asset`` function to correctly link up the the resource we need to
-copy over or link the bundle resources into the applications ``web`` folder. This can
-be done with the following
+為了要讓 ``asset`` 方法正確連結到相關資源，我們需要將軟體包資源複製或是連結到應用程式的 ``web`` 資料夾，這
+可以這樣子做。
 
 .. code-block:: bash
 
@@ -452,18 +423,16 @@ be done with the following
 
 .. note::
 
-    If you are using an Operating System that doesn't support symlinks such as
-    Windows you will need to drop the symlink option as follows.
+    如果你使用的作業系統不支援符號連結，像是 Windows ，你會需要拿掉符號連結選項。
 
     .. code-block:: bash
 
         php app/console assets:install web
 
-    This method will actually copy the resources from the bundles ``public`` folder into the
-    applications ``web`` folder. As the files are actually copied, you will need to run
-    this task every time you make a change to a bundles public resource.
+    這個方法會實際從軟體包的 ``public`` 資料夾複製資源到應用程式的 ``web`` 資料夾，因為檔案是真的複製過去，
+    你會需要在每次異動軟體包資源時執行這個指令。
 
-Now if you refresh the contact page the form will be beautifully styled.
+現在如果重新整理畫面會看到表單有比較漂亮的風格了。
 
 .. image:: /_static/images/part_2/contact.jpg
     :align: center
@@ -471,35 +440,25 @@ Now if you refresh the contact page the form will be beautifully styled.
 
 .. tip::
 
-    While the ``asset`` function provides the functionality we require to use
-    resources, there is a better alternative for this. The
-    `Assetic <https://github.com/kriswallsmith/assetic>`_ library by
-    `Kris Wallsmith <https://github.com/kriswallsmith>`_ is bundled
-    with the Symfony2 standard distribution by default. This library
-    provides asset management far beyond the standard Symfony2 capabilities.
-    Assetic allows us to run filters on assets to automatically combine,
-    minify and gzip them. It can also run compression filters on images. Assetic
-    further allows us to reference resources directly within the bundles public
-    folder without having to run the ``assets:install`` task. We will explore the
-    use of Assetic in later chapters.
+    除了 ``asset`` 方法提供了我們在使用資源需要的功能，其實還有一個更好的方法。 `Kris Wallsmith <https://github.com/kriswallsmith>`_
+    製作了一個函式庫 `Assetic <https://github.com/kriswallsmith/assetic>`_ ，預設就放在 Symfony2 標準版本中。
+    這個函式庫提供比標準 Symfony2 方式更好的資源管理效果， Assetic 讓我們在資源中執行過濾器來自動整合、最小
+    化與壓縮，它還能在圖片檔案執行壓縮過濾器。 Assetic 讓我們在軟體包的公開資料夾直接參考資源，而不需要執行
+    ``assets:install`` 指令，我們在後面章節會做更多介紹。
 
-Failure to submit
+提交失敗
 -----------------
 
-The eager ones among you may have already tried to submit the form to be
-greeted with a Symfony2 error.
+如果動作快一點，你也許已經試著送出表單，然後看到 Symfony2 的錯誤訊息。
 
 .. image:: /_static/images/part_2/post_error.jpg
     :align: center
     :alt: No route found for "POST /contact": Method Not Allowed (Allow: GET, HEAD)
 
-This error is telling us that there is no route to match ``/contact``
-for the HTTP method POST. The route only accepts GET and HEAD requests.
-This is because we configured our route with the method requirement of
-GET.
+這個錯誤告訴我們沒有網址路徑符合 ``/contact`` 的 HTTP POST 方法，目前網址路徑只接受 GET 與 HEAD 請求。這是
+因為我們設定了這個網址路徑需要透過 GET 方式。
 
-Lets update the contact route located at
-``src/Blogger/BlogBundle/Resources/config/routing.yml`` to also allow POST requests.
+我們來更新 ``src/Blogger/BlogBundle/Resources/config/routing.yml`` 的網址路徑來接受 POST 請求。
 
 .. code-block:: yaml
 
@@ -512,27 +471,20 @@ Lets update the contact route located at
 
 .. tip::
 
-    You maybe wondering why the route would allow the HEAD method when only
-    GET was specified. This is because HEAD is a GET request
-    but only the HTTP Headers are returned.
+    你也許想知道為什麼網址路徑在指定 GET 時還允許 HEAD 方法，因為 HEAD 就是一個 GET 請求，不過只會傳回
+    HTTP Headers 。
 
-Now when you submit the form it should function as expected, although expected
-doesn't actually do much yet. The page will just redirect you back to the contact
-form.
+現在當你上傳表單時，應該會以預期的方式運作，雖然預期還沒實際做那麼多。這個頁面會將你引導回聯絡表單。
 
-Validators
+驗證
 ----------
 
-The Symfony2 validator allows us to perform the task of data validation. Validation
-is a common task when dealing with data from forms. Validation also needs to be
-performed on data before it is submitted to a database. The Symfony2 validator
-allows us to separate our validation logic away from the components that may use it,
-such as the Form component or the Database component. This approach means we have one
-set of validation rules for an object.
+Symfony2 的驗證器讓我們執行資料驗證的工作，在處理表單送過來的資料時驗證是常見的任務。這個驗證在資料送入
+資料庫時也需要執行， Symfony2 驗證器讓我們從可能用到的元件中分離驗證邏輯，像是表單元件或資料庫元件。這個
+方法表示我們對一個物件會有一組驗證規則。
 
-Let's begin by updating the ``Enquiry`` entity located at
-``src/Blogger/BlogBundle/Entity/Enquiry.php`` to specify some Validators.
-Ensure you add the 5 new ``use`` statements at the top of the file.
+讓我們開始更新放在 ``src/Blogger/BlogBundle/Entity/Enquiry.php`` 的 ``Enquiry`` 實體來指定一些驗證器，
+先確認你在檔案最上方加入了那 5 個 ``use`` 語法。
 
 .. code-block:: php
 
@@ -567,29 +519,21 @@ Ensure you add the 5 new ``use`` statements at the top of the file.
 
     }
 
-To define the validators we must implement the static method
-``loadValidatorMetadata``. This provides us with an object of
-``ClassMetadata``. We can use this object to set property constraints
-on our entity members. The first statement applies the ``NotBlank``
-constraint to the ``name`` member. The ``NotBlank`` validator is as simple
-as it sounds, it will only return ``true`` if the value it is validating is
-not empty. Next we setup validation for the ``email`` member. The Symfony2
-Validator service provides a validator for
-`emails <http://symfony.com/doc/current/reference/constraints/Email.html>`_
-that will even check MX records to ensure the domain is valid. On the ``subject``
-member we want to set a ``NotBlank`` and a ``MaxLength`` constraint.
-You can apply as many validators to a member as you wish.
+要定義驗證器，我們需要實做靜態方法 ``loadValidatorMetadata`` ，它提供我們一個 ``ClassMetadata`` 物件，
+我們可以使用這個物件來為實體屬性設定正確的條件。第一個語法在 ``name`` 屬性套用了 ``NotBlank`` 條件，這
+個 ``NotBlank`` 驗證器跟字面上看來一樣簡單，它只會在驗證的資料不是空白時傳回 ``true`` 。接著我們設定
+``email`` 屬性的驗證， Symfony2 驗證器服務提供了一個針對
+`emails <http://symfony.com/doc/current/reference/constraints/Email.html>`_ 的驗證器，它甚至可以檢查
+MX 記錄檔來確保網址是正確的。在 ``subject`` 屬性我們想要設定一個 ``NotBlank`` 與一個 ``MaxLength`` 條件
+，你可以針對一個屬性設定數個你想要使用的驗證器。
 
-A full list of
-`validator constrains <http://symfony.com/doc/current/reference/constraints.html>`_
-is available in the Symfony2 reference documents. It is also possible to
-`create custom validators <http://symfony.com/doc/current/cookbook/validation/custom_constraint.html>`_.
+`驗證器條件 <http://symfony.com/doc/current/reference/constraints.html>`_ 的完整清單可以在 Symfony2
+參考文件找到，當然你也能夠
+`建立自訂驗證器 <http://symfony.com/doc/current/cookbook/validation/custom_constraint.html>`_ 。
 
-Now when you submit the contact form, your submitted data will be passed through the
-validation constraints. Try typing in an invalid email address. You
-should see an error message informing you that the email address is invalid. Each
-validator provides a default message that can be overridden if required.
-To change the message output by the email validator you would do the following.
+現在當你送出聯絡表單，你所送出的資料會被送到驗證限制，試著輸入一個錯誤的信箱，你應該可以看到一個錯誤訊息
+告訴你信箱是錯誤的。每個驗證器提供了一個預設訊息，如果需要可以直接覆寫。要修改信箱驗證的輸出訊息可以這樣
+子做：
 
 .. code-block:: php
 
@@ -599,32 +543,26 @@ To change the message output by the email validator you would do the following.
 
 .. tip::
 
-    If you are using a browser that supports HTML5 (it is likely you are)
-    you will be prompted with HTML5 messages enforcing certain constraints.
-    This is client side validation and Symfony2 will set suitable HTML5 constraints
-    based on your ``Entity`` metadata. You can see this on the email element. The
-    output HTML is
+    如果你使用了一個支援 HTML5 的瀏覽器（通常是有），它會用 HTML5 訊息提醒必需要符合這個條件。這是用戶端
+    驗證， Symfony2 會基於你的 ``Entity`` 後設資料設定適合的 HTML5 條件。在 email 元素你可以看到輸出的
+    HTML 像這樣。
 
     .. code-block:: html
 
         <input type="email" value="" required="required" name="contact[email]" id="contact_email">
 
-    It has used one of the new HTML5 Input type fields, email and has set the required
-    attribute. Client side validation is great in that it doesn't require a round
-    trip to the server to validate the form. However, client side validation
-    should not be used alone. You should always validate submitted data server
-    side as it's quite easy for a user to by-pass the client side validation.
+    它使用了新的 HTML5 輸入類型之一，包括 email 與設定 required 屬性。用戶端驗證的好處是它不需要在驗證表
+    單時與伺服器來來回回，不過不能夠只靠用戶端的驗證，你應該要驗證所有送到伺服器端的資料，因為使用者可以輕
+    易跳過用戶端的驗證。
 
-Sending the email
+發送信件
 -----------------
 
-While our contact form will allow users to submit enquiries, nothing actually happens
-with them yet. Let's update the controller to send an email to the blog webmaster.
-Symfony2 comes complete with the `Swift Mailer <http://swiftmailer.org/>`_
-library for sending emails. Swift Mailer is a very powerful library,
-we will only scratch the surface of what this library can perform.
+我們的聯絡表單是讓使用者發出諮詢，不過現在還沒有發生，我們更新 controller 來送出信件給網站管理員。 Symfony2
+包含了完整的 `Swift Mailer <http://swiftmailer.org/>`_ 函式庫來寄送郵件，它非常強大，我們只會介紹這個函式
+庫的一些表面工夫。
 
-Configure Swift Mailer settings
+設定 Swift Mailer
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Swift Mailer is already configured out of the box to work in the Symfony2 Standard
