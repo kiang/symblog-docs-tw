@@ -1,3 +1,4 @@
 *.komodoproject
 *.sublime*
 _build/*
+_exts/configurationblock.pyc
