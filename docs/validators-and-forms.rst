@@ -802,4 +802,3 @@ controller ，這樣一來我們就可以輕易的重複運用這個數值在其
 
 接著我們會介紹這個教學的重點，也就是 Model 。我們會介紹 Doctrine 2 並且用它來定義部落格 Model 。我們也會建立檢視部落格頁面以及探討資料
 裝置的概念。
-page and explore the concept of Data fixtures .
