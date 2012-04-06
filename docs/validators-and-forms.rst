@@ -565,10 +565,8 @@ MX 記錄檔來確保網址是正確的。在 ``subject`` 屬性我們想要設�
 設定 Swift Mailer
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Swift Mailer is already configured out of the box to work in the Symfony2 Standard
-Distribution, however we need to configure some settings regarding sending methods,
-and credentials. Open up the parameters file located at ``app/config/parameters.ini`` and
-find the settings prefixed with ``mailer_``.
+Swift Mailer 在 Symfony2 標準版原本就設定好可以運作，不過我們還是需要設定一些發送信件的參數與認證資訊。開啟
+設定檔 ``app/config/parameters.ini`` 找到 ``mailer_`` 開頭的設定。
 
 .. code-block:: text
 
@@ -577,10 +575,8 @@ find the settings prefixed with ``mailer_``.
     mailer_user=""
     mailer_password=""
 
-Swift Mailer provides a number of methods for sending emails, including using an
-SMTP server, using a local install of sendmail, or even using a GMail account.
-For simplicity we will use a GMail account. Update the parameters with the following,
-substituting your username and password where necessary.
+Swift Mailer 提供許多發送信件的方式，包括使用 SMTP 伺服器、使用主機裝好的 sendmail 或甚至透過一個 GMail 帳號。
+為了要簡單化，我們使用一個 GMail 帳號，請像下面這樣更新參數，記得調整為你自己的帳號、密碼。
 
 .. code-block:: text
 
@@ -593,24 +589,16 @@ substituting your username and password where necessary.
 
 .. warning::
 
-    Be careful if you are using a Version Control System (VCS) like Git for
-    your project, especially if your repository is publicly accessible as your
-    GMail username and password will be committed to the repository and will be
-    available for anybody to see. You should make sure the file
-    ``app/config/parameters.ini`` is added to the ignore list of your VCS. A common
-    approach to this problem is to suffix the file name of the file
-    that has sensitive information such as ``app/config/parameters.ini`` with ``.dist``.
-    You then provide sensible defaults for the settings in this file and add the
-    actual file, i.e. ``app/config/parameters.ini`` to you VCS ignore list.
-    You can then deploy the ``*.dist`` file with your project and allow the developer to
-    remove the ``.dist`` extension and fill in the required settings.
+    如果你有使用版本控制系統 (VCS) ，請一定要注意，特別是在你的檔案庫可以公開存取時，因為你的 GMail 帳號與密碼會
+    被放進檔案庫，任何人都看得到。你需要確認 ``app/config/parameters.ini`` 是否已經加入 VCS 的忽略清單。一個常見
+    的解決方法是在放有敏感資訊的檔案名稱後面加入一些綴字，像是在 ``app/config/parameters.ini`` 後面加 ``.dist``
+    。接著在這個檔案提供一些預設的設定，把實際的設定檔 ``app/config/parameters.ini`` 加入到 VCS 的忽略清單。接著
+    可以佈署 ``*.dist`` 檔案到專案中，讓開發者移除 ``.dist`` 副檔名然後填入需要的設定。
 
-Update the controller
+更新 controller
 ~~~~~~~~~~~~~~~~~~~~~
 
-Update the ``Page`` controller located at
-``src/Blogger/BlogBundle/Controller/PageController.php``
-with the content below.
+用下面內容更新放在 ``src/Blogger/BlogBundle/Controller/PageController.php`` 的 ``Page`` controller 。
 
 .. code-block:: php
 
@@ -637,31 +625,21 @@ with the content below.
         // ..
     }
 
-When you have used the Swift Mailer library to create a ``Swift_Message`` instance,
-that can be sent as an email.
+當你使用 Swift Mailer 函式庫建立了一個 ``Swift_Message`` 實例，就可以開始發信。
 
 .. note::
 
-    As the Swift Mailer library does not use namespaces, we need to
-    prefix the Swift Mailer class with a ``\``. This tells PHP
-    to escape back to the
-    `global space <http://www.php.net/manual/en/language.namespaces.global.php>`_.
-    You will need to prefix all classes and functions that are not
-    namespaced with a ``\``. If you did not place this prefix before the
-    ``Swift_Message`` class PHP would look for the class in the
-    current namespace, which in this example is
-    ``Blogger\BlogBundle\Controller``, causing an error to be thrown.
+    由於 Swift Mailer 函式庫並沒有使用命名空間，我們需要在 Swift Mailer 類別名稱前面放一個 ``\`` ，讓 PHP 回到
+    `全域空間 <http://www.php.net/manual/en/language.namespaces.global.php>`_ 。所有沒使用命名空間的類別與函式都
+    需要在前面加個 ``\`` ，如果在 ``Swift_Message`` 類別前面沒有加這個符號， PHP 會將這個類別視為使用目前的命名空間
+    ，像這裡就是 ``Blogger\BlogBundle\Controller`` ，就會造成一個錯誤。
 
-We have also set a ``flash`` message on the session. Flash messages are messages
-that persist for exactly one request. After that they are
-automatically cleaned up by Symfony2. The ``flash`` message will be displayed in the
-contact template to inform the user the enquiry has been sent. As ``flash`` message
-only persist for exactly one request, they are perfect for notifying the user of
-the success of the previous actions.
+我們也在 session 設定了一個 ``flash`` 訊息，閃光訊息是只會保留一個請求週期的訊息，在這之後就會自動被 Symfony2 清除。
+這個 ``flash`` 訊息會在聯絡樣板顯示，提醒使用者諮詢的內容已經送出。由於 ``flash`` 訊息只保留一個請求週期，它們非常適
+合用來提醒使用者上個操作已經成功。
 
-To display the ``flash`` message we need to update the contact template
-located at ``src/Blogger/BlogBundle/Resources/views/Page/contact.html.twig``.
-Update the content of the template with the following.
+要顯示 ``flash`` 訊息，我們需要更新位於 ``src/Blogger/BlogBundle/Resources/views/Page/contact.html.twig`` 的聯絡
+樣板，用下面內容去取代。
 
 .. code-block:: html
 
@@ -682,21 +660,15 @@ Update the content of the template with the following.
 
     {# rest of template ... #}
 
-This checks to see if a ``flash`` message with the identifier
-'blogger-notice' is set and outputs it.
+這會檢查 ``flash`` 訊息中是否有識別字元為 'blogger-notice' 的訊息，並且將它輸出。
 
-Register webmaster email
+註冊網站管理員信箱
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Symfony2 provides a configuration system that we can use to define our own
-settings. We will use this system to set the webmaster email address rather
-than hard coding the address in the controller above. That way we can easily
-reuse this value in other places without code duplication. Further, when your
-blog has generated so much traffic the enquiries become too much for you
-to deal with, you can easily update the email address to pass the emails
-onto your assistant. Create a new file at
-``src/Blogger/BlogBundle/Resources/config/config.yml`` and paste in the
-following.
+Symfony2 提供一個設定系統，我們可以用來定義自己的設定。我們會用這個系統來設定網站管理員的信箱，而不是直接寫入到上面的
+controller ，這樣一來我們就可以輕易的重複運用這個數值在其他地方，而不需要複製重複的程式碼。進一步的，當你的部落格流量
+非常大且諮詢數量多到你無法處理，你可以輕易更新這個信箱來將它轉給你的助理。建立一個檔案放在
+``src/Blogger/BlogBundle/Resources/config/config.yml`` 並且貼入下面內容。
 
 .. code-block:: yaml
 
@@ -705,16 +677,12 @@ following.
         # Blogger contact email address
         blogger_blog.emails.contact_email: contact@email.com
 
-When defining parameters it is good practice to break the parameter name into a number
-of components. The first part should be a lower cased version of the bundle name
-using underscores to separate words. In our example we have transformed the
-bundle ``BloggerBlogBundle`` into ``blogger_blog``. The remaining part of the
-parameter name can contain any number of parts separated by the . (period) character.
-This allows us to logically group parameters together.
+定義參數時，建議可以將參數名稱切割為多個元件，第一個部份是小寫的軟體包名稱，使用底線來區隔多個單字。在我們的範例中，我們
+將 ``BloggerBlogBundle`` 轉換為 ``blogger_blog`` ，而其他部份的參數名稱用多個以小數點 . 字元分隔，這讓我們可以在邏輯上
+把參數組合在一起。
 
-In order for the Symfony2 application to use the new parameters, we need to import
-the config into the main application config file located at ``app/config/config.yml``.
-To achieve this, update the ``imports`` directive at the top of the file to the following.
+要讓 Symfony2 應用使用新參數，我們需要將設定匯入到主要的應用程式設定，檔案放在 ``app/config/config.yml`` 。要做到這個部
+份，更新檔案最上面的 ``imports`` 指令成下面這樣。
 
 .. code-block:: yaml
 
@@ -723,11 +691,10 @@ To achieve this, update the ``imports`` directive at the top of the file to the 
         # .. existing import here
         - { resource: @BloggerBlogBundle/Resources/config/config.yml }
 
-The import path is the physical location of the file on disk. The
-``@BloggerBlogBundle`` directive will resolve to the path of the
-``BloggerBlogBundle`` which is ``src/Blogger/BlogBundle``.
+匯入路徑是檔案的實體位置， ``@BloggerBlogBundle`` 指令會解決 ``BloggerBlogBundle`` 對應到路徑 ``src/Blogger/BlogBundle``
+之類的問題。
 
-Finally let's update the contact action to use the parameter.
+最後讓我們更新聯繫方法來使用這個參數。
 
 .. code-block:: php
 
@@ -752,10 +719,8 @@ Finally let's update the contact action to use the parameter.
 
 .. tip::
 
-    As the config file is imported at the top of the application configuration file
-    we can easily override any of the imported parameters in the application.
-    For example, adding the following to the bottom of ``app/config/config.yml``
-    would override the bundle set value for the parameter.
+    由於設定檔案在應用程式設定檔最上方匯入，我們在應用程式中可以輕易覆蓋任何匯入的參數，例如將下面內容加入到 ``app/config/config.yml``
+    最下面會覆蓋這個參數在軟體包的設定。
 
     .. code-block:: yaml
 
@@ -764,22 +729,19 @@ Finally let's update the contact action to use the parameter.
             # Blogger contact email address
             blogger_blog.emails.contact_email: assistant@email.com
 
-    These customisation allow for the bundle to provide sensible defaults for values
-    where the application can override them.
+    這些客製允許軟體包提供一些敏感資料的預設值，讓應用程式可以覆寫過去。
 
 .. note::
 
-    While its easy to create bundle configuration parameters using this method
-    Symfony2 also provides a method where you
-    `expose a Semantic Configuration <http://symfony.com/doc/current/cookbook/bundles/extension.html>`_
-    for a bundle. We will explore this method later in the tutorial.
+    雖然用這個方法可以輕易建立軟體包設定參數， Symfony2 還提供軟體包一個方法
+    `揭露一個語意設定 <http://symfony.com/doc/current/cookbook/bundles/extension.html>`_
+    ，我們在後面的教學會介紹它。
 
-Create the Email template
+建立信件樣板
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The body of the email is set to render a template. Create this template at
-``src/Blogger/BlogBundle/Resources/views/Page/contactEmail.txt.twig`` and add
-the following.
+信件內容設定為透過一個樣板產生，建立一個樣板在 ``src/Blogger/BlogBundle/Resources/views/Page/contactEmail.txt.twig`` 並且放入
+下面內容。
 
 .. code-block:: text
 
@@ -791,26 +753,18 @@ the following.
     Body:
     {{ enquiry.body }}
 
-The content of the email is just the enquiry the user submitted.
+信件內容只是使用者送出的諮詢內容。
 
-You may have also noticed the extension of this template is different to the other
-templates we have created. It uses the extension ``.txt.twig``. The first part
-of the extension, ``.txt`` specifies the format of the file to generate.
-Common formats here include, .txt, .html, .css, .js, .xml and .json. The last part of the
-extension specifies which templating engine to use, in this case Twig. An extension
-of ``.php`` would use PHP to render the template instead.
+你也許會注意到這個樣板的副檔名跟我們之前建立的不一樣，它使用 ``.txt.twig`` 作為副檔名。副檔名的第一部份 ``.txt`` 指定了這個檔案要
+產生的格式，常見的格式包括 .txt 、 .html 、 .css 、 .js 、 .xml 與 .json ，而副檔名的最後則是指定要使用的樣板引擎，這裡是使用 Twig
+。副檔名如果是 ``.php`` 就會改使用 PHP 來產生樣板。
 
-When you now submit an enquiry, an email will be sent to the address set in the
-``blogger_blog.emails.contact_email`` parameter.
+現在當你送出一個諮詢，一封信件就會寄送到 ``blogger_blog.emails.contact_email`` 參數所設定的信箱。
 
 .. tip::
 
-    Symfony2 allows us to configure the behavior of the Swift Mailer library
-    while operating in different Symfony2 environments. We can already see this
-    in use for the ``test`` environment. By default, the Symfony 2 Standard
-    Distribution configures Swift Mailer to not send emails when running in the ``test``
-    environment. This is set in the test configuration file located at
-    ``app/config/config_test.yml``.
+    Symfony2 允許我們在不同的 Symfony2 環境設定 Swift Mailer 函式庫的行為，我們已經看到這個用在 ``test`` 環境。 Symfony 2 標準版
+    設定的 Swift Mailer 是不會在執行 ``test`` 環境時發出信件，這是設定在 ``app/config/config_test.yml`` 的環境中。
 
     .. code-block:: yaml
 
@@ -818,28 +772,21 @@ When you now submit an enquiry, an email will be sent to the address set in the
         swiftmailer:
             disable_delivery: true
 
-    It could be useful to duplicate this functionality for the ``dev`` environment.
-    After all, you don't want to accidentally send an email to the wrong email address
-    while developing. To achieve this, add the above configuration to the
-    ``dev`` configuration file located at ``app/config/config_dev.yml``.
+    在 ``dev`` 環境複製這個功能很實用，畢竟你不會想在開發過程中意外送出信件到錯誤的信箱。要做到這樣可以將上面的設定加入到
+    ``app/config/config_dev.yml`` 的 ``dev`` 部份。
 
-    You may be wondering how you can now test that the emails are being sent, and
-    more specifically the content of them, seeing as they will no longer be delivered
-    to an actual email address. Symfony2 has a solution for this via the developer
-    toolbar. When an email is sent an email notification icon will appear in the toolbar
-    that has all the information about the email that Swift Mailer would have delivered.
+    你也許想知道現在如何測試信件是否寄出，特別是它們的內容為何，因為它們不會再實際發送信件到信箱。 Symfony2 有一個解決方案是透過開發
+    工具列，當有信件送出時，工具列會出現一個信件提醒圖示，它會包含 Swift Mailer 送出信件的所有資訊。
 
     .. image:: /_static/images/part_2/email_notifications.jpg
         :align: center
         :alt: Symfony2 toolbar show email notifications
 
-    If you perform a redirect after sending an email, like we do for the contact form,
-    you will need to set the ``intercept_redirects`` setting in ``app/config/config_dev.yml``
-    to true in order to see the email notification in the toolbar.
+    如果你在發送信件後執行頁面引導，就像我們在這個聯絡表單做的一樣，你會需要在 ``app/config/config_dev.yml`` 設定 ``intercept_redirects``
+    為 true ，這樣才能在工具列看到信件提醒。
 
-    We could have instead configured Swift Mailer to send all emails to a specific
-    email address in the ``dev`` environment by placing the following
-    setting in the ``dev`` configuration file located at ``app/config/config_dev.yml``.
+    我們也可以設定 Swift Mailer 在 ``dev`` 環境時將所有信件寄到指定信箱，只要將下面內容放到 ``app/config/config_dev.yml`` 的 ``dev``
+    設定中。
 
     .. code-block:: yaml
 
@@ -847,15 +794,12 @@ When you now submit an enquiry, an email will be sent to the address set in the
         swiftmailer:
             delivery_address:  development@symblog.dev
 
-Conclusion
+結論
 ----------
 
-We have demonstrated the concepts behind creating one of the most fundamental part of any
-website: forms. Symfony2 comes complete with an excellent Validator and Form library
-that allows us to separate validation logic out of the form so it can be used
-by other parts of the application (such as the Model). We were also introduced to
-setting custom configuration settings that can be read into our application.
+我們已經展示了建立任何網站都會需要的基礎，表單，背後的概念。 Symfony2 提供了非常好用的驗證與表單函式庫，讓我們可以將驗證邏輯從表單獨立
+出來，讓它可以被用在應用程式的其他部份（像是 Model）。我們也介紹了自訂參數設定如何在我們的應用中使用。
 
-Next we will look at a big part of this tutorial, The Model. We will introduce
-Doctrine 2 and use it to define the blog Model. We will also build the show blog
+接著我們會介紹這個教學的重點，也就是 Model 。我們會介紹 Doctrine 2 並且用它來定義部落格 Model 。我們也會建立檢視部落格頁面以及探討資料
+裝置的概念。
 page and explore the concept of Data fixtures .
