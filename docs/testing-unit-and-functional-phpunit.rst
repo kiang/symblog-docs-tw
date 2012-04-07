@@ -1,99 +1,67 @@
-[Part 6] - Testing: Unit and Functional with PHPUnit
+[Part 6] - 測試：使用 PHPUnit 進行單元與功能測試
 ====================================================
 
-Overview
+概要
 --------
 
-So far we have explored a good amount of ground looking at a number of core
-concepts with regards to Symfony2 development. Before we continue adding
-features it is time to introduce testing. We will look at how to test individual
-functions with unit testing and how to ensure multiple components are working
-correctly together with functional testing. The PHP testing library `PHPUnit
-<http://www.phpunit.de/manual/current/en/>`_ will be covered as this library is
-at the centre of the Symfony2 tests. As testing is a large topic it will also be
-covered in later chapters. By the end of this chapter you will have written a
-number of tests covering both unit and functional testing. You will have simulated
-browser requests, populated forms with data, and checked responses to ensure
-the website pages are outputting correctly. You will also have checked how much coverage
-your tests have on your applications code base.
+到目前為止，我們已經試過了許多 Symfony2 開發的核心概念基礎，在我們開始加入新功能前，該是時候來介紹測試
+部份。我們會看看如何針對個別方法進行單元測試以及確保多個元件可以一起正確運作的功能性測試。我們會介紹
+PHP 測試函式庫 `PHPUnit <http://www.phpunit.de/manual/current/en/>`_ ，因為它是 Symfony2 測試功能的
+核心。由於測試是一個很大的主題，在後面章節也會談到。在這個章節完成後，你會完成一些測試程式，包括單元測試
+以及功能性測試。你會用到模擬的瀏覽器請求、將資料放入表單以及檢查過的回應來確保網頁可以正確輸出，你也會看
+到測試程式在應用程式基礎上涵蓋了多大範圍。
 
-Testing in Symfony2
+在 Symfony2 的測試
 -------------------
 
-`PHPUnit <http://www.phpunit.de/manual/current/en/>`_ has become the "de facto
-standard" for writing tests in PHP, so learning it will benefit you in all your
-PHP projects. Lets also not forget that most of the topics covered in this
-chapter are language independent and so can be transferred to other languages
-you. 
+`PHPUnit <http://www.phpunit.de/manual/current/en/>`_ 已經自然形成了 PHP 測試程式的一個標準，所以學著
+用它對於所有 PHP 專案都有幫助，也別忘了這個章節大部分主題都沒有區分程式語言，所以可以轉移到其他語言使用。
 
 .. tip::
 
-    If you are planning on writing your own Open Source Symfony2 bundles, 
-    you are much more likely to receive interest if your bundle is well
-    tested (and documented). Have a look at the existing Symfony2 bundles available
-    at `Symfony2Bundles <http://symfony2bundles.org/>`_.
+    如果你計畫寫一個自己的開放原始碼 Symfony2 軟體包，如果你的軟體包經過了完整的測試（與製作文件），預期
+    會有比較多人感興趣。可以看看 `Symfony2Bundles <http://symfony2bundles.org/>`_ 上面已經存在的
+    Symfony2 軟體包。
 
-Unit Testing
+單元測試
 ~~~~~~~~~~~~
 
-Unit testing is concerned with ensuring individual units of code function
-correctly when used in isolation. In an Object Oriented code base like Symfony2,
-a unit would be a class and its methods. For example, we could write tests for
-the ``Blog`` and ``Comment`` Entity classes. When writing unit tests, the test
-cases should be written independently of other test cases, i.e., the result of test
-case B should not depend on the result of test case A. It is useful when unit testing
-to be able to create mock objects that allow you to easily unit test
-functions that have external dependencies. Mocking allows you to simulate a function
-call instead of actually executing it. An example of this
-would be unit testing a class that wraps up an external API. The API class may
-use a transport layer for communicating with the external API. We could mock the
-request method of the transport layer to return the results we specify, rather
-than actually hitting the external API. Unit testing does not test that the
-components of an application function correctly together, this is covered by the
-next topic, functional testing.
+單元測試的目的是確保程式碼功能的個別單元在獨立使用時的正確性，在一個像 Symfony2 這樣物件導向的程式架構，
+一個單元可能是一個類別與他的方法。例如，我們可以設計測試程式給 ``Blog`` 與 ``Comment`` 實體類別。在設計
+單元測試時，測試案例應該要被設計為不需要依靠其他程式就能獨立運作，例如測試案例 B 的結果不應該依賴測試案例
+A 的結果。單元測試時有個實用的方法是模擬物件，讓你可以輕易針對依賴外部程式的功能進行單元測試，透過這個方式
+可以讓你模擬一個方法的執行，而不需要實際執行它，例如一個類別打包了外部 API ，我們要針對它做單元測試時，我
+們可以模擬傳輸層的請求方法來傳回我們指定的結果，而不需要實際接觸外部 API 。單元測試並不針對應用程式功能相
+關元件能夠一起運作，這會在下一個主題的功能性測試中討論。
 
-Functional Testing
+功能性測試
 ~~~~~~~~~~~~~~~~~~
 
-Functional testing checks the integration of different components within the
-application, such as routing, controllers, and views. Functional tests are
-similar to the manual tests you would run yourself in the browser such as requesting
-the homepage, clicking a blog link and checking the correct blog is shown.
-Functional testing provides you with the ability to automate this process.
-Symfony2 comes complete with a number of useful classes that assist in functional testing
-including a ``Client`` that is able to requests pages and submit forms and DOM ``Crawler``
-that we can use to traverse the ``Response`` from the client.
+功能性測試檢查應用程式中不同元件結合在一起的情況，像是網址路徑、 controllers 與 views 。功能性測試有點像
+是你自己會透過瀏覽器手動進行的測試，像是請求首頁、點選部落格連結以及檢查是否顯示了正確的文章。功能性測試讓
+你可以將這個程序自動化， Symfony2 提供了完整且實用的類別來協助你進行功能性測試，包括一個 ``Client`` 可以
+用來請求頁面、送出表單與 DOM ``Crawler`` 來解讀來自用戶端的 ``Response`` 。
 
 .. tip::
 
-    There are a number of software development process that are driven by testing.
-    These include processes such as Test Driven Development (TDD) and Behavioral
-    Driven Development (BDD). While these are out side the scope of this tutorial
-    you should be aware of the library written by `everzet
-    <https://twitter.com/#!/everzet>`_ that facilitates BDD called `Behat
-    <http://behat.org/>`_. There is also a Symfony2 `BehatBundle
-    <http://docs.behat.org/bundle/index.html>`_ available to easily integrate Behat
-    into your Symfony2 project.
+    許多軟體開發流程是測試導向的，像是測試驅動開發 (TDD) 與行為驅動開發 (BDD) 。不過這些已經超過本篇教學的
+    範圍，你可以參考 `everzet <https://twitter.com/#!/everzet>`_ 設計的 BDD 函式庫
+    `Behat <http://behat.org/>`_ ，已經有一個 Symfony2 `BehatBundle <http://docs.behat.org/bundle/index.html>`_
+    可以讓你將 Behat 整合到自己的 Symfony2 專案。
 
 PHPUnit
 -------
 
-As stated above, Symfony2 tests are written using PHPUnit. You will need to
-install PHPUnit in order to run these tests and the tests from this chapter.
-For detailed `installation instructions
-<http://www.phpunit.de/manual/current/en/installation.html>`_ refer to the
-official documentation on the PHPUnit website. To run the tests in Symfony2 you
-need to install PHPUnit 3.5.11 or later. PHPUnit is a very large testing library, so references
-to the official documentation will be made where additional reading can be
-found. 
+如同上面提到的， Symfony2 的測試程式是以 PHPUnit 設計，你需要安裝 PHPUnit 來執行這些測試，以及我們在這個章
+節產生的測試程式。完整的 `安裝教學 <http://www.phpunit.de/manual/current/en/installation.html>`_ 可以參考
+PHPUnit 官方網站的文件。要執行 Symfony2 的測試，你需要安裝 PHPUnit 3.5.11 或更新版本， PHPUnit 是一個非常
+大的測試函式庫，所以有需要的時候可以參考官方文件的說明。
 
-Assertions
+主張
 ~~~~~~~~~~
 
-Writing tests is concerened with checking that the actual test result is equal
-to the expected test result. There are a number of assertion methods available
-in PHPUnit to assist you with this task. Some of the common assertion
-methods you will use are listed below.
+設計測試程式的目的是檢查實際測試結果是否與預期測試結果相同，在 PHPUnit 有許多主張方法協助你處理這個部份。部份
+你會用到的常見主張方法列在下面。
 
 .. code-block:: php
 
@@ -112,25 +80,22 @@ methods you will use are listed below.
     // Check array contains value 'php'
     $this->assertContains('php', array('php', 'ruby', 'c++', 'JavaScript'));
 
-A full list of
-`assertions <http://www.phpunit.de/manual/current/en/writing-tests-for-phpunit.html#writing-tests-for-phpunit.assertions>`_
-is available in the PHPUnit documentation.
+完整的
+`主張方法 <http://www.phpunit.de/manual/current/en/writing-tests-for-phpunit.html#writing-tests-for-phpunit.assertions>`_
+可以參考 PHPUnit 文件。
 
-Running Symfony2 Tests
+執行 Symfony2 測試
 ----------------------
 
-Before we begin writing some tests, lets look at how we run tests in Symfony2. PHPUnit
-can be set to execute using a configuration file. In our Symfony2 project this
-file is located at ``app/phpunit.xml.dist``. As this file is suffixed with
-``.dist``, you need to copy its contents into a file called ``app/phpunit.xml``.
+在我們開始設計一些測試程式前，我們先看看如何執行在 Symfony2 中的測試。 PHPUnit可以設定為透過一個設定檔執行，在
+我們的 Symfony2 專案，這個檔案放在 ``app/phpunit.xml.dist`` 。由於這個檔案副檔名是 ``.dist`` ，你需要複製它的
+內容到一個新檔案 ``app/phpunit.xml`` 。
 
 .. tip::
 
-    If you are using a VCS such as Git, you should add the new ``app/phpunit.xml``
-    file to the VCS ignore list.
+    如果你使用了像是 Git 這樣的 VCS ，你需要將新增的 ``app/phpunit.xml`` 檔案加入到 VCS 忽略清單。
 
-If you have a look at the contents of the PHPUnit configuration file you will see the
-following.
+如果你打開 PHPUnit 的設定檔，會看到下面內容。
 
 .. code-block:: xml
 
@@ -143,15 +108,11 @@ following.
         </testsuite>
     </testsuites>
 
-The following settings configure some directories that are part of our test suite.
-When running PHPUnit it will look in the above directories for tests to run. You
-can also pass additional command line arguments to PHPUnit to run tests in
-specific directories, instead of the test suite tests. You will see how to
-achieve this later.
+這些設定有一些資料夾是我們測試程式的一部分，執行 PHPUnit 時它會檢查上面的資料夾來執行測試，你也可以傳一些額外的
+指令列參數給 PHPUnit 來在指定資料夾執行，而不是這個測試程式。後面會介紹這個部份。
 
-You will also notice the configuration is specifying the bootstrap file located at
-``app/bootstrap.php.cache``. This file is used by PHPUnit to get the testing environment
-setup.
+你也會注意到這個設定指定了放在 ``app/bootstrap.php.cache`` 的引導程序檔案，這個檔案是讓 PHPUnit 可以取得測試
+環境設定。
 
 .. code-block:: xml
 
@@ -162,27 +123,22 @@ setup.
 
 .. tip::
 
-    For more information regarding configuring PHPUnit with an XML file
-    see the
-    `PHPUnit documentation <http://www.phpunit.de/manual/current/en/organizing-tests.html#organizing-tests.xml-configuration>`_.
+    關於在 PHPUnit 使用 XML 檔案進行設定部份可以參考
+    `PHPUnit 手冊 <http://www.phpunit.de/manual/current/en/organizing-tests.html#organizing-tests.xml-configuration>`_.
 
-Running the Current Tests
+執行目前測試
 -------------------------
 
-As we used one of the Symfony2 generator tasks to create the
-``BloggerBlogBundle`` back in chapter 1, it also created a controller test for
-the ``DefaultController`` class. We can execute this test by running the
-following command from the root directory of the project. The ``-c`` option
-specifies that PHPUnit should load its configuration from the ``app`` directory.
+由於我們在第一章使用了一個 Symfony2 產生器指令來建立 ``BloggerBlogBundle`` ，它同時也為 ``DefaultController``
+類別建立了一個 controller 測試，我們可以在專案根目錄用下面指令執行這個測試， ``-c`` 選項指定了 PHPUnit 應該要從
+``app`` 目錄載入它的設定。
 
 .. code-block:: bash
 
     $ phpunit -c app
 
-Once the testing has completed you should be notified that the tests failed.
-If you look at the ``DefaultControllerTest`` class located at
-``src/Blogger/BlogBundle/Tests/Controller/DefaultControllerTest.php`` you will see
-the following content.
+測試完成後你應該會被提醒測試有錯誤，如果你看看放在 ``src/Blogger/BlogBundle/Tests/Controller/DefaultControllerTest.php``
+的 ``DefaultControllerTest`` 類別，會看到下面內容。
 
 .. code-block:: php
 
@@ -205,29 +161,21 @@ the following content.
         }
     }
 
-This is a functional test for the ``DefaultController`` class that Symfony2 generated.
-If you remember back to chapter 1, this Controller had an action that handled requests
-to ``/hello/{name}``. The fact that we removed this controller is why the above test
-is failing. Try going to the URL ``http://symblog.dev/app_dev.php/hello/Fabien`` in
-your browser. You should be informed that the route could not be found. As the
-above test makes a request to the same URL, it will also get the same response,
-hence why the test fails. Functional testing is a large part of this chapter and
-will be covered in detail later.
+這是 Symfony2 為 ``DefaultController`` 類別產生的功能性測試，如果你還記得我們在第一章提到的，這個 Controller 有
+一個方法會處理 ``/hello/{name}`` 的請求。由於我們已經刪除了這個 controller ，所以上面的測試會產生錯誤。可以試著
+在瀏覽器打開網址 ``http://symblog.dev/app_dev.php/hello/Fabien`` ，你應該會被提醒這個網址路徑不存在，因為上面
+的測試對同樣網址發出一個請求，它應該會取得同樣的回應，這就是為什麼測試出現錯誤。功能性測試在這個章節佔很大的篇幅，
+我們後面會做詳細介紹。
 
-As the ``DefaultController`` class has been removed, you can also remove this test
-class. Delete the ``DefaultControllerTest`` class located at
-``src/Blogger/BlogBundle/Tests/Controller/DefaultControllerTest.php``.
+由於 ``DefaultController`` 類別已經刪除了，你也可以刪除這個測試類別，也就是刪除放在
+``src/Blogger/BlogBundle/Tests/Controller/DefaultControllerTest.php`` 的 ``DefaultControllerTest`` 類別。
 
-Unit Testing
+單元測試
 ------------
 
-As explained previously, unit testing is concerned with testing individual units
-of your application in isolation. When writing unit tests it is recommend that you
-replicate the Bundle structure under the Tests folder. For example, if you wanted
-to test the ``Blog`` entity class located at
-``src/Blogger/BlogBundle/Entity/Blog.php`` the test file would reside at
-``src/Blogger/BlogBundle/Tests/Entity/BlogTest.php``. An example folder layout
-would be as follows.
+如同之前提到的，單元測試的目的是獨立測試應用程式的個別單元，設計單元測試時建議在測試資料夾下重現軟體包的目錄結構，
+例如如果你想要測試放在 ``src/Blogger/BlogBundle/Entity/Blog.php`` 的 ``Blog`` 實體類別，測試檔案就可以放在
+``src/Blogger/BlogBundle/Tests/Entity/BlogTest.php`` ，一個資料夾的範例就像下面這樣。
 
 .. code-block:: text
 
@@ -250,9 +198,9 @@ would be as follows.
                             Extensions/
                                 BloggerBlogExtensionTest.php
 
-Notice that each of the Test files are suffixed with Test.
+注意，每個測試檔案的名稱在最後都有 Test 。
 
-Testing the Blog Entity - Slugify method
+測試 Blog 實體 - Slugify 方法
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We begin by testing the slugify method in the ``Blog`` entity. Lets write some
