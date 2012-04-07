@@ -133,12 +133,12 @@ symblog 。 Twig 樣板引擎可以被擴充提供新的過濾器功能，並且
 平衡點必須被找尋出來以確保您的程式有效綠的被執行。首先最好將所有關聯的實體統統
 join 進來，所以你就不需要使用到延遲載入，並且你的資料庫查詢數量將維持在最低。
 然而，要記住很重要的，你從資料庫中取得越多的資訊，Doctrine 2 就得處理越多的步驟
-將這些實體物件結合起來。越多的資料表示你的伺服器得耗費越多的記憶體來除存這些實體物件。
+將這些實體物件結合起來。越多的資料表示你的伺服器得耗費越多的記憶體來儲存這些實體物件。
 
-Before moving on lets make one minor addition to the homepage template for the
-number of comments we have just added. Update the homepage template located at
-``src/Blogger/BlogBundle/Resources/views/Page/index.html.twig`` to add a link to
-show the blog comments.
+在這之前我們先針對首頁樣板我們剛剛加入的日誌文章回應進行一個小版更。更新首頁
+樣板位於
+``src/Blogger/BlogBundle/Resources/views/Page/index.html.twig`` 加入一個連結
+顯示日誌文章的回應。
 
 .. code-block:: html
 
@@ -153,21 +153,20 @@ show the blog comments.
     </footer>
     
     {# .. #}
-            
-The Sidebar
+
+側邊欄位            
 -----------
 
-Currently the sidebar of symblog is looking a bit empty. We will update this
-with 2 common blog components, the Tag Cloud and a list of the Latest Comments.
+目前 symblog 的側邊欄位看起來還是有點空虛。我們將要幫這個欄位新增兩個常用的
+部落格元件，標籤雲和最新日誌文章回應的清單。
 
-Tag Cloud
+標籤雲
 ~~~~~~~~~
 
-The Tag Cloud shows tags for each blog emphasized in a way that displays the
-more common tags bolder. To achieve this we need a way to retrieve all the tags
-for all the blogs. Lets create some new methods in the ``BlogRepository`` class
-to do this. Update the ``BlogRepository`` class located at
-``src/Blogger/BlogBundle/Repository/BlogRepository.php`` with the following.
+標籤雲顯示每個日誌文章標籤的一種方式，將常用的標籤加粗顯示。要達到這個目的，
+我們需要取得所有日誌文章的標籤。讓我們在 ``BlogRepository`` 類別中新增幾個
+新方法來實現。更新 ``BlogRepository`` 類別，位於
+``src/Blogger/BlogBundle/Repository/BlogRepository.php`` 修改如下。
 
 .. code-block:: php
 
@@ -221,15 +220,14 @@ to do this. Update the ``BlogRepository`` class located at
         return $tagWeights;
     }
 
-As the tags are stored in the database as comma separated values (CSV) we need a
-way to split them and return them as an array. This is achieved by the ``getTags()``
-method. The ``getTagWeights()`` method is then able to use an array of tags to calculate
-the weight of each tag based on its popularity within the array. The tags are also
-shuffled to randomise their display on the page.
+標籤是以逗號分隔的方式(CSV)處存在資料庫中，我們需要一個方式將他們分離並回傳成
+一個陣列。這在 ``getTags()`` 這個方法中實現了。然後 ``getTagWeights()`` 方法
+可以使用這個陣列來統計每個標籤的權重根據他們在陣列中的熱門程度資訊。標籤也隨機
+排序顯示在頁面上。
 
-Now we are able to generate the Tag Cloud, we need to display it. Create a new
-action in the ``PageController`` located at
-``src/Blogger/BlogBundle/Controller/PageController.php`` to handle the sidebar.
+現在有能力產生標籤雲了，我們需要將他顯示出來。建立一個新的動作在 ``PageController``
+中位於
+``src/Blogger/BlogBundle/Controller/PageController.php`` 來處理側邊欄位。
 
 .. code-block:: php
 
@@ -251,8 +249,8 @@ action in the ``PageController`` located at
         ));
     }
 
-The action is very simple, it uses the 2 new ``BlogRepository`` methods to generate
-the Tag Cloud, and passes this over to the view. Now lets create this view located at
+這個動作非常簡單，他使用了兩個 ``BlogRepository`` 中的新方法來產生標籤雲，並且
+將他傳遞給 view 。現在讓我們建立這個 view 位於
 ``src/Blogger/BlogBundle/Resources/views/Page/sidebar.html.twig``.
 
 .. code-block:: html
@@ -272,6 +270,7 @@ the Tag Cloud, and passes this over to the view. Now lets create this view locat
         </p>
     </section>
 
+這個樣板也十分簡單。
 The template is also very simple. It just iterates over the various tags
 setting a class to the weight of the tag. The ``for`` loop does introduce how to
 access the ``key`` and ``value`` pairs of the array, with ``tag`` being the key
