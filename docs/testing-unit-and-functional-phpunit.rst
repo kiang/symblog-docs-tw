@@ -203,9 +203,8 @@ PHPUnit 官方網站的文件。要執行 Symfony2 的測試，你需要安裝 P
 測試 Blog 實體 - Slugify 方法
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We begin by testing the slugify method in the ``Blog`` entity. Lets write some
-tests to ensure this method is working correctly. Create a new file located at
-``src/Blogger/BlogBundle/Tests/Entity/BlogTest.php`` and add the following.
+我們從測試 ``Blog`` 實體的替代網址方法開始，設計一些測試來確保這個方法可以正確運作。建立一個新檔案在
+``src/Blogger/BlogBundle/Tests/Entity/BlogTest.php`` 並且貼入下面內容。
 
 .. code-block:: php
 
@@ -221,17 +220,14 @@ tests to ensure this method is working correctly. Create a new file located at
 
     }
 
-We have created a test class for the ``Blog`` entity. Notice the location of the file
-complies with the folder structure mentioned above. The ``BlogTest`` class extends
-the base PHPUnit class ``PHPUnit_Framework_TestCase``. All tests you write for PHPUnit
-will be a child of this class. You'll remember from previous chapters that
-the ``\`` must be placed in front of the ``PHPUnit_Framework_TestCase`` class
-name as the class is declared in the PHP public namespace.
+我們已經建立了一個 ``Blog`` 實體的測試類別，注意檔案的位置遵循了上面提到的資料夾結構，這個 ``BlogTest`` 類別繼承
+了 ``PHPUnit_Framework_TestCase`` 這個基礎 PHPUnit 類別，所有基於 PHPUnit 設計的測試都會是這個類別的一個子項目。
+記得在上一個章節提到過，在 ``PHPUnit_Framework_TestCase`` 類別名稱前需要加一個 ``\`` ，因為這個類別被宣告為 PHP
+開放命名空間。
 
-Now we have the skeleton class for our ``Blog`` entity tests, lets write a test
-case. Test cases in PHPUnit are methods of the Test class prefixed
-with ``test``, such as ``testSlugify()``. Update the ``BlogTest`` located at
-``src/Blogger/BlogBundle/Tests/Entity/BlogTest.php`` with the following.
+現在我們有測試 ``Blog`` 實體的骨架類別，就開始來設計一個測試案例。在 PHPUnit 中，測試案例就是測試類別中名稱前面有
+``test`` 的方法，像是 ``testSlugify()`` 。用下面內容更新放在 ``src/Blogger/BlogBundle/Tests/Entity/BlogTest.php``
+的 ``BlogTest`` 類別
 
 .. code-block:: php
 
@@ -249,19 +245,17 @@ with ``test``, such as ``testSlugify()``. Update the ``BlogTest`` located at
         }
     }
 
-This is a very simple test case. It instantiates a new ``Blog`` entity and runs
-an ``assertEquals()`` on the result of the ``slugify`` method. The ``assertEquals()``
-method takes 2 mandatory arguments, the expected result and the actual result.
-An optional 3rd argument can be passed in to specify a message to display
-when the test case fails.
+這是一個非常簡單的測試案例，它產生 ``Blog`` 實體的實例，接著針對 ``slugify`` 方法執行一個 ``assertEquals()``。
+``assertEquals()`` 方法取得兩個必要參數，預期的結果以及實際結果。另外選填的第三個參數可以放入在測試案例錯誤時要顯
+示的訊息。
 
-Lets run our new unit test. Run the following on the command line.
+讓我們執行新的單元測試，執行下面指令。
 
 .. code-block:: bash
 
     $ phpunit -c app
 
-You should see the following output.
+你應該會看到下面輸出。
 
 .. code-block :: bash
 
@@ -273,13 +267,10 @@ You should see the following output.
 
     OK (1 test, 1 assertion)
 
-The output from PHPUnit is very simple, Its start by displaying some information about
-PHPUnit and the outputs a number of ``.`` for each test it runs, in our case
-we are only running 1 test so only 1 ``.`` is output. The last statement informs
-us of the result of the tests. For our ``BlogTest`` we only ran 1 test with 1
-assertion. If you have color output on your command line you will also see the
-last line displayed in green showing everything executed OK.
-Lets update the ``testSlugify()`` method to see what happens when the tests fails.
+PHPUnit 的輸出很簡單，開始是顯示 PHPUnit 的資訊以及輸出一些 ``.`` 來代表每次執行的測試數量。在我們的例子中，我們
+只有執行一個測試，所以只有輸出一個 ``.`` 。最後的描述告訴我們測試的結果，在我們的 ``BlogTest`` 只有執行一個測試，
+其中只有一個主張。如果你的指令模式支援彩色輸出，你會發現最後一行是綠色的，表示執行正確。接著更新 ``testSlugify()``
+方法來看測試失敗時會怎麼樣。
 
 .. code-block:: php
 
@@ -295,7 +286,7 @@ Lets update the ``testSlugify()`` method to see what happens when the tests fail
         $this->assertEquals('a day with symfony2', $blog->slugify('A Day With Symfony2'));
     }
 
-Re run the unit tests as before. The following output will be displayed
+重新執行上一個單元測試，應該會看到下面輸出。
 
 .. code-block :: bash
 
@@ -320,15 +311,10 @@ Re run the unit tests as before. The following output will be displayed
     FAILURES!
     Tests: 1, Assertions: 2, Failures: 1.
 
-The output is a bit more involved this time. We can see the ``.`` for the run tests
-is replaced by a ``F``. This tells us the test failed. You will also see the ``E``
-character output if your test contains Errors. Next PHPUnit notifies us in
-detail of the failures, in this case, the 1 failure. We can see the
-``Blogger\BlogBundle\Tests\Entity\BlogTest::testSlugify`` method failed because
-the Expected and the Actual values were different. If you have color output on
-your command line you will also see the last line displayed in red showing
-there were failures in your tests. Correct the ``testSlugify()`` method so
-the tests execute successfully.
+這次的輸出就有點複雜了，我們可以看到執行測試時的 ``.`` 變成了 ``F`` ，這告訴我們測試出錯。如果你的測試包含錯誤，你
+也會看到 ``E`` 字元輸出。我們看到 ``Blogger\BlogBundle\Tests\Entity\BlogTest::testSlugify`` 方法錯誤，因為預期的
+數值與實際的數值不一樣，如果你的指令列支援彩色輸出，你會發現最後一行用紅色顯示，表示測試有錯誤發生。修正
+``testSlugify()`` 方法，這樣子測試就能夠執行成功。
 
 .. code-block:: php
 
@@ -344,7 +330,7 @@ the tests execute successfully.
         $this->assertEquals('a-day-with-symfony2', $blog->slugify('A Day With Symfony2'));
     }
 
-Before moving on add some more test for ``slugify()`` method.
+在繼續加入更多測試給 ``slugify()`` 方法。
 
 .. code-block:: php
 
@@ -363,10 +349,8 @@ Before moving on add some more test for ``slugify()`` method.
         $this->assertEquals('symblog', $blog->slugify(' symblog'));
     }
 
-Now we have tested the ``Blog`` entity slugify method, we need to  ensure the ``Blog``
-``$slug`` member is correctly set when the ``$title`` member of the ``Blog`` is
-updated. Add the following methods to the ``BlogTest`` file located at
-``src/Blogger/BlogBundle/Tests/Entity/BlogTest.php``.
+現在我們已經測試了 ``Blog`` 實體的替代網址方法，我們需要確保 ``Blog`` 的 ``$title`` 屬性更新時， ``Blog`` 的
+``$slug`` 會正確被設定。 在 ``src/Blogger/BlogBundle/Tests/Entity/BlogTest.php`` 的 ``BlogTest`` 加入下面方法。
 
 .. code-block:: php
 
@@ -390,19 +374,16 @@ updated. Add the following methods to the ``BlogTest`` file located at
         $this->assertEquals('hello-world', $blog->getSlug());
     }
 
-We begin by testing the ``setSlug`` method to ensure the ``$slug`` member is
-correctly slugified when updated. Next we check the ``$slug`` member is correctly
-updated when the ``setTitle`` method is called on the ``Blog`` entity.
+我們開始測試 ``setSlug`` 方法來確保 ``$slug`` 屬性在更新時能夠正確放入替代網址，接著我們檢查 ``Blog`` 實體的
+``setTitle`` 呼叫時能夠正確更新 ``$slug`` 屬性。
 
-Run the tests to verify the ``Blog`` entity is functioning correctly.
+執行這些測試來檢驗 ``Blog`` 實體能否正常運作。
 
-Testing the Twig extension
+測試 Twig 外掛
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In the previous chapter we created a Twig extension to convert a ``\DateTime``
-instance into a string detailing the duration since a time period. Create a new test file located at
-``src/Blogger/BlogBundle/Tests/Twig/Extensions/BloggerBlogExtensionTest.php`` and
-update with the following content.
+在上一個章節，我們建立了一個 Twig 外掛來轉換一個 ``\DateTime`` 實體變成字串來處理一個時段的持續時間，在
+``src/Blogger/BlogBundle/Tests/Twig/Extensions/BloggerBlogExtensionTest.php`` 建立一個檔案並且貼入下面內容。
 
 .. code-block:: php
 
@@ -438,24 +419,17 @@ update with the following content.
         }
     }
 
-The class is setup much the same as before, creating a method ``testCreatedAgo()``
-to test the Twig Extension. We introduce another PHPUnit method in this test case,
-the ``setExpectedException()`` method. This method should be called before executing
-a method you expect to throw an exception. We know that the ``createdAgo`` method
-of the Twig extension cannot handle dates in the future and will throw an
-``\Exception``. The ``getDateTime()`` method is simply a helper method for
-creating a ``\DateTime`` instance. Notice it is not prefixed with ``test`` so
-PHPUnit will not try to execute it as a test case. Open up the command line
-and run the tests for this file. We could simply run the test as before, but
-we can also tell PHPUnit to run tests for a specific folder (and its sub folders)
-or a file. Run the following command.
+這個類別設定的跟之前一樣，建立一個 ``testCreatedAgo()`` 方法來測試 Twig 外掛。在這個測試案例我們介紹了另一個 PHPUnit
+方法 ``setExpectedException()`` ，這個方法應該要在你預期方法執行前被呼叫來產生一個例外。我們知道 Twig 外掛的
+``createdAgo`` 方法無法處理未來的日期，同時也會產生一個 ``\Exception`` 。這個 ``getDateTime()`` 方法只是一個用來建立
+``\DateTime`` 實例的輔助方法，差異是它前面沒有 ``test`` ，所以 PHPUnit 不會試著將它當測試案例執行。我們可以像之前一樣
+簡單執行測試，不過我們也可以告訴 PHPUnit 來執行特定目錄的測試（像是它的子目錄）或檔案，執行下面指令。
 
 .. code-block:: bash
 
     $ phpunit -c app src/Blogger/BlogBundle/Tests/Twig/Extensions/BloggerBlogExtensionTest.php
 
-This will run the tests for the ``BloggerBlogExtensionTest`` file only. PHPUnit
-will inform us that the tests failed. The output is shown below.
+這只會執行 ``BloggerBlogExtensionTest`` 這個檔案的測試， PHPUnit 會告訴我們測試失敗，輸出像這樣。
 
 .. code-block:: bash
 
