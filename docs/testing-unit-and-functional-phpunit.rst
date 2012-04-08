@@ -443,9 +443,8 @@ PHPUnit 的輸出很簡單，開始是顯示 PHPUnit 的資訊以及輸出一些
 
     /var/www/html/symblog/symblog/src/Blogger/BlogBundle/Tests/Twig/Extensions/BloggerBlogExtensionTest.php:14
 
-We were expecting the first assertion to return ``0 seconds ago`` but it didn't, the
-word second was not plural. Lets update the Twig Extension located at
-``src/Blogger/BlogBundle/Twig/Extensions/BloggerBlogBundle.php`` to correct this.
+我們預期第一個主張會傳回 ``0 seconds ago`` ，不過實際上沒有，second 這個字不是複數。讓我們來修正這個放在
+``src/Blogger/BlogBundle/Twig/Extensions/BloggerBlogBundle.php`` 的 Twig 外掛。
 
 .. code-block:: php
 
@@ -473,8 +472,7 @@ word second was not plural. Lets update the Twig Extension located at
         // ..
     }
 
-Re run the PHPUnit tests. You should see the first assertion passing correctly,
-but our test case still fails. Lets examine the next output.
+重新執行 PHPUnit 測試，你應該會看到第一個主張正確的通過，不過我們的測試案例還是有錯，所以來檢查下面的輸出。
 
 .. code-block:: bash
 
@@ -488,16 +486,11 @@ but our test case still fails. Lets examine the next output.
 
     /var/www/html/symblog/symblog/src/Blogger/BlogBundle/Tests/Twig/Extensions/BloggerBlogExtensionTest.php:18
 
-We can see now that the 5th assertion is failing (notice the 18 at the end of the
-output, this gives us the line number in the file where the assertion failed).
-Looking at the test case we can see that the Twig Extension has functioned
-incorrectly. 1 hour ago should have been returned, but instead 60 minutes ago
-was. If we examine the code in the ``BloggerBlogExtension`` Twig
-extension we can see the reason. We compare the time to be inclusive, i.e., we use
-``<=`` rather than ``<``. We can also see this is the case when checking for
-hours. Update the Twig extension located at
-``src/Blogger/BlogBundle/Twig/Extensions/BloggerBlogBundle.php`` to correct
-this.
+我們可以看到第五個主張錯誤的細節（留意輸出最下方的 18 ，這告訴我們主張錯誤的部份是在哪個檔案的那一行），看看這個測試案例
+，我們可以看到這個 Twig 外掛的功能不正確，它應該要傳回 1 hour ago ，但實際上卻傳回 60 minutes ago 。如果我們檢查這個
+``BloggerBlogExtension`` Twig 外掛的程式碼可以看到原因，我們在時間的比對用了包含語法，也就是說我們用了 ``<=`` 而不是
+``<`` ，這個問題經常會花多個小時來找尋。更新這個放在 ``src/Blogger/BlogBundle/Twig/Extensions/BloggerBlogBundle.php``
+的 Twig 外掛來修正問題。
 
 .. code-block:: php
 
@@ -533,34 +526,27 @@ this.
         // ..
     }
 
-Now re run all our tests using the following command.
+現在我們透過下面指令重新執行所有測試。
 
 .. code-block:: bash
 
     $ phpunit -c app
 
-This runs all our tests, and shows all tests pass successfully. Although we have
-only written a small number of unit tests you should be getting a feel for how
-powerful and important testing is when writing code. While the above errors
-were minor, they were still errors. Testing also helps any future functionality
-added to the project breaking previous features. This concludes the unit testing
-for now. We will see more unit testing in the following chapters. Try adding some
-of your own unit tests to test functionality that has been missed.
+這個指令執行所有測試，所有的測試也都成功通過。雖然我們只有設計少數單元測試，你應該可以感受到寫程式時測試的強大與重要性
+。當出現上面這樣的小錯誤，它們仍然是錯誤，測試也可以幫助我們在未來新功能加入專案時不會造成舊有功能的錯誤。到這裡就是單
+元測試的結論了，我們會在後面章節看到更多的單元測試，你現在就可以試著加入一些自己覺得缺少的單元測試來測試功能
 
-Functional Testing
+功能性測試
 ------------------
 
-Now we have written some unit tests, lets move on to testing multiple components
-together. The first section of the functional testing will involve simulating
-browser requests to tests the generated responses.
+現在我們已經設計了一些單元測試，接著來看如何測試多個元件一起運作。功能性測試的第一個部份會介紹模擬瀏覽器請求來測試產生
+的回應。
 
-Testing the About page
+測試關於頁面
 ~~~~~~~~~~~~~~~~~~~~~~
 
-We begin testing the ``PageController`` class for the about page. As the about page
-is very simple, this is a good place to start. Create a new file located at
-``src/Blogger/BlogBundle/Tests/Controller/PageControllerTest.php`` and add
-the following content.
+我們開始測試 ``PageController`` 類別的關於頁面，由於關於頁面非常單純，所以是個適合作為開始的地方。建立一個檔案在
+``src/Blogger/BlogBundle/Tests/Controller/PageControllerTest.php`` 並且貼入下面內容。
 
 .. code-block:: php
 
@@ -583,24 +569,15 @@ the following content.
         }
     }
 
-We have already seen a Controller test very similar to this when we briefly looked
-at the ``DefaultControllerTest`` class. This is testing the about page of symblog,
-checking the string ``About symblog`` is present in the generated HTML,
-specifically within the ``H1`` tag. The ``PageControllerTest`` class doesn't extend the
-``\PHPUnit_Framework_TestCase`` as we saw with the unit testing examples,
-it instead extends the class ``WebTestCase``. This class is part of the Symfony2
-FrameworkBundle.
+我們在大略看過 ``DefaultControllerTest`` 類別時就有見過一個非常相像的 Controller 測試，這是用來測試 symblog 關於頁面
+，檢查 ``About symblog`` 這個字串是否出現在產生的 HTML ，指定是在 ``H1`` 標籤中。這個 ``PageControllerTest`` 類別沒有
+繼承我們在單元測試提到的 ``\PHPUnit_Framework_TestCase`` ，而是繼承 ``WebTestCase`` 這個類別，他是 Symfony2 Framework
+軟體包的一部分。
 
-
-As explained before PHPUnit test classes must extend the
-``\PHPUnit_Framework_TestCase``, but when extra or common functionality is
-required across multiple Test cases it is useful to encapsulate this in its
-own class and have your Test classes extend this. The ``WebTestCase`` does
-exactly this, it provides a number of useful method for running functional tests
-in Symfony2. Have a look at the ``WebTestCase`` file located at
-``vendor/symfony/src/Symfony/Bundle/FrameworkBundle/Test/WebTestCase.php``, you
-will see that this class is in fact extending the ``\PHPUnit_Framework_TestCase``
-class.
+在之前提過， PHPUnit 測試類別必須繼承 ``\PHPUnit_Framework_TestCase`` ，不過當我們在多個測試案例都需要額外或常見功能時
+，將這些封裝為它自己的類別然後在你的測試類別中繼承它是很實用的，這個 ``WebTestCase`` 就是這樣子做，它提供一些實用的方法
+來在 Symfony2 中執行功能性測試，可以看一下放在 ``vendor/symfony/src/Symfony/Bundle/FrameworkBundle/Test/WebTestCase.php``
+的 ``WebTestCase`` ，你會看到這個類別實際上繼承了 ``\PHPUnit_Framework_TestCase`` 類別。
 
 .. code-block:: php
 
@@ -611,55 +588,40 @@ class.
         // ..
     }
 
-If you look at the ``createClient()`` method in the ``WebTestCase`` class
-you can see it creates an instance of the Symfony2 Kernel. Following the methods
-through you will also notice that the ``environment`` is set to ``test``
-(unless overridden as one of the arguments to ``createClient()``). This is the
-``test`` environment we spoke about in the previous chapter.
+如果你看一下 ``WebTestCase`` 類別的 ``createClient()`` 方法，你可以看到它建立一個 Symfony2 核心的實例，繼續看下去你也會
+注意到 ``environment`` 被設定為 ``test`` （除非被一個 ``createClient()`` 的參數覆蓋），這就是我們在上一章提到的 ``test``
+環境。
 
-Looking back at our test class we can see the ``createClient()`` method is
-called to get the test up and running. We then call the ``request()`` method on the
-client to simulate a browser HTTP GET request to the url ``/about`` (this would
-be just like you visiting ``http://symblog.dev/about`` in your browser). The
-request gives us a ``Crawler`` object back, which contains the ``Response``. The
-``Crawler`` class is very useful as it lets us traverse the returned HTML. We
-use the ``Crawler`` instance to check that the ``H1`` tag in the response HTML
-contains the words ``About symblog``. You'll notice that even though we are
-extending the class ``WebTestCase`` we still use the assert method as before
-(remember the ``PageControllerTest`` class is still is child of the
-``\PHPUnit_Framework_TestCase`` class).
+看回到我們的測試類別，我們可以看到 ``createClient()`` 方法在測試開始執行時被呼叫，我們接著在用戶端呼叫 ``request()`` 方法
+來針對網址 ``/about`` 模擬一個瀏覽器的 HTTP GET 請求（這就很像你透過瀏覽器訪問 ``http://symblog.dev/about`` ）。這個請求
+傳回一個 ``Crawler`` 物件，它包含了 ``Response`` 。這個 ``Crawler`` 類別非常實用，因為它讓我們解析傳回的 HTML ，我們用這
+個 ``Crawler`` 實例來檢查傳回 HTML 中的 ``H1`` 標籤是否包含文字 ``About symblog`` 。你會發現即使我們是繼承 ``WebTestCase`
+類別，我們依舊使用之前提到的主張方法（記得 ``PageControllerTest`` 類別還是 ``\PHPUnit_Framework_TestCase`` 的子項目）。
 
-Lets run the ``PageControllerTest`` using the following command. When writing
-tests its useful to only execute the tests for the file you are currently working on.
-As your test suite gets large, running tests can be a time consuming tasks.
+我們用下面指令執行 ``PageControllerTest`` ，設計測試時，我們通常只執行目前處理中檔案的測試。當你要測試的對象變多，執行個別
+測試會變成需要大量時間的工作。
 
 .. code-block:: bash
 
     $ phpunit -c app/ src/Blogger/BlogBundle/Tests/Controller/PageControllerTest.php
 
-You should be greeted with the message ``OK (1 test, 1 assertion)`` letting us
-know that 1 test (the ``testAbout()``) ran, with 1 assertion (the ``assertEquals()``).
+你應該會看到歡迎訊息 ``OK (1 test, 1 assertion)`` ，這讓我們知道執行了一個測試（ ``testAbout()`` ），以及一個主張（
+``assertEquals()`` ）。
 
-Try changing the ``About symblog`` string to ``Contact`` and then re run the test.
-The test will now fail as ``Contact`` wont be found, causing ``asertEquals`` to
-equate to false.
+試著修改文字 ``About symblog`` 為 ``Contact`` ，然後重新執行測試。這個測試現在應該會錯物，因為找不到 ``Contact`` ，會造成
+``asertEquals`` 變成 false 。
 
 .. code-block:: bash
 
     1) Blogger\BlogBundle\Tests\Controller\PageControllerTest::testAbout
     Failed asserting that 0 matches expected 1.
 
-Revert the string back to ``About symblog`` before moving on.
+在繼續之前把文字改回 ``About symblog`` 。
 
-The ``Crawler`` instance used allows you to traverse either HTML or XML
-documents (which means the ``Crawler`` will only work with responses that return
-HTML or XML). We can use the ``Crawler`` to traverse the generated response using
-methods such as ``filter()``, ``first()``, ``last()``, and ``parents()``. If you
-have used `jQuery <http://jquery.com/>`_ before you should feel right at home
-with the ``Crawler`` class. A full list of supported ``Crawler`` traversal methods can be
-found in the `Testing
-<http://symfony.com/doc/current/book/testing.html#traversing>`_ chapter of the
-Symfony2 book. We will explore more of the ``Crawler`` features as we continue.
+這個 ``Crawler`` 實例用來讓你解析 HTML 或 XML 文件（這表示 ``Crawler`` 只會在回應是 HTML 或 XML 時運作），我們可以用 ``Crawler``
+來解析產生的回應，可以使用的方法包括 ``filter()`` 、 ``first()`` 、 ``last()`` 與 ``parents()`` ，如果你曾經使用過
+`jQuery <http://jquery.com/>`_ ，你應該會對於 ``Crawler`` 感覺很熟悉。 ``Crawler`` 支援的解析方法完整清單可以參考 Symfony2
+手冊的 `測試 <http://symfony.com/doc/current/book/testing.html#traversing>`_ 章節，我們接著會介紹更多 ``Crawler`` 的功能。
 
 Homepage
 ~~~~~~~~
