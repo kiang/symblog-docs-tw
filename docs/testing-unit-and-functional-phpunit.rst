@@ -623,24 +623,20 @@ PHPUnit 的輸出很簡單，開始是顯示 PHPUnit 的資訊以及輸出一些
 `jQuery <http://jquery.com/>`_ ，你應該會對於 ``Crawler`` 感覺很熟悉。 ``Crawler`` 支援的解析方法完整清單可以參考 Symfony2
 手冊的 `測試 <http://symfony.com/doc/current/book/testing.html#traversing>`_ 章節，我們接著會介紹更多 ``Crawler`` 的功能。
 
-Homepage
+首頁
 ~~~~~~~~
 
-While the test for the about page was simple, it has outlined the basic principles
-of functional testing the website pages.
+雖然關於頁面的測試很簡單，它已經概要介紹了網頁功能性測試的基本原則。
 
- 1. Create the client
- 2. Request a page
- 3. Check the response
+ 1. 建立用戶端
+ 2. 請求一個頁面
+ 3. 檢查回應
 
-This is a simple overview of the process, in fact there are a number of other
-steps we could also do such as clicking links and populating and submitting
-forms.
+這是一個簡單的處理概要，事實上還有許多期它步驟我們可以做，像是點選連結、填寫與送出表單等。
 
-Lets create a method to test the homepage. We know the homepage is available
-via the URL ``/`` and that is should display the latest blog posts. Add a new
-method ``testIndex()`` to the ``PageControllerTest`` class located at
-``src/Blogger/BlogBundle/Tests/Controller/PageControllerTest.php`` as shown below.
+我們來建立一個方法測試首頁。我們知道首頁的網址是 ``/`` ，它應該會顯示最新的部落格文章。在檔案
+``src/Blogger/BlogBundle/Tests/Controller/PageControllerTest.php`` 的 ``PageControllerTest`` 類別建立一個新方法 ``testIndex()``
+並且放入下面內容。
 
 .. code-block:: php
 
@@ -656,18 +652,14 @@ method ``testIndex()`` to the ``PageControllerTest`` class located at
         $this->assertTrue($crawler->filter('article.blog')->count() > 0);
     }
 
-You can see the same steps are taken as with the tests for the about page.
-Run the test to ensure everything is working as expected.
+你可以看到跟測試關於頁面一樣的步驟，執行它來看看是否能夠如預期般運作。
 
 .. code-block:: bash
 
     $ phpunit -c app/ src/Blogger/BlogBundle/Tests/Controller/PageControllerTest.php
 
-Lets now take the testing a bit further. Part of functional testing involves being
-able to replicate what a user would do on the site. In order for users to move
-between pages on your website they click links. Lets simulate this action now
-to test the links to the show blog page work correctly when the blog title is clicked.
-Update the ``testIndex()`` method in the ``PageControllerTest`` class with the following.
+接著做進一步的測試，部份功能性測試包含能夠複製使用者在網站的操作，使用者為了在頁面間移動會點選連結，我們就試著模擬這個操作來測
+試當部落格標題點選後顯示部落格頁面的連結是否正確。用下面內容更新 ``PageControllerTest`` 類別的 ``testIndex()`` 方法。
 
 .. code-block:: php
 
@@ -686,11 +678,8 @@ Update the ``testIndex()`` method in the ``PageControllerTest`` class with the f
         $this->assertEquals(1, $crawler->filter('h2:contains("' . $blogTitle .'")')->count());
     }
 
-The first thing we do it use the ``Crawler`` to extract the text within the first
-blog title link. This is done using the filter ``article.blog h2 a``. This filter
-is used return the ``a`` tag within the ``H2`` tag of the ``article.blog``
-article. To understand this better, have a look at the markup used on the homepage
-for displaying blogs.
+我們首先使用 ``Crawler`` 來解析第一個部落格標題連結的文字，這透過過濾器 ``article.blog h2 a`` 完成。這個過濾器會傳回
+``article.blog`` 在 ``H2`` 標籤中的 ``a`` 標籤，要更了解這個部份，可以看看首頁用來顯示部落格的原始碼。
 
 .. code-block:: html
 
@@ -711,51 +700,39 @@ for displaying blogs.
         <!-- .. -->
     </article>
 
-You can see the filter ``article.blog h2 a`` structure in place in the homepage
-markup. You'll also notice that there is more than one ``<article class="blog">`` in
-the markup, meaning the ``Crawler`` filter will return a collection. As we only want
-the first link, we use the ``first()`` method on the collection. Finally we use
-the ``text()`` method to extract the link text, in this case it will be the text
-``A day with Symfony2``. Next, the blog title link is clicked to navigate to the
-blog show page. The client ``click()`` method takes a link object and returns the
-``Response`` in a ``Crawler`` instance. You should by now be noticing that the
-``Crawler`` object is a key part to functional testing.
+你可以看到過濾器的 ``article.blog h2 a`` 結構就在首頁原始碼中，你也會發現不只一個 ``<article class="blog">`` ，這表示
+``Crawler`` 過濾器會傳回一個集合，由於我們只需要第一個連結，我們在這個集合使用 ``first()`` 方法。最後我們使用 ``text()`` 方法
+來解析連結文字，在這裡應該是 ``A day with Symfony2`` 。接著部落格標題的連結被點選來引導到部落格顯示頁，用戶端的 ``click()``
+方法會接受一個連結物件，然後以 ``Crawler`` 實例傳回一個 ``Response`` ，你現在應該會注意到 ``Crawler`` 物件在功能性測試裡面是一
+個很重要的部份。
 
-The ``Crawler`` object now contains the Response for the blog show page. We need
-to test that the link we navigated took us to the right page. We can use the
-``$blogTitle`` value we retrieved earlier to check this against the title in the
-Response.
+``Crawler`` 物件現在包含部落格顯示頁的回應，我們需要測試引導的連結是否讓我們在正確的頁面，我們可以使用之前取得的 ``$blogTitle``
+數值來檢查回應中的標題。
 
-Run the tests to ensure that navigation between the homepage and the blog show
-pages is working correctly.
+執行測試來確認首頁與部落格顯示頁的引導是否正確。
 
 .. code-block:: bash
 
     $ phpunit -c app/ src/Blogger/BlogBundle/Tests/Controller/PageControllerTest.php
 
-Now you have an understanding of how to navigate through the website pages
-when functional testing, lets move onto testing forms.
+現在你應該了解如何在網站頁面間透過引導來進行功能性測試，接著我們會看到表單的測試。
 
-Testing the Contact Page
+測試聯絡頁面
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Users of symblog are able to submit contact enquiries by completing the form on
-the contact page ``http://symblog.dev/contact``. Lets test that submissions
-of this form work correctly. First we need to outline what should happen when
-the form is successfully submitted (successfully submitted in this case means
-there are no errors present in the form).
+symblog 的使用者可以在聯絡頁面 ``http://symblog.dev/contact`` 透過填寫表單送出聯繫諮詢，我們來測試這個表單送出過程是否正確。首
+先我們需要列出在表單成功送出過程的概要（成功送出在這裡意思是表單沒有錯誤資料）。
 
- 1. Navigate to contact page
- 2. Populate contact form with values
- 3. Submit form
- 4. Check email was sent to symblog
- 5. Check response to client contains notification of successful contact
+ 1. 引導到聯絡頁面
+ 2. 在表單輸入數值
+ 3. 送出表單
+ 4. 檢查信件是否送到 symblog
+ 5. 檢查用戶端的回應是否包含成功聯繫的提醒
 
-So far we have explored enough to be able to complete steps 1 and 5 only. We will
-now look at how to test the 3 middle steps.
+到目前為止我們只知道如何進行第 1 步與第 5 步，我們現在要看看如何測試中間的 3 個步驟。
 
-Add a new method ``testContact()`` to the ``PageControllerTest`` class located at
-``src/Blogger/BlogBundle/Tests/Controller/PageControllerTest.php``.
+在檔案 ``src/Blogger/BlogBundle/Tests/Controller/PageControllerTest.php`` 中的類別 ``PageControllerTest`` 新增一個方法
+``testContact()`` 。
 
 .. code-block:: php
 
@@ -782,22 +759,16 @@ Add a new method ``testContact()`` to the ``PageControllerTest`` class located a
         $this->assertEquals(1, $crawler->filter('.blogger-notice:contains("Your contact enquiry was successfully sent. Thank you!")')->count());
     }
 
-We begin in the usual fashion, making a request to the ``/contact`` URL, and
-checking the page contains the correct ``H1`` title. Next we use the ``Crawler``
-to select the form submit button. The reason we select the button and not the
-form is that a form may contain multiple buttons that we may want to click
-independently. From the selected button we are able to retrieve the form. We are
-able to set the form values using the array subscript notation ``[]``.
-Finally the form is passed to the client ``submit()`` method to actually
-submit the form. As usual, we receive a ``Crawler`` instance back. Using the
-``Crawler`` response we check to ensure the flash message is present in the returned
-response. Run the test to check everything is functioning correctly.
+我們用同樣的形式開始，建立一個請求到網址 ``/contact`` ，然後檢查頁面是否包含正確的 ``H1`` 標題。接著我們使用 ``Crawler`` 來找到
+表單送出按鈕。為什麼我們找按鈕而不是表單？理由是一個表單也許包含多個按鈕，我們會想要個別點選。從找到的按鈕可以取得表單，我們可以透
+過陣列下標語法 ``[]`` 來設定表單數值。最後表單會傳送給用戶端的 ``submit()`` 方法來實際將表單送出。我們一樣會接收到一個 ``Crawler``
+實例，使用這個 ``Crawler`` 回應來檢查是否有快閃訊息出現在回應中。執行這個測試來確認所有功能都正確運作。
 
 .. code-block:: bash
 
     $ phpunit -c app/ src/Blogger/BlogBundle/Tests/Controller/PageControllerTest.php
 
-The tests failed. We are given the following output from PHPUnit.
+這個測試失敗了，我們會看到 PHPUnit 產生下面的輸出。
 
 .. code-block:: bash
 
@@ -809,15 +780,9 @@ The tests failed. We are given the following output from PHPUnit.
     FAILURES!
     Tests: 3, Assertions: 5, Failures: 1.
 
-The output is informing us that the flash message could not be found in the
-response from the form submit. This is because when in the ``test`` environment,
-redirects are not followed. When the form is successfully validated in the
-``PageController`` class a redirect happens. This redirect is not being
-followed; We need to explicitly say that the redirect should be followed. The
-reason redirects are not followed is simple, you may want to check the current
-response first. We will demonstrate this soon to check the email was sent.
-Update the ``PageControllerTest`` class to set the client to follow the
-redirect.
+這個輸出告訴我們在表單送出後的回應找不到快閃訊息，這是因為在 ``test`` 環境中並不會發生轉頁。在表單於 ``PageController`` 類別通過
+檢查後會發生一個轉頁，這個轉頁沒有發生，我們需要明確的表示應該要進行轉頁。至於為什麼轉頁沒有發生，很簡單，你也許想要先檢查目前的回
+應，我們很快就會在檢查信件是否送出時展示這個部份。更新 ``PageControllerTest`` 類別來設定用戶端去進行轉頁。
 
 .. code-block:: php
 
@@ -835,10 +800,8 @@ redirect.
         $this->assertEquals(1, $crawler->filter('.blogger-notice:contains("Your contact enquiry was successfully sent. Thank you!")')->count());
     }
 
-No when you run the PHPUnit tests they should pass. Lets now look at the final
-step of checking the contact form submission process, step 4, checking an email
-was sent to symblog. We already know that emails will not be delivered in the
-``test`` environment due to the following configuration.
+現在你執行 PHPUnit 測試時應該會通過，我們現在來看檢查聯絡表單送出程序的最後一步，第 4 步，檢查信件是否送給 symblog 。我們已經知道
+在 ``test`` 環境信件不會被送出，因為下面設定。
 
 .. code-block:: yaml
 
@@ -847,10 +810,8 @@ was sent to symblog. We already know that emails will not be delivered in the
     swiftmailer:
         disable_delivery: true
 
-We can test the emails were sent using the information gathered by the web profiler.
-This is where the importance of the client not following redirects comes in. The
-check on the profiler needs to be done before the redirect happens, as the information
-in the profiler will be lost. Update the ``testContact()`` method with the following.
+我們可以透過取得網頁配置器的資訊來測試信件是否送出，這就是為什麼用戶端不進行轉頁的重點，配置器的檢查必需要在轉頁發生前進行，因為在轉
+頁後配置器的資訊會消失。用下面內容來更新 ``testContact()`` 方法。
 
 .. code-block:: php
 
@@ -885,49 +846,36 @@ in the profiler will be lost. Update the ``testContact()`` method with the follo
         $this->assertTrue($crawler->filter('.blogger-notice:contains("Your contact enquiry was successfully sent. Thank you!")')->count() > 0);
     }
 
-After the form submit we check to see if the profiler is available as it may have
-been disabled by a configuration setting for the current environment.
+在表單送出後我們檢查配置器是否存在，因為它在目前環境有可能設定為停用。
 
 .. tip::
 
-    Remember tests don't have to be run in the ``test`` environment, they could be
-    run on the ``production`` environment where things like the profiler wont be
-    available.
+    記住測試並不一定要在 ``test`` 執行，它們可以在 ``production`` 環境執行，這時候像配置器這樣的東西並不會存在。
 
-If we are able to get the profiler we make a request to retrieve the
-``swiftmailer`` collector. The ``swiftmailer`` collector works behind the scenes
-to gather information about how the emailing service is used. We can use this to
-get information regarding which emails have been sent.
+如果我們可以取得配置器，我們建立一個請求來取得 ``swiftmailer`` 集合器，這個 ``swiftmailer`` 集合器在後端運作，用來取得信件服務的使
+用狀況，我們可以藉此取得信件是否送出的資訊。
 
-Next we use the ``getMessageCount()`` method to check that 1 email was sent. This
-maybe enough to ensure that at least an email is going to be sent, but it doesn't verify
-that the email will be sent to the correct location. It could be very embarrassing
-or even damaging for emails to be sent to the wrong email address. To check this
-isn't the case we verify the email to address is correct.
+接著我們使用 ``getMessageCount()`` 方法來檢查是否有 1 個訊息送出，這對於確認至少一個信件是否送出也許足夠，不過它並沒有檢查信件是否
+被送到正確的位置，如果信件被送到錯誤的信箱也許會有點麻煩或甚至造成損害，我們在這裡並不會檢查信箱是否正確。
 
-Now re run the tests to check everything is working correctly.
+現在我們執行測試來檢查是否正確運作。
 
 .. code-block:: bash
 
     $ phpunit -c app/ src/Blogger/BlogBundle/Tests/Controller/PageControllerTest.php
 
-Testing Adding Blog Comments
+測試新增部落格評論
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Lets now use the knowledge we have gained from the previous tests on the contact page
-to test the process of submitting a blog comment.
-Again we outline what should happen when the form is successfully
-submitted.
+我們現在用已經在聯絡頁面提過的知識來測試發布部落格評論的流程，一樣的，我們需要列出表單成功送出會經過的流程。
 
- 1. Navigate to a blog page
- 2. Populate comment form with values
- 3. Submit form
- 4. Check new comment is added to end of blog comment list
- 5. Also check sidebar latest comments to ensure comment is at top of list
+ 1. 引導到部落格頁面
+ 2. 在表單輸入數值
+ 3. 送出表單
+ 4. 檢查新的評論是否被加入到部落格評論清單的最後
+ 5. 也檢查邊框區塊的最新評論是否在清單最上方
 
-Create a new file located at
-``src/Blogger/BlogBundle/Tests/Controller/BlogControllerTest.php``
-and add in the following.
+在 ``src/Blogger/BlogBundle/Tests/Controller/BlogControllerTest.php`` 建立一個新檔案並且貼入下面內容。
 
 .. code-block:: php
 
@@ -979,25 +927,19 @@ and add in the following.
         }
     }
 
-We jump straight in this time with the entire test. Before we begin dissecting the code,
-run the tests for this file to ensure everything is working correctly.
+我們這次直接跳到整個測試，在我們開始剖析程式碼前，執行這個檔案的測試來確認功能正確。
 
 .. code-block:: bash
 
     $ phpunit -c app/ src/Blogger/BlogBundle/Tests/Controller/BlogControllerTest.php
 
-PHPUnit should inform you that the 1 test was executed successfully. Looking at
-the code for the ``testAddBlogComment()`` we can see things begin in the usual
-format, creating a client, requesting a page and checking the page we are on is
-correct. We then proceed to get the add comment form, and submit the form. The
-way we populate the form values is slightly different than the previous version.
-This time we use the 2nd argument of the client ``submit()`` method to pass in
-the values for the form.
+PHPUnit 應該會告訴你有 1 個測試成功執行，看看 ``testAddBlogComment()`` 的程式碼，我們可以看到一樣的形式，建立一個用戶端、請求一個
+頁面以及檢查我們所在頁面是否正確。我們接著取得新增評論表單、送出表單，填寫表單數值的方法跟之前有點不同，這次我們使用用戶端
+``submit()`` 方法的第 2 個參數來傳入表單的數值。
 
 .. tip::
 
-    We could also use the Object Oriented interface to set the values of the form fields.
-    Some examples are shown below.
+    我們也可以透過物件導向的介面來設定表單欄位的數值，下面是一些範例。
 
     .. code-block:: php
 
@@ -1007,18 +949,14 @@ the values for the form.
         // Select an option or a radio
         $form['gender']->select('Male');
 
-After submitting the form, we request the client should follow the redirect so we
-can check the response. We use the ``Crawler`` again to get the last blog comment, which
-should be the one we just submitted. Finally we check the latest comments in the
-sidebar to check the comment is also the first one in the list.
+在表單送出後，我們要求用戶端去進行轉頁，這樣我們才能檢查回應。我們再次使用 ``Crawler`` 來取得最新部落格評論，它應該是我們剛剛送出的
+那一筆。最後我們檢查邊框區塊的最新評論，這個評論是否也在清單中的第一筆。
 
-Blog Repository
+部落格儲藏庫
 ~~~~~~~~~~~~~~~
 
-The last part of the functional testing we will explore in this chapter is
-testing a Doctrine 2 repository. Create a new file located at
-``src/Blogger/BlogBundle/Tests/Repository/BlogRepositoryTest.php`` and add the
-following content.
+在這一章功能性測試我們要介紹的最後一個部份是測試 Doctrine 2 的儲藏庫，建立一個檔案在
+``src/Blogger/BlogBundle/Tests/Repository/BlogRepositoryTest.php`` 並且放入下面內容。
 
 .. code-block:: php
 
@@ -1085,42 +1023,33 @@ following content.
         }
     }
 
-As we want to perform tests that require a valid connection to the database
-we extend the ``WebTestCase`` again as this allows us to bootstrap the Symfony2
-Kernel. Run this test for this file using the following command.
+由於我們要執行測試時需要一個正確的資料庫連線，我們再次繼承 ``WebTestCase`` ，因為這讓我們能夠啟用 Symfony2 核心。用下面指令來執行
+這個測試。
 
 .. code-block:: bash
 
     $ phpunit -c app/ src/Blogger/BlogBundle/Tests/Repository/BlogRepositoryTest.php
 
-Code Coverage
+程式碼涵蓋範圍
 -------------
 
-Before we move on lets quickly touch on code coverage. Code coverage gives us an
-insight into which parts of the code are executed when the tests are run. Using
-this we can see the parts of our code that have no tests run on them, and
-determine if we need to write test for them.
+在繼續之前，我們快速的看過程式碼涵蓋範圍。程式碼涵蓋範圍讓我們可以觀察測試執行時哪個部份的程式碼被執行，透過這個功能我們可以看到程式
+碼的哪些部份沒有相關測試，並且決定我們是否要為這些部份設計測試。
 
-To output the code coverage analysis for your application run the following
+要輸出應用程式的程式碼涵蓋範圍分析就執行下面指令
 
 .. code-block:: bash
 
     $ phpunit --coverage-html ./phpunit-report -c app/
 
-This will output the code coverage analysis to the folder ``phpunit-report``.
-Open the ``index.html`` file in your browser to see the analysis output.
+這會將程式碼涵蓋範圍分析輸出到 ``phpunit-report`` 資料夾，透過瀏覽器打開 ``index.html`` 就可以看到分析輸出。
 
-See the `Code Coverage Analysis <http://www.phpunit.de/manual/current/en/code-coverage-analysis.html>`_
-chapter in the PHPUnit documentation for more information.
+更多的資訊可以參考 PHPUnit 手冊的 `程式碼涵蓋範圍分析 <http://www.phpunit.de/manual/current/en/code-coverage-analysis.html>`_ 章節。
 
-Conclusion
+結論
 ----------
 
-We have covered a number of key areas with regards to testing. We have explored
-both unit and functional testing to ensure our website is functioning correctly.
-We have seen how to simulate browser requests and how to use the Symfony2 ``Crawler``
-class to check the Response from these requests.
+我們已經提到一些關於測試重要的地方，我們也介紹了單元與功能性測試來確保我們網站功能正確執行。我們已經看到如何模擬瀏覽器請求以及如何使用
+Symfony2 的 ``Crawler`` 類別檢查這些請求的回應。
 
-Next we will look at the Symfony2 security component, and more specifically how to use it
-for user management. We will also integrate the FOSUserBundle ready for us to work on the
-symblog admin section.
+接著我們會看到 Symfony2 的安全元件，特別是如何將它用在使用者管理上。我們也會在 symblog 管理區結合已經做好的 FOSUserBundle 。
